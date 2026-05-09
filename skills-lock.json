@@ -7,6 +7,12 @@
       "skillPath": "skills/ralph-tui-create-json/SKILL.md",
       "computedHash": "395b8c2dc5c2e45f927f1cde33fc771ad7d989f5accb993999c5135df061eb01"
     },
+    "ralph-wiggum": {
+      "source": "fstandhartinger/ralph-wiggum",
+      "sourceType": "github",
+      "skillPath": "skills/ralph-wiggum/SKILL.md",
+      "computedHash": "69e5dcb55497cc5f1ecfa1ec31c9cd9b110f528c1c721a5e1480f44638779a7d"
+    },
     "using-git-worktrees": {
       "source": "obra/superpowers",
       "sourceType": "github",
