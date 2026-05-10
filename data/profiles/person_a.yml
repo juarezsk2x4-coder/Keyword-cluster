@@ -82,9 +82,10 @@ substances:
     trend: reducing
     notes: "smoked separately from cannabis; trying to cut down"
   cocaine:
-    current_status: active_use
-    frequency: "2x_per_week"
-    pattern: "cyclical — usa 2x/sem por períodos, depois 1-2 meses sem usar"
+    current_status: active_use_frequent_phase
+    pattern: "cyclical — 2 dias/sem em fases de uso, intercalado com pausas de 1-2+ meses"
+    current_phase: "actively using" # right now em fase de uso, não em pausa
+    typical_use_days_per_week_when_active: 2
     intent: reducing_or_quitting
     historical_severe_use: 2024_2025_chronic_binge_period
   psychedelics:
@@ -220,9 +221,10 @@ meal_times:
 food_preferences:
   hard_no: [tomate]                                  # alergia da esposa, vale pra casa toda
   soft_dislikes: [figado, couve_flor, mamao, azeitonas]
-  functional_use_only: [ovos]                        # uses if needed, doesn't enjoy
+  mood_dependent: [ovos]                              # mexidos ou cozidos, depende do humor
   fish_dislikes: [tainha, anchova, camarao]
-  fish_preferences: [salmao, sardinha, atum_fresco, pescada, robalo, linguado, merluza, polvo, lula]
+  fish_loved: [atum_fresco, linguado, robalo, salmao]  # explicitly preferred
+  fish_acceptable: [sardinha, pescada, merluza, polvo, lula]  # tolerated, lower priority
   loved_cuisines: [italiana_sem_tomate, indiana, coreana, tailandesa, japonesa, peruana, fermentados]
   fermentados_interest: [kimchi, chucrute, kefir, kombucha, misso, iogurte_natural]
   favorite_proteins: [patinho_moido, peito_frango, lombo_suino, file_mignon, entrecot, cogumelos, quinoa]
