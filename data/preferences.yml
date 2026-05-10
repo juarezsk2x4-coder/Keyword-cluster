@@ -1,0 +1,58 @@
+# Shared food preferences for the household.
+# Hard rules apply to BOTH people. Personal lists are split per person.
+
+# ── Hard restrictions (NEVER include) ────────────────────────────────────────
+# Allergies and absolute blocks. The Meal Plan Designer will reject any recipe
+# containing any of these in any form.
+hard_no:
+  - tomate              # confirmed allergy: nada de tomate em forma alguma
+                        # bloqueia: molho de tomate, extrato, ketchup, sugo, polpa,
+                        #           tomate seco, lasanha tradicional, pizza marinara,
+                        #           rondelli ao sugo, vinagrete tradicional, gazpacho
+  # add more if needed (ex: amendoim, frutos_do_mar, lactose_estrita, gluten_estrito)
+
+# ── Soft dislikes (avoid but not banned) ─────────────────────────────────────
+soft_dislikes:
+  person_a: []          # ex: ["beterraba", "fígado", "quiabo"]
+  person_b: []
+
+# ── Loved cuisines (anchor the rotation around these) ────────────────────────
+loved_cuisines:         # ex: comida_caseira_brasileira, italiana_sem_tomate, japonesa,
+                        #     churrasco_gaucho, cozinha_litoranea_sc, indiana, tailandesa,
+                        #     mediterranea, mexicana_sem_tomate
+  - FILL_IN
+
+# ── Favorite ingredients (the rotation will lean on these) ───────────────────
+favorite_proteins:      # ex: peito_frango, coxa_frango, file_mignon_suino, patinho_moido,
+                        #     tainha, anchova, pescada, sardinha, ovos, tofu, lentilha, grao_de_bico
+  - FILL_IN
+favorite_carbs:         # ex: arroz_branco, arroz_integral, aipim, batata_doce, batata_inglesa,
+                        #     pao_frances, macarrao_integral, polenta, quinoa, cuscuz
+  - FILL_IN
+favorite_vegetables:    # ex: brocolis, couve_flor, abobrinha, berinjela, repolho, couve_manteiga,
+                        #     vagem, cenoura, abobora_cabotia, espinafre, rucula, alface, pepino
+  - FILL_IN
+favorite_fruits:        # ex: banana_prata, banana_nanica, mamao, abacate, laranja_pera,
+                        #     bergamota, maca, abacaxi, manga, uva
+  - FILL_IN
+
+# ── Eating out ───────────────────────────────────────────────────────────────
+# Reserve N meal slots per week so the planner doesn't waste ingredients on
+# meals you won't cook.
+eating_out:
+  meals_per_week: 1
+  typical_day: friday   # monday..sunday
+  typical_meal: jantar  # cafe_da_manha | almoco | jantar
+
+# ── Beverages ────────────────────────────────────────────────────────────────
+beverages:
+  coffee_cups_per_day:
+    person_a: FILL_IN
+    person_b: FILL_IN
+  chimarrao:
+    person_a: false
+    person_b: false
+  water_target_l_per_day:
+    person_a:           # leave blank = auto-calculate from weight + activity
+    person_b:
+  other_regular: []     # ex: ["cha_verde", "kombucha", "agua_de_coco"]

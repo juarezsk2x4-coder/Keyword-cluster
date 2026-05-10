@@ -1,0 +1,64 @@
+# Person A profile (default: the man, more cardio-active)
+# Anything marked FILL_IN must be set. Pre-filled values are sensible defaults — change if wrong.
+
+name: FILL_IN
+sex: male
+age_years: FILL_IN
+height_cm: FILL_IN
+weight_kg: FILL_IN
+body_fat_pct:           # optional; leave blank if unknown
+
+# ── Activity ──────────────────────────────────────────────────────────────────
+# Add one entry per recurring activity. Drop the section if you don't do it.
+activity:
+  - type: musculacao    # musculacao | corrida | ciclismo | natacao | hiit | yoga | caminhada | futebol | surf | outro
+    days_per_week: FILL_IN
+    minutes_per_session: FILL_IN
+    typical_time: evening    # morning | afternoon | evening | night
+    intensity: moderate      # light | moderate | hard | very_hard
+  - type: corrida
+    days_per_week: FILL_IN
+    minutes_per_session: FILL_IN
+    typical_time: morning
+    intensity: moderate
+
+# ── Sleep ─────────────────────────────────────────────────────────────────────
+sleep:
+  bedtime: "23:00"
+  waketime: "07:00"
+
+# ── Substances (nutrition impact only — no judgement, just so the agent calibrates) ──
+substances:
+  caffeine:
+    mg_per_day: FILL_IN          # ~80mg per cafe coado 200ml, ~95mg per espresso, ~30mg per chá preto
+    last_dose_time: "16:00"      # used to flag late caffeine vs sleep
+  alcohol:
+    frequency: weekly            # daily | weekly | monthly | rarely | never
+    typical_units_per_occasion: 0  # 1 unit = 1 lata 350ml cerveja 5% | 1 taça vinho 150ml | 1 dose 40ml destilado
+    typical_drinks: []           # ex: ["cerveja_pilsen", "vinho_tinto", "cachaca", "gin_tonica"]
+  cannabis:
+    frequency: never             # daily | weekly | monthly | rarely | never
+    typical_time: evening
+    typical_form: flor           # flor | concentrado | comestivel | vaporizador
+  nicotine:
+    frequency: never             # daily | weekly | rarely | never
+    form: none                   # cigarro | vape | tabaco_cachimbo | none
+  medications: []                # ex: [{ name: "losartana", dose_mg: 50, time: "08:00" }]
+  supplements: []                # ex: [{ name: "creatina", dose_g: 5, time: "post_workout" }, { name: "whey", dose_g: 30, time: "post_workout" }]
+
+# ── Medical / nutritional flags ───────────────────────────────────────────────
+medical_flags: []                # ex: ["refluxo", "ibs", "hipertensao", "anemia_historico", "diabetes_tipo2"]
+bloodwork_flags: []              # ex: ["ferro_baixo", "vitamina_d_baixa", "b12_baixa", "tireoide_alterada"]
+
+# ── Goal ──────────────────────────────────────────────────────────────────────
+goals:
+  primary: recomp                # recomp | cut | bulk | maintain | endurance_perf
+  notes:                         # free text: "subir bench até X", "correr 10k em Y", etc.
+
+# ── Preferred meal times (override of defaults) ───────────────────────────────
+meal_times:
+  cafe_da_manha: "07:30"
+  lanche_manha: "10:30"
+  almoco: "12:30"
+  lanche_tarde: "16:00"          # serves as pre-workout if training evening
+  jantar: "20:00"                # serves as post-workout if training evening
