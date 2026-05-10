@@ -184,6 +184,8 @@ substances:
 
 # ── Medical flags (encoded for nutrition planning calibration) ────────────────
 medical_flags:
+  - asma_com_o2_volumes_reduzidos                 # explica eosinofilia + inflamação cronica baixa
+  - fenotipo_atopico                              # asma + alergia tomate + eosinofilia
   - tea_autismo_alto_funcionamento_cid11_6a02
   - tdah_em_uso_venvanse_70mg_max
   - dx_anterior_tab_descartado                    # foi tratado como bipolar antes de descobrir TEA
