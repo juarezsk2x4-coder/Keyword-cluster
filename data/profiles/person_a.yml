@@ -64,7 +64,8 @@ substances:
     primary_source: mate_uruguayan
     mate_liters_per_day: 1.5
     estimated_caffeine_mg_per_day: 250    # uruguayan style is concentrated
-    last_dose_time: TBD                   # PENDING — affects sleep planning
+    last_dose_time: "16:30"               # 16-17h range; LATE for 00:00 bedtime
+    sleep_impact_flag: high               # ~50% caffeine still circulating at bedtime
   alcohol:
     frequency: weekly
     typical_units_per_occasion: 3
@@ -81,9 +82,23 @@ substances:
     trend: reducing
     notes: "smoked separately from cannabis; trying to cut down"
   cocaine:
-    historical_use: 2024_2025_chronic_binge_period   # caused undernutrition deficits
-    current_status: TBD                              # PENDING — need to confirm
-  other_drugs: TBD                                    # PENDING
+    current_status: active_use
+    frequency: "2x_per_week"
+    pattern: "cyclical — usa 2x/sem por períodos, depois 1-2 meses sem usar"
+    intent: reducing_or_quitting
+    historical_severe_use: 2024_2025_chronic_binge_period
+  psychedelics:
+    lsd: { frequency: rare, status: enjoys_uses_sparingly }
+    psilocibina_cogumelos: { frequency: rare, status: enjoys_uses_sparingly }
+  dissociatives:
+    ketamina: { frequency: rare, status: enjoys_uses_sparingly }
+  sedatives:
+    benzos:
+      frequency: "<1x_per_week"
+      purpose: [sleep, extreme_anxiety]
+      trend: reducing
+      flag: respiratory_cns_stack_risk_if_combined_with_alcohol_or_cannabis
+  other_drugs: none_additional
   medications:
     - name: venvanse
       compound: lisdexamfetamina
@@ -124,6 +139,8 @@ medical_flags:
   - historico_subnutricao_severa_2024_2025
   - alergia_tomate                                # hard block household-wide
   - massa_proteica_subdimensionada                # 12.3 kg vs target 13.5-15 kg
+  - carga_adrenergica_cronica                     # Venvanse + mate + cocaina 2x/sem
+  - carga_substancia_polifarmacia_recreacional    # cannabis diário + álcool sem + benzos ocasional + psicodélicos raros
 
 # ── Bloodwork (24/10/2025, Lab. Santa Luzia) ──────────────────────────────────
 bloodwork:
@@ -204,8 +221,8 @@ food_preferences:
   hard_no: [tomate]                                  # alergia da esposa, vale pra casa toda
   soft_dislikes: [figado, couve_flor, mamao, azeitonas]
   functional_use_only: [ovos]                        # uses if needed, doesn't enjoy
-  fish_dislikes: [tainha, anchova]
-  fish_preferences: TBD                              # PENDING
+  fish_dislikes: [tainha, anchova, camarao]
+  fish_preferences: [salmao, sardinha, atum_fresco, pescada, robalo, linguado, merluza, polvo, lula]
   loved_cuisines: [italiana_sem_tomate, indiana, coreana, tailandesa, japonesa, peruana, fermentados]
   fermentados_interest: [kimchi, chucrute, kefir, kombucha, misso, iogurte_natural]
   favorite_proteins: [patinho_moido, peito_frango, lombo_suino, file_mignon, entrecot, cogumelos, quinoa]
@@ -217,7 +234,7 @@ food_preferences:
     coffee_cups_per_day: 0
     mate_style: uruguayan
     mate_liters_per_day: 1.5
-    last_mate_time: TBD                              # PENDING
+    last_mate_time: "16:30"
 
 # ── Structural guardrails (autism + ADHD + history-driven) ────────────────────
 guardrails:

@@ -101,6 +101,81 @@ He is being correctly treated by Dra. Schlindwein (B12 IM, D3 7000 UI/d, ferro 3
 
 This is excellent baseline metabolic flexibility. **Whatever we feed him, he can use efficiently.**
 
+## Full substance load — clinical re-read
+
+Updated stack after follow-up questions:
+
+| Substance | Frequency | Adrenergic load | Notes |
+|---|---|---|---|
+| Lisdexamfetamina (Venvanse) 70 mg | Daily AM | +++ max dose | Prescribed, central para função TDAH |
+| Mate uruguayano 1.5 L | Daily, última 16:30 | ++ | ~250 mg cafeína; horário tardio compromete sono |
+| Cocaína | **2×/sem atual, ciclos de 1–2 meses off** | +++ acute | Quer reduzir/parar |
+| Cannabis flor | Daily, 5 joints | — (anti-adrenérgico) | Counterbalance + sleep aid |
+| Álcool | Semanal, 3 unidades | (transitório) | IPA, vinho branco, gin |
+| Tabaco Amsterdam/Marlboro | Semanal, reduzindo | ++ acute | Inflamatório + alta demanda vit C |
+| LSD / cogumelos | Raros | (transitório) | Recreacional |
+| Ketamina | Rara | (transitório) | Recreacional |
+| Benzodiazepínicos | **<1×/sem** | +++ GABA | Sono ou ansiedade extrema; reduzindo |
+
+**This is significant polysubstance load — clinicamente relevante, não patológico.** O corpo está processando cinco sistemas neurotransmissores em rotação: dopaminérgico (Venvanse + coca), GABAérgico (benzos + álcool + cannabis CB1 indireto), endocanabinoide (cannabis diário), serotonérgico (LSD/cogu quando), glutamatérgico (ketamina). O framework TEA + TDAH explica boa parte disso como **lógica de auto-regulação**, não excesso recreacional.
+
+**The plan works *with* this reality, not around it.** Dois princípios:
+
+1. **Dias de uso são déficits nutricionais previsíveis.** Coca → próximo dia: apetite baixo, hidratação ruim, Mg depletado. Álcool → próximo dia: hidratação + B-complex. Benzo → próxima manhã: groggy + apetite baixo. O sistema precisa de **templates de "dia de recuperação"** que ativam baseados no logging.
+
+2. **O plano apoia a direção de harm-reduction que ele já está perseguindo.** Quer reduzir coca + tabaco. Nutrição genuinamente ajuda estabilizando os substratos que o craving explora (glicemia, Mg, precursores dopaminérgicos, sono).
+
+### Cocaine-day recovery protocol (~2 dias/semana)
+
+Aplica no dia *seguinte* ao uso:
+
+- **Hidratação 5+ L** com sódio + potássio (água de coco, ou caseiro: água + mel + sal + limão).
+- **Mg via comida**: cacau 70% 30g + castanha-do-pará 2un + folhas verde-escuras almoço e jantar + abacate. (Mg renal wasting peaks 24–48h pós-stim.)
+- **Tirosina alimentar para reposição catecolaminérgica** (NÃO supplements — comida): ovo, queijo colonial, amêndoa, frango, peixe; **B6 cofactor**: banana, batata, pistache, atum; **folato**: folhas verdes, lentilha, grão de bico.
+- **Proteína 2.0 g/kg sustentada** (anti-catabolismo do estresse adrenérgico residual).
+- **Carbs adequados** — hipoglicemia pós-stim é gatilho de craving. **Sem low-carb dia seguinte.**
+- **Sem álcool** dia seguinte (hepato + neuro carga somada).
+- **Cannabis pode** (efeito anti-adrenérgico ajuda transição).
+- **Sono prioritário**: corte mate às 14h max no dia seguinte; ritual wind-down às 22h.
+
+**Critical scheduling question:** quais dias da semana caem as noites de coca tipicamente? Se sexta/sábado (mais comum), o **domingo de skate hard é exatamente o dia mais depletado** — Mg baixo + desidratação prévia + eletrólitos shiftados + carga cardíaca acumulada da semana = **risco aumentado de re-síncope vasovagal**. Posso programar:
+- (a) Mover skate hard pra dia mais distante do uso, OU
+- (b) Refeed/repleção super-robusto no sábado se coca for sexta, OU
+- (c) Pré-skate eletrolítico mais agressivo nos domingos pós-uso, OU
+- (d) Sistema sinaliza pular skate hard se logging indica uso recente <36h.
+
+### Mate last cuia 16:30 — high-leverage sleep optimization
+
+Cafeína half-life ~5–6h. Última às 16:30 = ainda **~50% circulando ao deitar 00:00**. Combinado com Venvanse residual + cannabis (que comprime REM) → sono profundo + REM fragmentados. Custos compostos:
+
+- Recuperação muscular (MPS noturna)
+- Testosterona (peak no REM)
+- Memória/consolidação (relevante TEA + TDAH)
+- Apetite e craving regulação dia seguinte (cansaço aumenta craving stim)
+
+→ **Recomendação high-leverage, low-friction**: cortar última cuia para **14:30 max**. Manter os 1.5L/dia distribuídos entre manhã e início da tarde. Resultado esperado em 5–7 dias.
+
+### Benzo / álcool stack safety note
+
+Benzo + cannabis + álcool na mesma noite = depressão CNS + respiratória aditiva. **Não combinar os três.** Se vai usar benzo pra sono, evita álcool no mesmo dia.
+
+### Trip-day protocol (LSD / cogu / K — quando optar)
+
+- **Dia anterior**: refeição completa, hidratação, sono OK.
+- **Dia D**: leve. Fruta, mel, pão integral, água + eletrólitos. **Sem proteína pesada** (digestão prejudicada). Sem cannabis pesada (potencializa demais, altera curva). Sem álcool.
+- **Dia seguinte (integração)**: comida densa em triptofano e B6 (banana, aveia, ovo, peixe), folhas verdes, frutas vermelhas, cacau, água. Sono extra se possível.
+
+### Fish profile confirmed (carga omega-3 + B12 + D + ferro)
+
+Aceita: salmão, sardinha, atum fresco, pescada, robalo, linguado, merluza, polvo, lula. NÃO: camarão, tainha, anchova.
+
+**Implicações:**
+- **Salmão 1–2×/sem** (omega-3, D, B12, alta densidade)
+- **Sardinha 1×/sem** (omega-3, D, ferro, Ca, B12 — densidade nutricional máxima do peixe popular)
+- **Atum fresco 1×/sem** (B12, Se, ferro)
+- **Polvo/lula 1× a cada 2–3 sem** (B12, ferro, **taurina** — proteção cardíaca relevante dado stack adrenérgico)
+- **Brancos (pescada/robalo/linguado/merluza)** rotacionam nas receitas indiana/coreana/peruana
+
 ## Nutritional priorities (ranked)
 
 1. **Repletion of B12, D, and functional iron** (already underway via prescription; food accelerates).
