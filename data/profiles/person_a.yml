@@ -1,49 +1,58 @@
 # Person A profile (default: the man, more cardio-active)
 # Anything marked FILL_IN must be set. Pre-filled values are sensible defaults — change if wrong.
 
-name: FILL_IN
+name:Joao
 sex: male
-age_years: FILL_IN
-height_cm: FILL_IN
-weight_kg: FILL_IN
-body_fat_pct:           # optional; leave blank if unknown
+age_years: 32
+height_cm: 166
+weight_kg: 64.5
+body_fat_pct: 16.3       # optional; leave blank if unknown
 
 # ── Activity ──────────────────────────────────────────────────────────────────
 # Add one entry per recurring activity. Drop the section if you don't do it.
 activity:
-  - type: musculacao    # musculacao | corrida | ciclismo | natacao | hiit | yoga | caminhada | futebol | surf | outro
-    days_per_week: FILL_IN
-    minutes_per_session: FILL_IN
-    typical_time: evening    # morning | afternoon | evening | night
-    intensity: moderate      # light | moderate | hard | very_hard
-  - type: corrida
-    days_per_week: FILL_IN
-    minutes_per_session: FILL_IN
-    typical_time: morning
+  - type: skate  # musculacao | corrida | ciclismo | natacao | hiit | yoga | caminhada | futebol | surf | outro
+    days_per_week: 1
+    minutes_per_session: 180
+    typical_time: morning    # morning | afternoon | evening | night
+    intensity: hard      # light | moderate | hard | very_hard
+  - type: racing sim
+    days_per_week: 1
+    minutes_per_session: 120
+    typical_time: evening
     intensity: moderate
-
+  - type: caminhada  # musculacao | corrida | ciclismo | natacao | hiit | yoga | caminhada | futebol | surf | outro
+    days_per_week: 3
+    minutes_per_session: 30
+    typical_time: afternoon    # morning | afternoon | evening | night
+    intensity: moderate  # light | moderate | hard | very_hard
+ - type: sex  # musculacao | corrida | ciclismo | natacao | hiit | yoga | caminhada | futebol | surf | outro
+    days_per_week: 4
+    minutes_per_session: 30
+    typical_time: evening    # morning | afternoon | evening | night
+    intensity: very hard      # light | moderate | hard | very_hard
 # ── Sleep ─────────────────────────────────────────────────────────────────────
 sleep:
-  bedtime: "23:00"
+  bedtime: "00:00"
   waketime: "07:00"
 
 # ── Substances (nutrition impact only — no judgement, just so the agent calibrates) ──
 substances:
-  caffeine:
-    mg_per_day: FILL_IN          # ~80mg per cafe coado 200ml, ~95mg per espresso, ~30mg per chá preto
+  mate:
+    liters_per_day: 1          # ~80mg per cafe coado 200ml, ~95mg per espresso, ~30mg per chá preto
     last_dose_time: "16:00"      # used to flag late caffeine vs sleep
   alcohol:
     frequency: weekly            # daily | weekly | monthly | rarely | never
-    typical_units_per_occasion: 0  # 1 unit = 1 lata 350ml cerveja 5% | 1 taça vinho 150ml | 1 dose 40ml destilado
-    typical_drinks: []           # ex: ["cerveja_pilsen", "vinho_tinto", "cachaca", "gin_tonica"]
+    typical_units_per_occasion: 3  # 1 unit = 1 lata 350ml cerveja 5% | 1 taça vinho 150ml | 1 dose 40ml destilado
+    typical_drinks: ["cerveja_ipa", "vinho_branco", "fitzgerald"]           # ex: ["cerveja_pilsen", "vinho_tinto", "cachaca", "gin_tonica"]
   cannabis:
-    frequency: never             # daily | weekly | monthly | rarely | never
-    typical_time: evening
+    frequency: daily             # daily | weekly | monthly | rarely | never
+    typical_time: all day, most in the evening
     typical_form: flor           # flor | concentrado | comestivel | vaporizador
   nicotine:
-    frequency: never             # daily | weekly | rarely | never
-    form: none                   # cigarro | vape | tabaco_cachimbo | none
-  medications: []                # ex: [{ name: "losartana", dose_mg: 50, time: "08:00" }]
+    frequency: weekly             # daily | weekly | rarely | never
+    form: tabaco_seda                   # cigarro | vape | tabaco_cachimbo | none
+  medications: [ name: "venvanse", dose_mg: 70, time: "08:00"]                # ex: [{ name: "losartana", dose_mg: 50, time: "08:00" }]
   supplements: []                # ex: [{ name: "creatina", dose_g: 5, time: "post_workout" }, { name: "whey", dose_g: 30, time: "post_workout" }]
 
 # ── Medical / nutritional flags ───────────────────────────────────────────────
