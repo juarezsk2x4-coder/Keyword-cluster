@@ -60,7 +60,10 @@ neuropsych_evaluation:
     - { relation: tia_paterna, dx: transtorno_personalidade_borderline }
     - { theme: abuso_substancias, sides: ambos_lados }
     - { theme: altas_habilidades, sides: ambos_lados }
-  prior_psychotherapy: discontinued_2023_03_17
+  current_psychotherapy:                             # CORRECTION: report wording was wrong
+    therapist: ana_ponilla_dores_ribeiro_crp_21_2767  # same neuropsicóloga
+    started: 2023-03-17                               # active since this date
+    status: ativo
   recommendations:
     - retomar_psicoterapia_estruturada_dbt_ou_tcc_adaptada_tea_adulto
     - manejo_sensorial
@@ -139,11 +142,18 @@ substances:
     notes: "smoked separately from cannabis; trying to cut down"
   cocaine:
     current_status: active_use_frequent_phase
-    pattern: "cyclical — 2 dias/sem em fases de uso, intercalado com pausas de 1-2+ meses"
-    current_phase: "actively using" # right now em fase de uso, não em pausa
-    typical_use_days_per_week_when_active: 2
+    pattern: "cyclical — fases de uso intercaladas com pausas de 1-2+ meses"
+    current_phase: actively_using
+    typical_use_days: [wednesday, friday]            # durante trabalho + simulador racing
+    typical_amount_grams_per_use: "1-2"
+    use_can_extend_multi_day: true                   # 1g pode durar 1-2 dias
+    purchase_frequency_when_active: "1-2x_per_week"
+    contexts: [trabalho, simulador_corrida]
     intent: reducing_or_quitting
     historical_severe_use: 2024_2025_chronic_binge_period
+    plan_strategy: log_driven                        # padrão é aleatório — sistema reage ao log
+    skate_collision_risk: HIGH                       # Sex use + Sun skate hard = pior cenário
+                                                     # Domingo é dia mais depletado se houve uso sex/sáb
   psychedelics:
     lsd: { frequency: rare, status: enjoys_uses_sparingly }
     psilocibina_cogumelos: { frequency: rare, status: enjoys_uses_sparingly }
@@ -211,6 +221,7 @@ medical_flags:
   - carga_substancia_polifarmacia_recreacional
   - externalizante_clinico_substancias_impulsividade_agressividade
   - historico_familiar_psiquiatrico_significativo
+  - padrao_atual_delivery_burger_cansaco_noturno      # CURRENT problem to solve
 
 # ── Bloodwork (24/10/2025, Lab. Santa Luzia) ──────────────────────────────────
 bloodwork:
@@ -288,13 +299,38 @@ meal_times:
 
 # ── Food preferences ──────────────────────────────────────────────────────────
 food_preferences:
-  hard_no: [tomate]                                  # alergia da esposa, vale pra casa toda
-  texture_aversions:                                 # documented in neuropsych 2025-10
-    - texturas_untuosas_gordurosas_escorregadias    # avoid: molhos muito gordurosos, gemas muito moles, carnes muito gordurosas
-    - carne_de_frango                                # ⚠️ flagged: ele listou frango como favorito, mas neuropsych aponta aversão
-                                                     # NEEDS CONFIRMATION: ainda atual? Quais preparos funcionam?
+  hard_no: [tomate, gema_mole]                       # tomate alergia + gema mole textura aversiva
+  texture_aversions:
+    - texturas_untuosas_gordurosas_escorregadias
+    - gema_mole_escorrendo                            # ovo poché, mole, sunny side up — NÃO
+    - molho_branco_com_queijo_excessivo_ou_separado   # AMA molho branco emulsionado e equilibrado
+    - gordura_visivel_em_carne                        # remove sempre antes de comer
+  egg_acceptable_preparations:
+    - mexido_bem_passado
+    - cozido_dura
+    - frito_gema_dura
+    - omelete_firme
+    - usado_em_receita_panqueca_bolo_etc            # adora ovo "que vem disso"
+  egg_unacceptable_preparations:
+    - poche
+    - mole
+    - sunny_side_up
+    - benedict_runny
+  molho_branco_preference:
+    loved: bechamel_emulsionado_equilibrado
+    avoid: queijo_excessivo
+    avoid: separado_oleoso
   soft_dislikes: [figado, couve_flor, mamao, azeitonas]
-  seletividade_alimentar_clinica: true               # autista — usar receitas testadas/familiares como anchors
+  seletividade_alimentar_clinica: true
+  current_chicken_phase: tolerant                    # fase atual: tolera peito_frango pelo intake proteico fácil
+  current_burger_delivery_pattern: high              # CURRENT PROBLEM: cansaço + casa grande -> hambúrguer + delivery noites
+  abacate_acceptable_in: [pao, salada, poke]         # NÃO em pasta livre
+  iogurte_granola_loved: true                        # combinação favorita — usar como anchor de café/lanche
+  manga_smoothie_signature: "manga + gengibre + limão"  # ele faz regularmente — manter como receita reconhecida
+  entrecot_pattern:
+    frequency: rara
+    preparation: gordura_removida
+    role: condutor_de_sabor                           # não como proteína primária
   mood_dependent: [ovos]                              # mexidos ou cozidos, depende do humor
   fish_dislikes: [tainha, anchova, camarao]
   fish_loved: [atum_fresco, linguado, robalo, salmao]  # explicitly preferred
