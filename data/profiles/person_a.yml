@@ -361,12 +361,21 @@ guardrails:
     minimize_cooking_friction: true                   # he won't cook if it requires motivation
     use_loved_cuisines_for_novelty: true              # indiana/coreana/peruana/fermentados
     avoid_repetitive_boring_meals: true               # rotate aggressively
-  texture_strategy:                                    # autistic seletividade alimentar
+  texture_strategy:
     avoid_oily_greasy_textures: true
     prefer_firm_defined_textures: true
-    separate_sauce_from_protein: true                 # not pre-mixed
-    chicken_preparation_pending_confirmation: true
-  mood_logging_recommended: true                      # hipomania + dx_anterior_tab — track for pattern
-  sleep_variability_aware: true                       # hipo/hipersonia documentada
+    separate_sauce_from_protein: true
+    chicken_preparation_pending_confirmation: false   # resolved — tolerant phase
+  prep_time_adaptive:                                 # NEW — adapt on the go
+    sunday_batch_minutes: variable                    # ask weekly: "quanto tempo hoje?"
+    weekday_meal_prep_minutes: variable               # uses meal-card toggle to match
+    user_logs_available_time_daily: true              # dashboard input drives card defaults
+    default_state_mapping:                            # when user says X min available
+      "<=5_min": liquid_or_easy
+      "6_to_15_min": easy
+      "16_to_30_min": original_simple
+      ">30_min": original_full
+  mood_logging_recommended: true
+  sleep_variability_aware: true
 
 clinical_brief_path: data/profiles/person_a_clinical.md

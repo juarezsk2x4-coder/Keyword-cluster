@@ -24,18 +24,44 @@ storage:
   freezer_separate: false      # true se tem freezer horizontal ou separado
   pantry_shelves: FILL_IN      # quantas prateleiras de despensa/armário pra secos
 
-# ── Shopping cadence (confirmed: bi-weekly bulk + weekly produce) ────────────
+# ── Building access constraint (NEW — major impact on shopping strategy) ─────
+building_access:
+  floor: 3
+  has_elevator: false
+  carry_method: stairs_only
+  practical_implications:
+    - bulk_items_via_delivery_preferred
+    - per_trip_weight_cap_kg: 10                # max razoável por subida sem destruir as costas
+    - max_trips_per_shop_event: 2               # 2 subidas por sessão
+    - heavy_items_avoid_self_carry: [arroz_5kg, feijao_5kg, leite_caixa_12un, agua_galao, oleo_garrafao]
+    - forte_atacado_pickup_strategy: monthly_or_skip  # pickup-only + bulk + 3rd floor = punitive
+
+# ── Shopping cadence (REVISED for 3rd floor walk-up) ─────────────────────────
 shopping_windows:
+  primary_strategy: delivery_first_for_weight
   bulk:
-    cadence: bi_weekly         # weekly | bi_weekly | monthly
-    day: saturday              # monday..sunday
-    stores: [forte_atacado, imperatriz]
-  produce:
+    cadence: monthly                            # was bi_weekly — agora reduzido
+    day: saturday
+    stores: [forte_atacado]
+    items: [oleos_grandes, cafe_kg, mel_kg, castanhas_kg, graos_secos_sacos]
+    weight_cap_per_trip_kg: 10
+    notes: "Considerar dividir em 2 subidas se exceder 10kg. Itens pesados (arroz/feijão sacos) avaliar se vale vs delivery Imperatriz."
+  weekly_delivery:                              # NEW — substitui bi-weekly self-carry
     cadence: weekly
-    day: wednesday
-    stores: [imperatriz, ifood]
+    day: monday                                 # segunda chega pra semana toda
+    stores: [imperatriz_delivery, ifood]
+    items: [proteinas_fresca, hortifruti, laticinios, congelados, pesados_diversos]
+    weight_no_cap: true                         # delivery não tem problema de peso
+  produce_topup:
+    cadence: "as_needed"
+    day: wednesday_or_friday
+    stores: [imperatriz_canasvieiras_self_pickup]
+    items: [folhas_extra, frutas_extra, peixe_fresco_balcao]
+    weight_cap_per_trip_kg: 5                   # leve, máximo 1 sacola
+    notes: "Apenas se for sair na rua de qualquer forma. Caso contrário, delivery."
   emergency_topup:
     stores: [ifood]
+    same_day: true
 
 # ── Stores (Florianópolis — Canasvieiras region) ─────────────────────────────
 stores:

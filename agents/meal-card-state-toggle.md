@@ -127,6 +127,40 @@ Separate "Tô cansado da casa hoje" button on the dashboard (not per-meal):
 - Surfaces saved acceptable delivery list (poke / sushi / salada places — never burger junk).
 - Logs the trigger so Habit Analyst sees frequency.
 
+## Special case: adaptive prep-time signal ("quanto tempo eu tenho hoje?")
+
+A daily dashboard input where the user declares available cooking time (or the system asks once per morning). The Meal Plan Designer translates this into the default state for the day's cards:
+
+| User input | Default cards for the day |
+|---|---|
+| `≤5 min` | All slots → `liquid` ou `easy` |
+| `6–15 min` | All slots → `easy` |
+| `16–30 min` | Almoço → `original_simple` (one-pan, ≤15 ingredients); outros slots → `easy` |
+| `>30 min` | All slots → `original_full` |
+
+User can still manually override any card by toggling. The signal just sets the **default**.
+
+For the **Sunday batch session**, a separate weekly input is asked Saturday night or Sunday morning: "Quanto tempo de prep no domingo?" The Designer outputs a batch plan calibrated:
+
+| Sunday available | Batch plan output |
+|---|---|
+| `30–60 min` | 3 marmitas simples + folhas lavadas + frutas porcionadas |
+| `60–120 min` | 5 marmitas + componentes (carne desfiada, arroz, batata-doce assada) + shake bases pré-mistas |
+| `120–180 min` | 7 marmitas variadas + bechamel para a semana + molhos + granola caseira opcional |
+| `<30 min` | Sistema sugere delivery-heavy semana ou marmita pré-pronta de fornecedor (Marmitex saudável Canasvieiras) |
+
+Same input is asked for both household members independently — Person A and Person B prep capacity vary independently.
+
+## Special case: 3rd floor walk-up shopping logic
+
+The Shopping List Builder must respect the building access constraint:
+
+- Itens com peso individual >3kg → tag `delivery_preferred`
+- Total weekly weight >10kg → divide automatically into delivery (Imperatriz/iFood) e self-carry (apenas itens leves)
+- Forte Atacado runs limited to monthly bulk e flagged como "consider skipping if total >10kg"
+- Each shopping output is split into "🚚 Delivery (Imperatriz/iFood)" and "🚶 Self-carry (max Xkg)" sections
+- A weight column is shown next to each item so the user can mentally estimate the trip burden before approving
+
 ## Why this design
 
 1. **Honors interocepção comprometida**: not asking him to "feel hungry" — providing a real-time choice in 1 tap.
