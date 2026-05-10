@@ -9,7 +9,63 @@ age_years: 31                  # turns 32 on 2026-06-27
 height_cm: 168                 # InBody measured; user-self-reported 166 (using InBody value)
 weight_kg: 64.5
 body_fat_pct: 16.3             # RelaxFit 15/12/2025 (most recent)
-neurotype: [tea_autismo, tdah]
+neurotype: [tea_autismo_alto_funcionamento_cid11_6a02, tdah]
+neuropsych_evaluation:
+  date: 2025-10-11
+  evaluator: ana_ponilla_dores_ribeiro_crp_21_2767
+  psychiatrist: derek_moreira_crm_sp_190836
+  prior_dx_ruled_out: transtorno_afetivo_bipolar
+  current_dx: tea_sem_deficiencia_intelectual_dsm5_cid11_6a02
+  cognitive_profile:
+    iq: media_superior
+    atencao_concentrada_percentil: 80
+    atencao_dividida_percentil: 75
+    atencao_dividida_reaction_time: muito_rapido
+    atencao_alternada_percentil: 40        # flexibilidade cognitiva é o ponto fraco
+    memoria_reconhecimento_percentil: 80
+    paralisacao: baixo                      # engaja em comportamentos meta-direcionados
+  social_profile:
+    ihs2_geral_percentil: 10
+    ihs2_f1_enfrentamento_percentil: 5
+    ihs2_f3_conversa_percentil: 10
+    ihs2_f5_autocontrole_percentil: 15
+    presencial: dois_amigos_proximos
+    online: mais_amplo
+    relacionamento: estavel_desde_2019
+  symptomatic_manifestations:
+    - irritabilidade
+    - reatividade
+    - isolamento_social
+    - episodios_depressivos
+    - impulsividade
+    - baixo_limiar_frustracao
+    - limitacao_expressao_emocional
+    - hipersensibilidade_tatil_auditiva
+    - seletividade_alimentar               # FOOD-RELEVANT
+    - dificuldade_relacoes_sociais
+    - labilidade_emocional
+    - desregulacao_sono                    # FOOD-RELEVANT
+    - ruminacao_cognitiva
+    - tricotilomania
+    - hiperfoco                            # FOOD-RELEVANT (esquece de comer)
+    - baixa_tolerancia_rotina_imprevistos
+    - episodios_hipomania                  # MOOD-RELEVANT
+    - abuso_substancias_clinicamente_relevante
+  externalizing_clinically_relevant: [agressividade, uso_substancias, impulsividade, manipulacao]
+  thought_disorder_relevant: [desorganizacao_cognitiva, ideacao_magica]
+  anhedonia_clinically_relevant: true
+  hipomania_facet: presente_pouco_prejuizo
+  family_psychiatric_history:
+    - { relation: primo_materno, dx: esquizofrenia, outcome: suicidio }
+    - { relation: tia_paterna, dx: transtorno_personalidade_borderline }
+    - { theme: abuso_substancias, sides: ambos_lados }
+    - { theme: altas_habilidades, sides: ambos_lados }
+  prior_psychotherapy: discontinued_2023_03_17
+  recommendations:
+    - retomar_psicoterapia_estruturada_dbt_ou_tcc_adaptada_tea_adulto
+    - manejo_sensorial
+    - rotina_estruturada
+    - manejo_substancias
 
 # ── Body composition history ──────────────────────────────────────────────────
 body_comp_history:
@@ -128,20 +184,31 @@ substances:
 
 # ── Medical flags (encoded for nutrition planning calibration) ────────────────
 medical_flags:
-  - tea_autismo
+  - tea_autismo_alto_funcionamento_cid11_6a02
   - tdah_em_uso_venvanse_70mg_max
+  - dx_anterior_tab_descartado                    # foi tratado como bipolar antes de descobrir TEA
+  - hipomania_episodios_facet_pouco_prejuizo
+  - anedonia_clinicamente_relevante
+  - tricotilomania
+  - desorganizacao_cognitiva_clinica
+  - seletividade_alimentar_tea
+  - desregulacao_sono_hipo_hipersonia
+  - hiperfoco_padrao
+  - psicoterapia_descontinuada_2023_recomendado_retomar
   - sincope_vasovagal_postural_2025_10            # CID-10 R55
-  - plaquetopenia_leve_112k                       # monitor
+  - plaquetopenia_leve_112k
   - deficiencia_b12_em_tratamento                 # CID-10 D51
   - deficiencia_vit_d_em_tratamento               # CID-10 E55
   - deficiencia_ferro_serico_em_tratamento        # CID-10 D50
   - homocisteinemia_elevada
-  - eosinofilia_leve_8pct                         # investigate atopic vs parasitose
+  - eosinofilia_leve_8pct
   - historico_subnutricao_severa_2024_2025
-  - alergia_tomate                                # hard block household-wide
-  - massa_proteica_subdimensionada                # 12.3 kg vs target 13.5-15 kg
-  - carga_adrenergica_cronica                     # Venvanse + mate + cocaina 2x/sem
-  - carga_substancia_polifarmacia_recreacional    # cannabis diário + álcool sem + benzos ocasional + psicodélicos raros
+  - alergia_tomate
+  - massa_proteica_subdimensionada
+  - carga_adrenergica_cronica
+  - carga_substancia_polifarmacia_recreacional
+  - externalizante_clinico_substancias_impulsividade_agressividade
+  - historico_familiar_psiquiatrico_significativo
 
 # ── Bloodwork (24/10/2025, Lab. Santa Luzia) ──────────────────────────────────
 bloodwork:
@@ -220,7 +287,12 @@ meal_times:
 # ── Food preferences ──────────────────────────────────────────────────────────
 food_preferences:
   hard_no: [tomate]                                  # alergia da esposa, vale pra casa toda
+  texture_aversions:                                 # documented in neuropsych 2025-10
+    - texturas_untuosas_gordurosas_escorregadias    # avoid: molhos muito gordurosos, gemas muito moles, carnes muito gordurosas
+    - carne_de_frango                                # ⚠️ flagged: ele listou frango como favorito, mas neuropsych aponta aversão
+                                                     # NEEDS CONFIRMATION: ainda atual? Quais preparos funcionam?
   soft_dislikes: [figado, couve_flor, mamao, azeitonas]
+  seletividade_alimentar_clinica: true               # autista — usar receitas testadas/familiares como anchors
   mood_dependent: [ovos]                              # mexidos ou cozidos, depende do humor
   fish_dislikes: [tainha, anchova, camarao]
   fish_loved: [atum_fresco, linguado, robalo, salmao]  # explicitly preferred
@@ -238,13 +310,25 @@ food_preferences:
     mate_liters_per_day: 1.5
     last_mate_time: "16:30"
 
-# ── Structural guardrails (autism + ADHD + history-driven) ────────────────────
+# ── Structural guardrails (autism + ADHD + neuropsych-driven) ────────────────
 guardrails:
   hyperfocus_undernutrition_risk: high                # primary structural risk
   scheduled_meals_not_hunger_driven: true             # interocepção autística + Venvanse + cannabis
-  alert_after_missed_meal_minutes: 240                # 4h post-window = notify
+  cannot_identify_hunger_clinically: true             # documented in neuropsych — comumente não identifica fome
+  alert_after_missed_meal_minutes: 240
   red_alert_after_missed_hours: 6
   always_available_snacks: [oleaginosas, fruta, queijo_colonial, iogurte_natural]
   prep_ahead_required: true                           # food must be queue-ready when alert fires
+  anhedonia_compensation:                             # anedonia clinicamente relevante
+    minimize_cooking_friction: true                   # he won't cook if it requires motivation
+    use_loved_cuisines_for_novelty: true              # indiana/coreana/peruana/fermentados
+    avoid_repetitive_boring_meals: true               # rotate aggressively
+  texture_strategy:                                    # autistic seletividade alimentar
+    avoid_oily_greasy_textures: true
+    prefer_firm_defined_textures: true
+    separate_sauce_from_protein: true                 # not pre-mixed
+    chicken_preparation_pending_confirmation: true
+  mood_logging_recommended: true                      # hipomania + dx_anterior_tab — track for pattern
+  sleep_variability_aware: true                       # hipo/hipersonia documentada
 
 clinical_brief_path: data/profiles/person_a_clinical.md

@@ -101,6 +101,60 @@ He is being correctly treated by Dra. Schlindwein (B12 IM, D3 7000 UI/d, ferro 3
 
 This is excellent baseline metabolic flexibility. **Whatever we feed him, he can use efficiently.**
 
+## Neuropsych integration — what changes after the assessment
+
+Neuropsych (Ana Ponilla, CRP 21/2767, set–out 2025) + laudo psiquiátrico (Derek Moreira, CRM-SP 190836) confirmam **TEA alto funcionamento (CID-11 6A02.0) sem deficiência intelectual**, com diagnóstico anterior de Transtorno Afetivo Bipolar **descartado**. Vários achados re-calibram o plano nutricional:
+
+### Achados que afetam diretamente o plano alimentar
+
+1. **Seletividade alimentar clínica documentada — texturas aversivas:**
+   - **Texturas untuosas / gordurosas / escorregadias** = aversão. Implica:
+     - Evitar gemas muito moles em pratos
+     - Evitar molhos muito gordurosos ou cremosos demais
+     - Evitar carnes muito gordurosas (entrecot com camada de gordura visível → pedir mais magra ou tirar)
+     - Preferir texturas firmes, definidas, não escorregadias
+     - Servir molho **separado** da proteína, não pré-misturado
+   - ⚠️ **CRÍTICO — Aversão a carne de frango documentada na neuropsych**, MAS ele listou peito_frango como favorito. Isso precisa esclarecimento:
+     - Era aversão de longa data e mudou recentemente? Ou
+     - Aversão específica a certos preparos (assado com pele? cozido? coxa com gordura?) e outros são OK (peito grelhado seco? desfiado?)
+     - Vou tratar peito_frango como provisório até confirmar — não como anchor da rotação.
+
+2. **"Comumente não consegue identificar fome"** — documentação clínica formal da interocepção comprometida. Reforça que o sistema **não pode** depender de "comer quando tiver fome". Reforça o que já planejei: alertas escalonados, food queue-ready, snacks sempre acessíveis.
+
+3. **Anedonia clinicamente relevante** — baixo estímulo, motivação, energia. Cozinhar não vai acontecer por motivação. **Sunday batch-cook é infraestrutura crítica, não comodidade.** Toda refeição da semana precisa estar a <2 minutos de prontidão.
+
+4. **Desregulação do sono (hipo + hipersonia)** — não é um padrão fixo de 7h. Tem dias de insônia e dias de hipersonia. O plano precisa adaptar:
+   - Pós-insônia (dia depois de dormir 3-4h): café manhã mais denso, almoço com mais carbo, café tarde reforçado
+   - Pós-hipersonia (dormiu 11h+): reintrodução gentil, hidratação prioritária, evitar pesar AM
+   - **Recomendação: log de horas de sono ao acordar**, sistema ajusta dia automaticamente.
+
+5. **Hiperfoco como padrão** — documentado, exatamente o gatilho da subnutrição passada. Reforça guardrails contra "esquecer de comer".
+
+6. **Episódios de hipomania documentados** + facet "Mania clinicamente relevante" no TriA + diagnóstico anterior de TAB (depois descartado). Implicação:
+   - **Estabilidade glicêmica é prioridade**: refeições espaçadas regularmente, sem picos açúcar, fibra adequada, ômega-3 sustentado (evidência de estabilização de humor).
+   - **Log de humor opcional**: padrões podem aparecer (energia alta + apetite baixo + sono curto = possível janela hipomaníaca).
+   - Cocaína + Venvanse + mate em dose alta podem precipitar episódio — outro motivo pra harm reduction.
+   - Mg + omega-3 + B-complex são neurotróficos relevantes nesse contexto.
+
+7. **Tricotilomania** — comportamento de auto-regulação, possivelmente associado a desregulação dopaminérgica. Não muda o plano diretamente, mas reforça que os substratos catecolaminérgicos via comida importam (tirosina + B6 + Mg + omega-3 + folato).
+
+8. **Externalizante clinicamente relevante** (uso de substâncias formalmente flagged como precisando atenção imediata). Isso é confirmação clínica do que vimos. O plano apoia a redução, não acomoda passivamente.
+
+### Achados que mudam **a abordagem** sem mudar receitas
+
+9. **Inteligência média-superior + atenção concentrada acima da média (p80) + atenção dividida acima da média (p75)** — ele **executa protocolos estruturados com excelência quando engajado**. O sistema pode usar regras formais explícitas; ele vai segui-las. Não precisa simplificar pra "leigo".
+
+10. **Atenção alternada média (p40)** + ideação mágica + desorganização cognitiva — ponto fraco é flexibilidade cognitiva e organização. **O plano não pode pedir que ele invente substituições em tempo real** se algo faltar. Tem que ter regras do tipo "se X não tem, faz Y específico" pré-definidas.
+
+11. **Baixa paralisação + boa engajamento em metas** — quando há estrutura, ele se compromete. Isso é favorável: um plano com clareza diária funciona.
+
+12. **Histórico familiar psiquiátrico**: primo materno esquizofrenia + suicídio, tia paterna borderline, abuso de substâncias e altas habilidades em ambos os lados. Implicação: vulnerabilidade neuropsiquiátrica de base. Diet com ômega-3 (anti-inflamatório CNS), B-complex completo, Mg, vit D adequada — todos têm evidência de neuroproteção.
+
+### Recomendações clínicas pendentes
+
+- **Psicoterapia descontinuada desde 2023-03-17** — recomendado pelos dois profissionais retomar (DBT ou TCC adaptada para TEA adulto). Tem 3+ anos sem acompanhamento. **Vale forte considerar retomar** — o ganho composto com correção nutricional + retirada gradual de substâncias + terapia estruturada é muito maior que cada um isoladamente.
+- Próximos exames laboratoriais com adendo já discutido (Mg RBC, T livre + SHBG, zinco, MMA, B6, PCR ultrassensível).
+
 ## Full substance load — clinical re-read
 
 Updated stack after follow-up questions:
