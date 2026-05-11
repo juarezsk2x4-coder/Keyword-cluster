@@ -56,8 +56,9 @@ export default function MealCard({ card, date, loggedState, defaultState }: Prop
         {ORDER.map((s) => (
           <button
             key={s}
+            type="button"
             onClick={() => setState(s)}
-            className={`chip ${state === s ? "chip-active" : ""}`}
+            className={`chip ${state === s ? "chip-active" : ""} active:scale-95 transition-transform`}
           >
             {STATE_LABELS[s]}
           </button>
@@ -76,7 +77,11 @@ export default function MealCard({ card, date, loggedState, defaultState }: Prop
         {version.notes && <p className="text-xs text-muted mt-2 italic">{version.notes}</p>}
       </div>
 
-      <button onClick={() => setExpanded(!expanded)} className="text-xs text-muted hover:text-text mb-3">
+      <button
+        type="button"
+        onClick={() => setExpanded(!expanded)}
+        className="text-xs text-muted hover:text-text mb-3"
+      >
         {expanded ? "Esconder ingredientes" : `Ver ${version.ingredients.length} ingrediente${version.ingredients.length === 1 ? "" : "s"}`}
       </button>
 
@@ -94,15 +99,30 @@ export default function MealCard({ card, date, loggedState, defaultState }: Prop
 
       <div className="flex gap-2">
         {!isLogged ? (
-          <button onClick={handleLog} disabled={pending} className="btn btn-primary flex-1 disabled:opacity-50">
+          <button
+            type="button"
+            onClick={handleLog}
+            disabled={pending}
+            className="btn btn-primary flex-1 disabled:opacity-50 active:scale-95 transition-transform"
+          >
             {pending ? "Logando…" : "Comi isso"}
           </button>
         ) : (
           <>
-            <button onClick={handleLog} disabled={pending} className="btn btn-ghost flex-1">
-              Atualizar versão ({STATE_LABELS[state]})
+            <button
+              type="button"
+              onClick={handleLog}
+              disabled={pending}
+              className="btn btn-ghost flex-1 disabled:opacity-50"
+            >
+              {pending ? "Atualizando…" : `Atualizar versão (${STATE_LABELS[state]})`}
             </button>
-            <button onClick={handleClear} disabled={pending} className="btn btn-ghost text-danger">
+            <button
+              type="button"
+              onClick={handleClear}
+              disabled={pending}
+              className="btn btn-ghost text-danger disabled:opacity-50"
+            >
               Desfazer
             </button>
           </>

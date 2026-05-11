@@ -1,17 +1,29 @@
 import { buildWeeklyPlan } from "@/lib/seed-plan";
-import { getTodayMealLogs, getTodaySleep, getFatigueToday, getPrepMinutesToday, getDailyTotals, getYesterdaySubstances } from "@/lib/query";
+import {
+  getDayMealLogs,
+  getDaySleep,
+  getDayFatigue,
+  getDayPrepMinutes,
+  getDayTotals,
+  getDaySubstances,
+  getPreviousDaySubstances,
+} from "@/lib/query";
 import MealCard from "@/components/MealCard";
 import DayHeader from "@/components/DayHeader";
+import DateNavigator from "@/components/DateNavigator";
 import type { CardState } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 
-function getWeekStart(): string {
-  // Anchor to last Sunday (or today if Sunday)
-  const today = new Date();
-  const dow = today.getDay(); // 0 = Sunday
-  today.setDate(today.getDate() - dow);
-  return today.toISOString().slice(0, 10);
+function getSundayOfWeek(iso: string): string {
+  const d = new Date(iso + "T00:00:00");
+  const dow = d.getDay();
+  d.setDate(d.getDate() - dow);
+  return d.toISOString().slice(0, 10);
+}
+
+function todayIso(): string {
+  return new Date().toISOString().slice(0, 10);
 }
 
 function defaultStateFor(opts: {
@@ -21,19 +33,14 @@ function defaultStateFor(opts: {
   sleepHours?: number;
   slot: string;
 }): CardState {
-  // Substance overlay takes precedence
   if (opts.hadCocaineYesterday) {
-    // recovery defaults to original (which carries the recovery template), but allow liquid AM
     if (opts.slot === "cafe_da_manha" || opts.slot === "lanche_manha") return "liquid";
   }
-  // Sleep overlay
   if (opts.sleepHours !== undefined) {
     if (opts.sleepHours < 5 && (opts.slot === "cafe_da_manha" || opts.slot === "lanche_manha")) return "liquid";
     if (opts.sleepHours >= 9 && (opts.slot === "cafe_da_manha" || opts.slot === "lanche_manha")) return "no_hunger";
   }
-  // Fatigue overlay
   if (opts.isFatigued) return "easy";
-  // Prep time overlay
   if (opts.prepMinutes !== null) {
     if (opts.prepMinutes <= 5) return "liquid";
     if (opts.prepMinutes <= 15) return "easy";
@@ -42,25 +49,33 @@ function defaultStateFor(opts: {
   return "original";
 }
 
-export default async function TodayPage() {
-  const weekStart = getWeekStart();
-  const plan = buildWeeklyPlan(weekStart);
-  const today = new Date().toISOString().slice(0, 10);
-  const dayPlan = plan.find((d) => d.date === today) ?? plan[0];
+interface PageProps {
+  searchParams: Promise<{ date?: string }>;
+}
 
-  const [logs, sleep, fatigued, prepMin, totals, yestSubs] = await Promise.all([
-    getTodayMealLogs(today),
-    getTodaySleep(today),
-    getFatigueToday(today),
-    getPrepMinutesToday(today),
-    getDailyTotals(today),
-    getYesterdaySubstances(today),
+export default async function TodayPage({ searchParams }: PageProps) {
+  const sp = await searchParams;
+  const selectedDate = sp.date ?? todayIso();
+  const weekStart = getSundayOfWeek(selectedDate);
+  const plan = buildWeeklyPlan(weekStart);
+  const dayPlan = plan.find((d) => d.date === selectedDate) ?? plan[0];
+
+  const [logs, sleep, fatigued, prepMin, totals, daySubs, prevDaySubs] = await Promise.all([
+    getDayMealLogs(selectedDate),
+    getDaySleep(selectedDate),
+    getDayFatigue(selectedDate),
+    getDayPrepMinutes(selectedDate),
+    getDayTotals(selectedDate),
+    getDaySubstances(selectedDate),
+    getPreviousDaySubstances(selectedDate),
   ]);
   const logsByslot = Object.fromEntries(logs.map((l) => [l.slot, l]));
-  const hadCocaineYesterday = yestSubs.some((s) => s.substance === "cocaine");
+  const hadCocaineYesterday = prevDaySubs.some((s) => s.substance === "cocaine");
 
   return (
     <div>
+      <DateNavigator current={selectedDate} />
+
       <DayHeader
         date={dayPlan.date}
         dayName={dayPlan.day_of_week}
@@ -73,6 +88,7 @@ export default async function TodayPage() {
         isFatigued={fatigued}
         prepMinutes={prepMin}
         hadCocaineYesterday={hadCocaineYesterday}
+        substanceLogs={daySubs}
       />
 
       <div className="space-y-3">
@@ -89,7 +105,7 @@ export default async function TodayPage() {
             <MealCard
               key={card.slot}
               card={card}
-              date={today}
+              date={selectedDate}
               loggedState={logged?.selected_state as CardState | undefined}
               defaultState={defaultState}
             />

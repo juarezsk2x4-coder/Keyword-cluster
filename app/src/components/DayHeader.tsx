@@ -1,7 +1,8 @@
 "use client";
 
 import { useTransition } from "react";
-import { logSleep, logFatigue, clearFatigue, logPrepTime, logSubstance } from "@/app/actions";
+import { logSleep, logFatigue, clearFatigue, logPrepTime, logSubstance, deleteSubstanceLog } from "@/app/actions";
+import type { SubstanceLog } from "@/lib/types";
 
 interface Props {
   date: string;
@@ -15,7 +16,18 @@ interface Props {
   isFatigued: boolean;
   prepMinutes: number | null;
   hadCocaineYesterday: boolean;
+  substanceLogs: SubstanceLog[];
 }
+
+const SUBSTANCE_LABELS: Record<string, string> = {
+  cocaine: "coca",
+  alcohol: "álcool",
+  cannabis: "cannabis",
+  tobacco: "tabaco",
+  benzo: "benzo",
+  psychedelic: "psicodélico",
+  ketamine: "ketamina",
+};
 
 export default function DayHeader(props: Props) {
   const [pending, startTransition] = useTransition();
@@ -33,7 +45,7 @@ export default function DayHeader(props: Props) {
           </div>
           <div className="flex gap-2 flex-wrap justify-end">
             {props.isSkateDay && <span className="chip chip-active">Skate day</span>}
-            {props.hadCocaineYesterday && <span className="chip" style={{ background: "#e87b6b", color: "#0b0d0f", borderColor: "#e87b6b" }}>Recovery overlay ativo</span>}
+            {props.hadCocaineYesterday && <span className="chip" style={{ background: "#e87b6b", color: "#0b0d0f", borderColor: "#e87b6b" }}>Recovery</span>}
             {props.isFatigued && <span className="chip" style={{ background: "#e8b06b", color: "#0b0d0f", borderColor: "#e8b06b" }}>Cansaço de casa</span>}
           </div>
         </div>
@@ -61,9 +73,10 @@ export default function DayHeader(props: Props) {
             {[4, 5, 6, 7, 8, 9, 10].map((h) => (
               <button
                 key={h}
-                onClick={() => startTransition(() => { logSleep(h); })}
+                type="button"
+                onClick={() => startTransition(async () => { await logSleep(h, props.date); })}
                 disabled={pending}
-                className={`chip ${props.sleepHours === h ? "chip-active" : ""}`}
+                className={`chip ${props.sleepHours === h ? "chip-active" : ""} active:scale-95 transition-transform`}
               >
                 {h}h
               </button>
@@ -77,9 +90,10 @@ export default function DayHeader(props: Props) {
             {[5, 15, 30, 60].map((m) => (
               <button
                 key={m}
-                onClick={() => startTransition(() => { logPrepTime(m); })}
+                type="button"
+                onClick={() => startTransition(async () => { await logPrepTime(m, props.date); })}
                 disabled={pending}
-                className={`chip ${props.prepMinutes === m ? "chip-active" : ""}`}
+                className={`chip ${props.prepMinutes === m ? "chip-active" : ""} active:scale-95 transition-transform`}
               >
                 {m === 5 ? "≤5min" : m === 15 ? "15min" : m === 30 ? "30min" : "60min+"}
               </button>
@@ -89,39 +103,69 @@ export default function DayHeader(props: Props) {
       </div>
 
       <div className="card">
-        <div className="flex items-center justify-between mb-2">
-          <div className="label">Cansaço de casa hoje</div>
+        <div className="flex items-center justify-between mb-2 gap-2">
+          <div className="label">Cansaço de casa</div>
           {props.isFatigued ? (
-            <button onClick={() => startTransition(() => { clearFatigue(); })} className="btn btn-ghost text-xs">
+            <button
+              type="button"
+              onClick={() => startTransition(async () => { await clearFatigue(props.date); })}
+              disabled={pending}
+              className="btn btn-ghost text-xs"
+            >
               Limpar
             </button>
           ) : (
-            <button onClick={() => startTransition(() => { logFatigue(); })} className="btn btn-warn text-xs">
-              Tô cansado da casa hoje
+            <button
+              type="button"
+              onClick={() => startTransition(async () => { await logFatigue(props.date); })}
+              disabled={pending}
+              className="btn btn-warn text-xs"
+            >
+              Tô cansado da casa
             </button>
           )}
         </div>
         {props.isFatigued && (
           <p className="text-xs text-muted">
-            Defaults dos cards setados pra <strong>Fácil</strong>. Delivery aceitável: poke / sushi / peruano / japonês. Nada de burger.
+            Defaults dos cards setados pra <strong>Fácil</strong>. Delivery aceitável: poke / sushi / peruano / japonês.
           </p>
         )}
       </div>
 
       <div className="card">
-        <div className="label mb-2">Log de substância (toque pra adicionar)</div>
-        <div className="flex flex-wrap gap-1.5">
+        <div className="label mb-2">Log de substância</div>
+        <div className="flex flex-wrap gap-1.5 mb-2">
           {(["cocaine", "alcohol", "cannabis", "tobacco", "benzo"] as const).map((s) => (
             <button
               key={s}
-              onClick={() => startTransition(() => { logSubstance({ substance: s }); })}
+              type="button"
+              onClick={() => startTransition(async () => { await logSubstance({ substance: s, date: props.date }); })}
               disabled={pending}
-              className="chip hover:bg-surface"
+              className="chip active:scale-95 transition-transform"
             >
-              + {s === "cocaine" ? "coca" : s === "alcohol" ? "álcool" : s === "cannabis" ? "cannabis" : s === "tobacco" ? "tabaco" : "benzo"}
+              + {SUBSTANCE_LABELS[s]}
             </button>
           ))}
         </div>
+        {props.substanceLogs.length > 0 && (
+          <>
+            <div className="label text-xs mb-1.5">Logado neste dia ({props.substanceLogs.length})</div>
+            <div className="flex flex-wrap gap-1.5">
+              {props.substanceLogs.map((log) => (
+                <button
+                  key={log.id}
+                  type="button"
+                  onClick={() => startTransition(async () => { if (log.id) await deleteSubstanceLog(log.id); })}
+                  disabled={pending}
+                  className="chip chip-active text-xs"
+                  title="Toque pra remover"
+                >
+                  {SUBSTANCE_LABELS[log.substance] ?? log.substance} ×
+                </button>
+              ))}
+            </div>
+          </>
+        )}
       </div>
     </div>
   );

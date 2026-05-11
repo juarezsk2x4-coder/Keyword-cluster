@@ -42,57 +42,65 @@ export async function deleteMealLog(date: string, slot: MealSlot) {
   revalidatePath("/history");
 }
 
-export async function logSleep(hours: number, quality?: number) {
+export async function logSleep(hours: number, date?: string, quality?: number) {
   await ensureMigrated();
-  const date = todayIso();
+  const d = date ?? todayIso();
   await getDb().execute({
     sql: `INSERT INTO sleep_logs (date, hours, quality, logged_at) VALUES (?, ?, ?, datetime('now'))
           ON CONFLICT(date) DO UPDATE SET hours = excluded.hours, quality = excluded.quality, logged_at = datetime('now')`,
-    args: [date, hours, quality ?? null],
+    args: [d, hours, quality ?? null],
   });
   revalidatePath("/");
 }
 
 export async function logSubstance(input: {
+  date?: string;
   substance: "cocaine" | "alcohol" | "cannabis" | "tobacco" | "benzo" | "psychedelic" | "ketamine";
   amount?: string;
   notes?: string;
 }) {
   await ensureMigrated();
-  const date = todayIso();
+  const d = input.date ?? todayIso();
   await getDb().execute({
     sql: `INSERT INTO substance_logs (date, substance, amount, notes, logged_at) VALUES (?, ?, ?, ?, datetime('now'))`,
-    args: [date, input.substance, input.amount ?? null, input.notes ?? null],
+    args: [d, input.substance, input.amount ?? null, input.notes ?? null],
   });
   revalidatePath("/");
   revalidatePath("/history");
 }
 
-export async function logFatigue() {
+export async function deleteSubstanceLog(id: number) {
   await ensureMigrated();
-  const date = todayIso();
+  await getDb().execute({ sql: `DELETE FROM substance_logs WHERE id = ?`, args: [id] });
+  revalidatePath("/");
+  revalidatePath("/history");
+}
+
+export async function logFatigue(date?: string) {
+  await ensureMigrated();
+  const d = date ?? todayIso();
   await getDb().execute({
     sql: `INSERT INTO fatigue_logs (date, logged_at) VALUES (?, datetime('now'))
           ON CONFLICT(date) DO UPDATE SET logged_at = datetime('now')`,
-    args: [date],
+    args: [d],
   });
   revalidatePath("/");
 }
 
-export async function clearFatigue() {
+export async function clearFatigue(date?: string) {
   await ensureMigrated();
-  const date = todayIso();
-  await getDb().execute({ sql: `DELETE FROM fatigue_logs WHERE date = ?`, args: [date] });
+  const d = date ?? todayIso();
+  await getDb().execute({ sql: `DELETE FROM fatigue_logs WHERE date = ?`, args: [d] });
   revalidatePath("/");
 }
 
-export async function logPrepTime(minutes: number) {
+export async function logPrepTime(minutes: number, date?: string) {
   await ensureMigrated();
-  const date = todayIso();
+  const d = date ?? todayIso();
   await getDb().execute({
     sql: `INSERT INTO prep_time_logs (date, available_minutes, logged_at) VALUES (?, ?, datetime('now'))
           ON CONFLICT(date) DO UPDATE SET available_minutes = excluded.available_minutes, logged_at = datetime('now')`,
-    args: [date, minutes],
+    args: [d, minutes],
   });
   revalidatePath("/");
 }
