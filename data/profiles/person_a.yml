@@ -318,8 +318,8 @@ food_preferences:
     - benedict_runny
   molho_branco_preference:
     loved: bechamel_emulsionado_equilibrado
-    avoid: queijo_excessivo
-    avoid: separado_oleoso
+    avoid_excessive_cheese: true
+    avoid_separated_oily: true
   soft_dislikes: [figado, couve_flor, mamao, azeitonas]
   seletividade_alimentar_clinica: true
   current_chicken_phase: tolerant                    # fase atual: tolera peito_frango pelo intake proteico fácil
