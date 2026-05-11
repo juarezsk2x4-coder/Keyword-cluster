@@ -59,8 +59,19 @@ export async function ensureMigrated() {
       logged_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
     );
 
+    CREATE TABLE IF NOT EXISTS beverage_logs (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      date TEXT NOT NULL,
+      type TEXT NOT NULL,
+      amount TEXT,
+      consumed_at TEXT NOT NULL,
+      notes TEXT,
+      logged_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+    );
+
     CREATE INDEX IF NOT EXISTS idx_meal_logs_date ON meal_logs(date);
     CREATE INDEX IF NOT EXISTS idx_substance_logs_date ON substance_logs(date);
+    CREATE INDEX IF NOT EXISTS idx_beverage_logs_date ON beverage_logs(date);
   `);
   initialized = true;
 }
