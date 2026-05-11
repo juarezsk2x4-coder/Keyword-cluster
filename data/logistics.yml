@@ -30,35 +30,35 @@ building_access:
   has_elevator: false
   carry_method: stairs_only
   practical_implications:
-    - bulk_items_via_delivery_preferred
-    - per_trip_weight_cap_kg: 10                # max razoável por subida sem destruir as costas
-    - max_trips_per_shop_event: 2               # 2 subidas por sessão
-    - heavy_items_avoid_self_carry: [arroz_5kg, feijao_5kg, leite_caixa_12un, agua_galao, oleo_garrafao]
-    - forte_atacado_pickup_strategy: monthly_or_skip  # pickup-only + bulk + 3rd floor = punitive
+    - bulk_items_via_delivery_preferred_optional
+    - per_trip_weight_cap_kg: 20                # user-confirmed up to 20kg per run
+    - max_trips_per_shop_event: 2               # 2 subidas por sessão = ate 40kg total se necessario
+    - heavy_items_avoid_self_carry: [agua_galao_20L, oleo_garrafao_5L, leite_caixa_12un]
+    - forte_atacado_pickup_strategy: monthly_viable  # 20kg cap viabiliza bulk run mensal
 
-# ── Shopping cadence (REVISED for 3rd floor walk-up) ─────────────────────────
+# ── Shopping cadence (REVISED for 3rd floor walk-up, 20kg cap) ───────────────
 shopping_windows:
-  primary_strategy: delivery_first_for_weight
+  primary_strategy: hybrid_self_carry_plus_delivery
   bulk:
-    cadence: monthly                            # was bi_weekly — agora reduzido
+    cadence: monthly
     day: saturday
     stores: [forte_atacado]
-    items: [oleos_grandes, cafe_kg, mel_kg, castanhas_kg, graos_secos_sacos]
-    weight_cap_per_trip_kg: 10
-    notes: "Considerar dividir em 2 subidas se exceder 10kg. Itens pesados (arroz/feijão sacos) avaliar se vale vs delivery Imperatriz."
-  weekly_delivery:                              # NEW — substitui bi-weekly self-carry
+    items: [oleos_grandes, cafe_kg, mel_kg, castanhas_kg, graos_secos_sacos, arroz_5kg, feijao_5kg]
+    weight_cap_per_trip_kg: 20
+    can_split_into_two_trips: true              # ate 40kg total se dividir
+  weekly:
     cadence: weekly
-    day: monday                                 # segunda chega pra semana toda
-    stores: [imperatriz_delivery, ifood]
-    items: [proteinas_fresca, hortifruti, laticinios, congelados, pesados_diversos]
-    weight_no_cap: true                         # delivery não tem problema de peso
+    day: monday
+    stores: [imperatriz_canasvieiras_or_delivery]  # self-pickup ou delivery, depende do peso total
+    items: [proteinas_fresca, hortifruti, laticinios, congelados]
+    weight_cap_per_trip_kg: 20
+    delivery_fallback_if_exceeds: 20            # se total >20kg, vira delivery
   produce_topup:
     cadence: "as_needed"
     day: wednesday_or_friday
     stores: [imperatriz_canasvieiras_self_pickup]
     items: [folhas_extra, frutas_extra, peixe_fresco_balcao]
-    weight_cap_per_trip_kg: 5                   # leve, máximo 1 sacola
-    notes: "Apenas se for sair na rua de qualquer forma. Caso contrário, delivery."
+    weight_cap_per_trip_kg: 8                   # leve, 1-2 sacolas
   emergency_topup:
     stores: [ifood]
     same_day: true
