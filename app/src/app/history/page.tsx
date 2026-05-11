@@ -2,8 +2,10 @@ import { getRecentMealLogs } from "@/lib/query";
 import { SLOT_LABELS, STATE_LABELS } from "@/lib/types";
 import type { MealSlot, CardState } from "@/lib/types";
 
-export default function HistoryPage() {
-  const logs = getRecentMealLogs(60);
+export const dynamic = "force-dynamic";
+
+export default async function HistoryPage() {
+  const logs = await getRecentMealLogs(60);
 
   // group by date
   const byDate = logs.reduce<Record<string, typeof logs>>((acc, l) => {

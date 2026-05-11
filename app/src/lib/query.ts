@@ -1,42 +1,58 @@
-import { getDb } from "./db";
+import { getDb, ensureMigrated } from "./db";
 import type { MealLog, SleepLog, SubstanceLog } from "./types";
 
-export function getTodayMealLogs(date: string): MealLog[] {
-  return getDb().prepare(`SELECT * FROM meal_logs WHERE date = ? ORDER BY slot`).all(date) as MealLog[];
+export async function getTodayMealLogs(date: string): Promise<MealLog[]> {
+  await ensureMigrated();
+  const r = await getDb().execute({ sql: `SELECT * FROM meal_logs WHERE date = ? ORDER BY slot`, args: [date] });
+  return r.rows as unknown as MealLog[];
 }
 
-export function getTodaySleep(date: string): SleepLog | undefined {
-  return getDb().prepare(`SELECT * FROM sleep_logs WHERE date = ?`).get(date) as SleepLog | undefined;
+export async function getTodaySleep(date: string): Promise<SleepLog | undefined> {
+  await ensureMigrated();
+  const r = await getDb().execute({ sql: `SELECT * FROM sleep_logs WHERE date = ?`, args: [date] });
+  return r.rows[0] as unknown as SleepLog | undefined;
 }
 
-export function getTodaySubstances(date: string): SubstanceLog[] {
-  return getDb().prepare(`SELECT * FROM substance_logs WHERE date = ? ORDER BY logged_at DESC`).all(date) as SubstanceLog[];
+export async function getTodaySubstances(date: string): Promise<SubstanceLog[]> {
+  await ensureMigrated();
+  const r = await getDb().execute({ sql: `SELECT * FROM substance_logs WHERE date = ? ORDER BY logged_at DESC`, args: [date] });
+  return r.rows as unknown as SubstanceLog[];
 }
 
-export function getYesterdaySubstances(date: string): SubstanceLog[] {
+export async function getYesterdaySubstances(date: string): Promise<SubstanceLog[]> {
+  await ensureMigrated();
   const yest = new Date(date + "T00:00:00");
   yest.setDate(yest.getDate() - 1);
   const yIso = yest.toISOString().slice(0, 10);
-  return getDb().prepare(`SELECT * FROM substance_logs WHERE date = ? ORDER BY logged_at DESC`).all(yIso) as SubstanceLog[];
+  const r = await getDb().execute({ sql: `SELECT * FROM substance_logs WHERE date = ? ORDER BY logged_at DESC`, args: [yIso] });
+  return r.rows as unknown as SubstanceLog[];
 }
 
-export function getFatigueToday(date: string): boolean {
-  const row = getDb().prepare(`SELECT 1 as v FROM fatigue_logs WHERE date = ?`).get(date) as { v: number } | undefined;
-  return !!row;
+export async function getFatigueToday(date: string): Promise<boolean> {
+  await ensureMigrated();
+  const r = await getDb().execute({ sql: `SELECT 1 as v FROM fatigue_logs WHERE date = ?`, args: [date] });
+  return r.rows.length > 0;
 }
 
-export function getPrepMinutesToday(date: string): number | null {
-  const row = getDb().prepare(`SELECT available_minutes FROM prep_time_logs WHERE date = ?`).get(date) as { available_minutes: number } | undefined;
+export async function getPrepMinutesToday(date: string): Promise<number | null> {
+  await ensureMigrated();
+  const r = await getDb().execute({ sql: `SELECT available_minutes FROM prep_time_logs WHERE date = ?`, args: [date] });
+  const row = r.rows[0] as unknown as { available_minutes: number } | undefined;
   return row?.available_minutes ?? null;
 }
 
-export function getRecentMealLogs(limit = 30): MealLog[] {
-  return getDb().prepare(`SELECT * FROM meal_logs ORDER BY date DESC, slot ASC LIMIT ?`).all(limit) as MealLog[];
+export async function getRecentMealLogs(limit = 30): Promise<MealLog[]> {
+  await ensureMigrated();
+  const r = await getDb().execute({ sql: `SELECT * FROM meal_logs ORDER BY date DESC, slot ASC LIMIT ?`, args: [limit] });
+  return r.rows as unknown as MealLog[];
 }
 
-export function getDailyTotals(date: string): { kcal: number; protein_g: number } {
-  const row = getDb().prepare(
-    `SELECT COALESCE(SUM(kcal), 0) as kcal, COALESCE(SUM(protein_g), 0) as protein_g FROM meal_logs WHERE date = ?`
-  ).get(date) as { kcal: number; protein_g: number };
-  return row;
+export async function getDailyTotals(date: string): Promise<{ kcal: number; protein_g: number }> {
+  await ensureMigrated();
+  const r = await getDb().execute({
+    sql: `SELECT COALESCE(SUM(kcal), 0) as kcal, COALESCE(SUM(protein_g), 0) as protein_g FROM meal_logs WHERE date = ?`,
+    args: [date],
+  });
+  const row = r.rows[0] as unknown as { kcal: number; protein_g: number };
+  return { kcal: Number(row.kcal ?? 0), protein_g: Number(row.protein_g ?? 0) };
 }

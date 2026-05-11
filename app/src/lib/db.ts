@@ -1,28 +1,21 @@
-import Database from "better-sqlite3";
-import path from "node:path";
-import fs from "node:fs";
+import { createClient, type Client } from "@libsql/client";
 
-const DATA_DIR = path.join(process.cwd(), "data");
-const DB_PATH = path.join(DATA_DIR, "app.db");
+const url = process.env.TURSO_DATABASE_URL || "file:./data/app.db";
+const authToken = process.env.TURSO_AUTH_TOKEN;
 
-if (!fs.existsSync(DATA_DIR)) {
-  fs.mkdirSync(DATA_DIR, { recursive: true });
+let clientInstance: Client | null = null;
+let initialized = false;
+
+export function getDb(): Client {
+  if (clientInstance) return clientInstance;
+  clientInstance = createClient({ url, authToken });
+  return clientInstance;
 }
 
-let dbInstance: Database.Database | null = null;
-
-export function getDb(): Database.Database {
-  if (dbInstance) return dbInstance;
-  const db = new Database(DB_PATH);
-  db.pragma("journal_mode = WAL");
-  db.pragma("foreign_keys = ON");
-  migrate(db);
-  dbInstance = db;
-  return db;
-}
-
-function migrate(db: Database.Database) {
-  db.exec(`
+export async function ensureMigrated() {
+  if (initialized) return;
+  const c = getDb();
+  await c.executeMultiple(`
     CREATE TABLE IF NOT EXISTS meal_logs (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       date TEXT NOT NULL,
@@ -69,4 +62,5 @@ function migrate(db: Database.Database) {
     CREATE INDEX IF NOT EXISTS idx_meal_logs_date ON meal_logs(date);
     CREATE INDEX IF NOT EXISTS idx_substance_logs_date ON substance_logs(date);
   `);
+  initialized = true;
 }

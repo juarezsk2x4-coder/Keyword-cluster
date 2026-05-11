@@ -4,6 +4,8 @@ import MealCard from "@/components/MealCard";
 import DayHeader from "@/components/DayHeader";
 import type { CardState } from "@/lib/types";
 
+export const dynamic = "force-dynamic";
+
 function getWeekStart(): string {
   // Anchor to last Sunday (or today if Sunday)
   const today = new Date();
@@ -40,19 +42,21 @@ function defaultStateFor(opts: {
   return "original";
 }
 
-export default function TodayPage() {
+export default async function TodayPage() {
   const weekStart = getWeekStart();
   const plan = buildWeeklyPlan(weekStart);
   const today = new Date().toISOString().slice(0, 10);
   const dayPlan = plan.find((d) => d.date === today) ?? plan[0];
 
-  const logs = getTodayMealLogs(today);
+  const [logs, sleep, fatigued, prepMin, totals, yestSubs] = await Promise.all([
+    getTodayMealLogs(today),
+    getTodaySleep(today),
+    getFatigueToday(today),
+    getPrepMinutesToday(today),
+    getDailyTotals(today),
+    getYesterdaySubstances(today),
+  ]);
   const logsByslot = Object.fromEntries(logs.map((l) => [l.slot, l]));
-  const sleep = getTodaySleep(today);
-  const fatigued = getFatigueToday(today);
-  const prepMin = getPrepMinutesToday(today);
-  const totals = getDailyTotals(today);
-  const yestSubs = getYesterdaySubstances(today);
   const hadCocaineYesterday = yestSubs.some((s) => s.substance === "cocaine");
 
   return (

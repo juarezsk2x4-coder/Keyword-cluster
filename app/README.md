@@ -1,6 +1,8 @@
 # Plano A — Test App (Person A only)
 
-Local-first meal-planning + logging app calibrated for Person A. Next.js 15 + SQLite + Tailwind.
+Meal-planning + logging app calibrated for Person A. Next.js 15 + libSQL (Turso) + Tailwind.
+
+**Quer rodar do celular sem instalar nada?** Veja [`DEPLOY.md`](../DEPLOY.md) na raiz — guia passo a passo pra subir no Vercel + Turso (15 min, free, só navegador).
 
 ## What's working
 
@@ -19,7 +21,7 @@ Local-first meal-planning + logging app calibrated for Person A. Next.js 15 + SQ
 - **Profile view**: reads `data/profiles/person_a.yml` and shows targets, restrictions, medical flags.
 - **History view**: last 60 logs grouped by day, with kcal + protein totals and state-distribution chips.
 
-## Quick start
+## Quick start (rodar localmente — precisa Node + pnpm instalado)
 
 ```bash
 cd app
@@ -27,7 +29,13 @@ pnpm install
 pnpm dev
 ```
 
-Open `http://localhost:3000` on your laptop. On your phone, find your laptop's local IP (e.g. `192.168.1.42`) and visit `http://192.168.1.42:3000` from the same Wi-Fi.
+Sem `TURSO_DATABASE_URL` configurado, o app usa um arquivo local em `data/app.db` (funciona em máquina com disco persistente). Pra produção/Vercel, configura `TURSO_DATABASE_URL` + `TURSO_AUTH_TOKEN` (veja `.env.example`).
+
+Open `http://localhost:3000`. On your phone, find your laptop's local IP and visit `http://<ip>:3000`.
+
+## Quick start (do celular, sem instalar nada)
+
+Veja [`DEPLOY.md`](../DEPLOY.md) na raiz do repo. Tudo via navegador, ~15 min.
 
 ## Architecture
 
