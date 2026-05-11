@@ -1,5 +1,11 @@
 import { getDb, ensureMigrated } from "./db";
-import type { MealLog, SleepLog, SubstanceLog } from "./types";
+import type { MealLog, SleepLog, SubstanceLog, BeverageLog } from "./types";
+
+export async function getDayBeverages(date: string): Promise<BeverageLog[]> {
+  await ensureMigrated();
+  const r = await getDb().execute({ sql: `SELECT * FROM beverage_logs WHERE date = ? ORDER BY consumed_at DESC`, args: [date] });
+  return r.rows as unknown as BeverageLog[];
+}
 
 export async function getDayMealLogs(date: string): Promise<MealLog[]> {
   await ensureMigrated();

@@ -133,3 +133,15 @@ export interface PrepTimeLog {
   available_minutes: number;
   logged_at: string;
 }
+
+export type BeverageType = "mate" | "coffee" | "tea" | "treat";
+
+export interface BeverageLog {
+  id?: number;
+  date: string;
+  type: BeverageType;
+  amount?: string;
+  consumed_at: string;     // ISO datetime
+  notes?: string;
+  logged_at: string;
+}

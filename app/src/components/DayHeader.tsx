@@ -2,7 +2,10 @@
 
 import { useTransition } from "react";
 import { logSleep, logFatigue, clearFatigue, logPrepTime, logSubstance, deleteSubstanceLog } from "@/app/actions";
-import type { SubstanceLog } from "@/lib/types";
+import type { SubstanceLog, BeverageLog } from "@/lib/types";
+import type { Lang } from "@/lib/i18n";
+import { t } from "@/lib/i18n";
+import BeveragePanel from "./BeveragePanel";
 
 interface Props {
   date: string;
@@ -17,20 +20,13 @@ interface Props {
   prepMinutes: number | null;
   hadCocaineYesterday: boolean;
   substanceLogs: SubstanceLog[];
+  beverages: BeverageLog[];
+  lang: Lang;
 }
-
-const SUBSTANCE_LABELS: Record<string, string> = {
-  cocaine: "coca",
-  alcohol: "álcool",
-  cannabis: "cannabis",
-  tobacco: "tabaco",
-  benzo: "benzo",
-  psychedelic: "psicodélico",
-  ketamine: "ketamina",
-};
 
 export default function DayHeader(props: Props) {
   const [pending, startTransition] = useTransition();
+  const tr = t(props.lang);
 
   const kcalPct = Math.min(100, Math.round((props.kcalLogged / props.kcalTarget) * 100));
   const protPct = Math.min(100, Math.round((props.proteinLogged / props.proteinTarget) * 100));
@@ -44,21 +40,21 @@ export default function DayHeader(props: Props) {
             <div className="text-xs text-muted">{props.date}</div>
           </div>
           <div className="flex gap-2 flex-wrap justify-end">
-            {props.isSkateDay && <span className="chip chip-active">Skate day</span>}
-            {props.hadCocaineYesterday && <span className="chip" style={{ background: "#e87b6b", color: "#0b0d0f", borderColor: "#e87b6b" }}>Recovery</span>}
-            {props.isFatigued && <span className="chip" style={{ background: "#e8b06b", color: "#0b0d0f", borderColor: "#e8b06b" }}>Cansaço de casa</span>}
+            {props.isSkateDay && <span className="chip chip-active">{tr.skate_day}</span>}
+            {props.hadCocaineYesterday && <span className="chip" style={{ background: "#e87b6b", color: "#0b0d0f", borderColor: "#e87b6b" }}>{tr.recovery}</span>}
+            {props.isFatigued && <span className="chip" style={{ background: "#e8b06b", color: "#0b0d0f", borderColor: "#e8b06b" }}>{tr.house_fatigue}</span>}
           </div>
         </div>
 
         <div className="grid grid-cols-2 gap-3 text-xs">
           <div>
-            <div className="flex justify-between mb-1"><span className="label">Kcal</span><span className="text-muted">{props.kcalLogged} / {props.kcalTarget}</span></div>
+            <div className="flex justify-between mb-1"><span className="label">{tr.kcal}</span><span className="text-muted">{props.kcalLogged} / {props.kcalTarget}</span></div>
             <div className="h-2 bg-border rounded-full overflow-hidden">
               <div className="h-full bg-accent" style={{ width: `${kcalPct}%` }} />
             </div>
           </div>
           <div>
-            <div className="flex justify-between mb-1"><span className="label">Proteína</span><span className="text-muted">{Math.round(props.proteinLogged)} / {props.proteinTarget} g</span></div>
+            <div className="flex justify-between mb-1"><span className="label">{tr.protein}</span><span className="text-muted">{Math.round(props.proteinLogged)} / {props.proteinTarget} g</span></div>
             <div className="h-2 bg-border rounded-full overflow-hidden">
               <div className="h-full bg-accent" style={{ width: `${protPct}%` }} />
             </div>
@@ -68,7 +64,7 @@ export default function DayHeader(props: Props) {
 
       <div className="grid grid-cols-2 gap-3">
         <div className="card">
-          <div className="label mb-2">Sono ao acordar</div>
+          <div className="label mb-2">{tr.sleep_on_wake}</div>
           <div className="flex flex-wrap gap-1.5">
             {[4, 5, 6, 7, 8, 9, 10].map((h) => (
               <button
@@ -85,7 +81,7 @@ export default function DayHeader(props: Props) {
         </div>
 
         <div className="card">
-          <div className="label mb-2">Tempo de prep hoje</div>
+          <div className="label mb-2">{tr.prep_time_today}</div>
           <div className="flex flex-wrap gap-1.5">
             {[5, 15, 30, 60].map((m) => (
               <button
@@ -104,7 +100,7 @@ export default function DayHeader(props: Props) {
 
       <div className="card">
         <div className="flex items-center justify-between mb-2 gap-2">
-          <div className="label">Cansaço de casa</div>
+          <div className="label">{tr.house_fatigue}</div>
           {props.isFatigued ? (
             <button
               type="button"
@@ -112,7 +108,7 @@ export default function DayHeader(props: Props) {
               disabled={pending}
               className="btn btn-ghost text-xs"
             >
-              Limpar
+              {tr.clear}
             </button>
           ) : (
             <button
@@ -121,19 +117,19 @@ export default function DayHeader(props: Props) {
               disabled={pending}
               className="btn btn-warn text-xs"
             >
-              Tô cansado da casa
+              {tr.house_fatigue_btn}
             </button>
           )}
         </div>
         {props.isFatigued && (
-          <p className="text-xs text-muted">
-            Defaults dos cards setados pra <strong>Fácil</strong>. Delivery aceitável: poke / sushi / peruano / japonês.
-          </p>
+          <p className="text-xs text-muted">{tr.house_fatigue_active_note}</p>
         )}
       </div>
 
+      <BeveragePanel date={props.date} beverages={props.beverages} lang={props.lang} />
+
       <div className="card">
-        <div className="label mb-2">Log de substância</div>
+        <div className="label mb-2">{tr.substance_log}</div>
         <div className="flex flex-wrap gap-1.5 mb-2">
           {(["cocaine", "alcohol", "cannabis", "tobacco", "benzo"] as const).map((s) => (
             <button
@@ -143,13 +139,13 @@ export default function DayHeader(props: Props) {
               disabled={pending}
               className="chip active:scale-95 transition-transform"
             >
-              + {SUBSTANCE_LABELS[s]}
+              + {tr.sub[s]}
             </button>
           ))}
         </div>
         {props.substanceLogs.length > 0 && (
           <>
-            <div className="label text-xs mb-1.5">Logado neste dia ({props.substanceLogs.length})</div>
+            <div className="label text-xs mb-1.5">{tr.logged_today} ({props.substanceLogs.length})</div>
             <div className="flex flex-wrap gap-1.5">
               {props.substanceLogs.map((log) => (
                 <button
@@ -158,9 +154,9 @@ export default function DayHeader(props: Props) {
                   onClick={() => startTransition(async () => { if (log.id) await deleteSubstanceLog(log.id); })}
                   disabled={pending}
                   className="chip chip-active text-xs"
-                  title="Toque pra remover"
+                  title={tr.tap_to_remove}
                 >
-                  {SUBSTANCE_LABELS[log.substance] ?? log.substance} ×
+                  {tr.sub[log.substance as keyof typeof tr.sub] ?? log.substance} ×
                 </button>
               ))}
             </div>

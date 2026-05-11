@@ -1,6 +1,9 @@
 import "./globals.css";
 import type { Metadata, Viewport } from "next";
 import Link from "next/link";
+import { getLang } from "@/lib/lang";
+import { t } from "@/lib/i18n";
+import LangToggle from "@/components/LangToggle";
 
 export const metadata: Metadata = {
   title: "Plano A",
@@ -13,18 +16,22 @@ export const viewport: Viewport = {
   themeColor: "#0b0d0f",
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const lang = await getLang();
+  const tr = t(lang);
+
   return (
-    <html lang="pt-BR">
+    <html lang={lang === "en" ? "en" : "pt-BR"}>
       <body className="min-h-screen">
         <nav className="sticky top-0 z-10 bg-bg border-b border-border">
-          <div className="max-w-2xl mx-auto px-4 py-3 flex items-center gap-4">
-            <Link href="/" className="font-semibold tracking-tight">Plano A</Link>
-            <div className="ml-auto flex gap-3 text-sm text-muted">
-              <Link href="/" className="hover:text-text">Hoje</Link>
-              <Link href="/shopping" className="hover:text-text">Compras</Link>
-              <Link href="/profile" className="hover:text-text">Perfil</Link>
-              <Link href="/history" className="hover:text-text">Histórico</Link>
+          <div className="max-w-2xl mx-auto px-4 py-3 flex items-center gap-3">
+            <Link href="/" className="font-semibold tracking-tight">{tr.app_name}</Link>
+            <div className="ml-auto flex items-center gap-3 text-sm text-muted">
+              <Link href="/" className="hover:text-text">{tr.nav.today}</Link>
+              <Link href="/shopping" className="hover:text-text">{tr.nav.shopping}</Link>
+              <Link href="/profile" className="hover:text-text">{tr.nav.profile}</Link>
+              <Link href="/history" className="hover:text-text">{tr.nav.history}</Link>
+              <LangToggle current={lang} />
             </div>
           </div>
         </nav>

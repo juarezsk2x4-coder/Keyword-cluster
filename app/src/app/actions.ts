@@ -104,3 +104,26 @@ export async function logPrepTime(minutes: number, date?: string) {
   });
   revalidatePath("/");
 }
+
+export async function logBeverage(input: {
+  date?: string;
+  type: "mate" | "coffee" | "tea" | "treat";
+  amount?: string;
+  consumed_at?: string;     // ISO datetime; defaults to now
+  notes?: string;
+}) {
+  await ensureMigrated();
+  const d = input.date ?? todayIso();
+  const consumed = input.consumed_at ?? new Date().toISOString();
+  await getDb().execute({
+    sql: `INSERT INTO beverage_logs (date, type, amount, consumed_at, notes, logged_at) VALUES (?, ?, ?, ?, ?, datetime('now'))`,
+    args: [d, input.type, input.amount ?? null, consumed, input.notes ?? null],
+  });
+  revalidatePath("/");
+}
+
+export async function deleteBeverageLog(id: number) {
+  await ensureMigrated();
+  await getDb().execute({ sql: `DELETE FROM beverage_logs WHERE id = ?`, args: [id] });
+  revalidatePath("/");
+}
