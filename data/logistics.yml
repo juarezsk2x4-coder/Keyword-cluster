@@ -1,0 +1,100 @@
+# Kitchen, storage, shopping windows, and store info.
+
+# ── Kitchen equipment ────────────────────────────────────────────────────────
+# Marks what the Meal Plan Designer can assume is available.
+kitchen_equipment:
+  fogao_bocas: 4              # number of burners
+  forno: true
+  microondas: true
+  airfryer: false
+  panela_pressao_eletrica: false  # ex: Mondial Pratic, Electrolux
+  panela_pressao_comum: true
+  liquidificador: true
+  processador: false
+  mixer: false
+  grill_eletrico: false
+  sanduicheira: false
+  espremedor_citrus: false
+  balança_cozinha: false       # important for portioning — recommend acquiring if false
+
+# ── Storage (rough capacity, not exact) ──────────────────────────────────────
+storage:
+  fridge_liters: FILL_IN       # geladeira ~ 300L típica de casal, 400L+ família
+  freezer_liters: FILL_IN      # freezer separado ou só o do topo da geladeira?
+  freezer_separate: false      # true se tem freezer horizontal ou separado
+  pantry_shelves: FILL_IN      # quantas prateleiras de despensa/armário pra secos
+
+# ── Building access constraint (NEW — major impact on shopping strategy) ─────
+building_access:
+  floor: 3
+  has_elevator: false
+  carry_method: stairs_only
+  carriers_per_run: 2                            # casal sobe junto sempre
+  transport_to_market: uber                      # vai e volta de Uber pro Forte/Imperatriz
+  practical_implications:
+    - per_trip_weight_cap_kg_per_person: 20
+    - max_trips_per_shop_event: 2                # as vezes 2 subidas
+    - effective_capacity_per_event_kg: 80        # 2 pessoas × 2 viagens × 20kg
+    - heavy_items_only_via_delivery: [agua_galao_20L, oleo_garrafao_5L]  # truly heavy
+    - forte_atacado_pickup_strategy: monthly_robust  # capacity high enough now
+
+# ── Shopping cadence (REVISED for 3rd floor walk-up, 20kg cap) ───────────────
+shopping_windows:
+  primary_strategy: hybrid_self_carry_plus_delivery
+  bulk:
+    cadence: monthly
+    day: saturday
+    stores: [forte_atacado]
+    items: [oleos_grandes, cafe_kg, mel_kg, castanhas_kg, graos_secos_sacos, arroz_5kg, feijao_5kg]
+    weight_cap_per_trip_kg: 20
+    can_split_into_two_trips: true              # ate 40kg total se dividir
+  weekly:
+    cadence: weekly
+    day: monday
+    stores: [imperatriz_canasvieiras_or_delivery]  # self-pickup ou delivery, depende do peso total
+    items: [proteinas_fresca, hortifruti, laticinios, congelados]
+    weight_cap_per_trip_kg: 20
+    delivery_fallback_if_exceeds: 20            # se total >20kg, vira delivery
+  produce_topup:
+    cadence: "as_needed"
+    day: wednesday_or_friday
+    stores: [imperatriz_canasvieiras_self_pickup]
+    items: [folhas_extra, frutas_extra, peixe_fresco_balcao]
+    weight_cap_per_trip_kg: 8                   # leve, 1-2 sacolas
+  emergency_topup:
+    stores: [ifood]
+    same_day: true
+
+# ── Stores (Florianópolis — Canasvieiras region) ─────────────────────────────
+stores:
+  ifood:
+    delivery_address: "Canasvieiras, Florianópolis"
+    confirmed_zone: false      # set true once you've checked the address loads in iFood
+    preferred_markets: []      # ex: ["Imperatriz Canasvieiras", "Hippo", "Angeloni Cachoeira do Bom Jesus"]
+                               # leave empty to let the scout pick by price
+  forte_atacado:
+    branch: FILL_IN            # ex: "Forte Atacadista SC-401" | "Forte Atacadista São José"
+    address: FILL_IN
+    has_delivery: false
+    pickup_only: true
+  imperatriz:
+    branch: FILL_IN            # ex: "Imperatriz Canasvieiras" | "Imperatriz Cachoeira do Bom Jesus"
+    address: FILL_IN
+    has_delivery: true
+    delivery_address: "Canasvieiras, Florianópolis"
+
+# ── Budget ───────────────────────────────────────────────────────────────────
+budget:
+  brl_per_week_combined: 500   # confirmed: R$ 400–600/week range, defaulting to 500
+  hard_cap: false              # true = never exceed; false = warn if over
+  prioritize:                  # ordered: what to keep paying for if budget is tight
+    - proteina_alta_qualidade  # ovos, peito frango, peixe
+    - hortifruti_estacao
+    - graos_integrais
+    - laticinios
+    - oleaginosas
+
+# ── Delivery preferences ─────────────────────────────────────────────────────
+delivery:
+  acceptable_fee_brl: 8        # ignore iFood options where delivery fee > this
+  acceptable_eta_min: 60       # ignore options that take longer than this

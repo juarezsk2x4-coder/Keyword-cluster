@@ -1,0 +1,64 @@
+# Person B profile (default: the woman, less cardio-active, more caffeine, no tobacco)
+# Same schema as person_a.yml — fill in the same fields.
+
+name: FILL_IN
+sex: female
+age_years: FILL_IN
+height_cm: FILL_IN
+weight_kg: FILL_IN
+body_fat_pct:           # optional; leave blank if unknown
+
+# ── Activity ──────────────────────────────────────────────────────────────────
+activity:
+  - type: musculacao
+    days_per_week: FILL_IN
+    minutes_per_session: FILL_IN
+    typical_time: evening
+    intensity: moderate
+  # add other activities (yoga, caminhada, pilates, dança, natação) by copying the block above
+
+# ── Sleep ─────────────────────────────────────────────────────────────────────
+sleep:
+  bedtime: "23:30"
+  waketime: "07:30"
+
+# ── Substances ────────────────────────────────────────────────────────────────
+substances:
+  caffeine:
+    mg_per_day: FILL_IN          # likely higher than partner per the briefing
+    last_dose_time: "16:00"
+  alcohol:
+    frequency: weekly            # daily | weekly | monthly | rarely | never
+    typical_units_per_occasion: 0
+    typical_drinks: []
+  cannabis:
+    frequency: never             # daily | weekly | monthly | rarely | never
+    typical_time: evening
+    typical_form: flor
+  nicotine:
+    frequency: never             # confirmed: she doesn't smoke
+    form: none
+  medications: []                # ex: contraceptive ["pílula_combinada"], hormonal therapy, antidepressants — relevant for B6/B12/folato/Mg targets
+  supplements: []
+
+# ── Medical / nutritional flags ───────────────────────────────────────────────
+# Especially relevant for women: ferritina, vit D, B12, ciclo menstrual (TPM, fluxo intenso → +ferro)
+medical_flags: []                # ex: ["sop", "endometriose", "tireoide", "ferritina_baixa_historico"]
+bloodwork_flags: []
+menstrual_cycle:                 # optional but helpful for nutrient timing
+  tracks: false                  # true if she tracks the cycle and wants the planner to adjust ferro/Mg around it
+  typical_length_days: 28
+  notes:                         # free text: "TPM forte", "fluxo intenso", "ciclo irregular"
+
+# ── Goal ──────────────────────────────────────────────────────────────────────
+goals:
+  primary: recomp                # confirmed: recomp for both
+  notes:
+
+# ── Preferred meal times ──────────────────────────────────────────────────────
+meal_times:
+  cafe_da_manha: "08:00"
+  lanche_manha: "10:30"
+  almoco: "12:30"
+  lanche_tarde: "16:00"
+  jantar: "20:00"

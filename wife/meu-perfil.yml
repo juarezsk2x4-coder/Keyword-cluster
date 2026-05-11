@@ -1,0 +1,71 @@
+# Seu perfil. Substitua os FILL_IN pelos seus valores.
+# Linhas que começam com # são só comentários explicando o campo.
+
+nome: FILL_IN
+sexo: feminino
+idade_anos: FILL_IN
+altura_cm: FILL_IN
+peso_kg: FILL_IN
+percentual_gordura:        # opcional — deixa em branco se não souber
+
+# ── Atividade física ─────────────────────────────────────────────────────────
+# Liste cada atividade que você faz com regularidade.
+# Tipos: musculacao | corrida | ciclismo | natacao | hiit | yoga | pilates | dança | caminhada | crossfit | surf | outro
+atividade:
+  - tipo: musculacao
+    dias_por_semana: FILL_IN
+    minutos_por_sessao: FILL_IN
+    horario_tipico: evening    # morning | afternoon | evening | night
+    intensidade: moderate      # light | moderate | hard | very_hard
+  # Pra adicionar outra atividade, copie o bloco acima e cole abaixo.
+
+# ── Sono ─────────────────────────────────────────────────────────────────────
+sono:
+  hora_de_dormir: "23:30"      # mantenha aspas e formato 24h
+  hora_de_acordar: "07:30"
+
+# ── Substâncias (sem julgamento — é pra calibrar nutriente) ──────────────────
+substancias:
+  cafeina:
+    mg_por_dia: FILL_IN        # ~80mg por café coado de 200ml, ~95mg por espresso, ~30mg por chá preto
+    horario_da_ultima_dose: "16:00"
+  alcool:
+    frequencia: weekly         # daily | weekly | monthly | rarely | never
+    doses_tipicas_por_ocasiao: 0   # 1 dose = 1 lata 350ml cerveja | 1 taça de vinho 150ml | 1 dose 40ml destilado
+    bebidas_tipicas: []        # ex: ["vinho_tinto", "espumante", "gin_tonica", "cerveja_pilsen"]
+  cannabis:
+    frequencia: never          # daily | weekly | monthly | rarely | never
+    horario_tipico: evening
+    forma_tipica: flor         # flor | concentrado | comestivel | vaporizador
+  nicotina:
+    frequencia: never          # confirmado: você não fuma
+    forma: none
+  medicamentos: []             # ex: [{ nome: "anticoncepcional_combinado", dose: "1 comprimido", horario: "21:00" }]
+                               #     [{ nome: "sertralina", dose_mg: 50, horario: "08:00" }]
+  suplementos: []              # ex: [{ nome: "vitamina_d", dose_ui: 2000, horario: "08:00" }]
+                               #     [{ nome: "ferro_quelato", dose_mg: 30, horario: "08:00" }]
+
+# ── Sinais médicos / nutricionais ────────────────────────────────────────────
+sinais_medicos: []             # ex: ["sop", "endometriose", "tireoide", "refluxo", "ibs"]
+sinais_de_exame: []            # ex: ["ferritina_baixa", "vitamina_d_baixa", "b12_baixa", "anemia_historico"]
+
+# ── Ciclo menstrual (opcional) ───────────────────────────────────────────────
+# Se quiser que o plano ajuste ferro/magnésio em volta do seu ciclo, preencha.
+# Se não, deixa rastreia: false e ignora o resto.
+ciclo_menstrual:
+  rastreia: false              # true se você acompanha e quer ajuste do plano
+  duracao_tipica_dias: 28
+  notas:                       # texto livre: "TPM forte", "fluxo intenso primeiros 2 dias", "irregular"
+
+# ── Objetivo ─────────────────────────────────────────────────────────────────
+objetivo:
+  principal: recomp            # confirmado: recomposição (manter peso, melhorar composição)
+  notas:                       # texto livre: "definir mais", "ganhar 1kg de massa magra", etc.
+
+# ── Horários das refeições ───────────────────────────────────────────────────
+horarios_refeicoes:
+  cafe_da_manha: "08:00"
+  lanche_manha: "10:30"
+  almoco: "12:30"
+  lanche_tarde: "16:00"
+  jantar: "20:00"

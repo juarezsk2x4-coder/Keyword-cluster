@@ -1,0 +1,40 @@
+# Suas preferências alimentares pessoais.
+# (As preferências comuns do casal — orçamento, lojas, etc. — ele já preencheu.)
+
+# ── Coisas que você não come, além do tomate ─────────────────────────────────
+# Tomate já está bloqueado pra todo mundo. Adicione aqui o que VOCÊ não come
+# por alergia, intolerância ou nojo profundo.
+nao_como_de_jeito_nenhum: []   # ex: ["fígado", "bucho", "camarão"]
+
+# ── Coisas que você não gosta, mas não é o fim do mundo ──────────────────────
+# O agente vai evitar, mas pode aparecer ocasionalmente em receitas que
+# você ame por outros motivos.
+nao_curto_muito: []            # ex: ["beterraba", "quiabo", "couve_de_bruxelas"]
+
+# ── Cozinhas que você ama ────────────────────────────────────────────────────
+# O plano da semana vai girar em torno dessas.
+# ex: comida_caseira_brasileira, italiana_sem_tomate, japonesa, churrasco_gaucho,
+#     cozinha_litoranea_sc, indiana, tailandesa, mediterranea, mexicana_sem_tomate
+cozinhas_que_amo:
+  - FILL_IN
+
+# ── Ingredientes favoritos (5 a 10 de cada) ──────────────────────────────────
+# ex: peito_frango, file_mignon_suino, tainha, sardinha, ovos, tofu, lentilha
+proteinas_favoritas:
+  - FILL_IN
+# ex: arroz_integral, aipim, batata_doce, pao_frances, quinoa, polenta, cuscuz
+carbos_favoritos:
+  - FILL_IN
+# ex: brocolis, abobrinha, berinjela, repolho, couve_manteiga, vagem, espinafre
+vegetais_favoritos:
+  - FILL_IN
+# ex: banana_prata, mamao, abacate, bergamota, maca, manga, abacaxi
+frutas_favoritas:
+  - FILL_IN
+
+# ── Bebidas ──────────────────────────────────────────────────────────────────
+bebidas:
+  cafes_por_dia: FILL_IN       # quantas xícaras você toma em média
+  toma_chimarrao: false
+  meta_agua_litros_por_dia:    # deixa em branco que o agente calcula pelo peso
+  outras_regulares: []         # ex: ["cha_verde", "kombucha", "agua_de_coco"]

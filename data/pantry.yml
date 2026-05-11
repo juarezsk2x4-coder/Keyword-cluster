@@ -1,0 +1,68 @@
+# Snapshot of what's currently in the kitchen.
+# Update before each shopping run so the Shopping List Builder doesn't double-buy.
+# Format: each entry is "<item em pt-BR>: <quantidade> <unidade>"
+#   Quantidades em decimal com ponto: "1.5 kg", não "1,5 kg"
+#   Unidades: kg, g, L, ml, un, pacote, lata, garrafa
+# Leave a section empty list (`[]`) if there's nothing in it.
+
+# ── Proteínas (geladeira / freezer) ──────────────────────────────────────────
+proteinas:
+  - # ex: "peito de frango: 1.5 kg"
+  - # ex: "ovos: 30 un"
+  - # ex: "linguiça blumenau: 500 g"
+
+# ── Carboidratos (despensa) ──────────────────────────────────────────────────
+carboidratos:
+  - # ex: "arroz branco: 5 kg"
+  - # ex: "aipim: 1 kg"
+  - # ex: "macarrão integral: 500 g"
+
+# ── Grãos e leguminosas ──────────────────────────────────────────────────────
+graos_e_leguminosas:
+  - # ex: "feijão preto: 2 kg"
+  - # ex: "lentilha: 500 g"
+  - # ex: "grão-de-bico: 500 g"
+
+# ── Laticínios e ovos (refrigerados) ─────────────────────────────────────────
+laticinios:
+  - # ex: "leite integral: 2 L"
+  - # ex: "iogurte natural: 4 un 170g"
+  - # ex: "queijo colonial: 300 g"
+
+# ── Hortifrúti (geladeira / fruteira) ────────────────────────────────────────
+hortifruti:
+  - # ex: "banana prata: 1 kg"
+  - # ex: "alface crespa: 1 pé"
+  - # ex: "couve manteiga: 1 maço"
+
+# ── Gorduras e óleos ─────────────────────────────────────────────────────────
+gorduras_e_oleos:
+  - # ex: "azeite extra virgem: 500 ml"
+  - # ex: "óleo de coco: 200 ml"
+
+# ── Temperos, condimentos, vinagres ──────────────────────────────────────────
+temperos:
+  - # ex: "sal grosso: 1 kg"
+  - # ex: "pimenta-do-reino: 50 g"
+  - # ex: "alho: 200 g"
+
+# ── Congelados ───────────────────────────────────────────────────────────────
+congelados:
+  - # ex: "filé de tainha: 800 g"
+  - # ex: "polpa de maracujá: 400 g"
+
+# ── Não perecíveis (enlatados, secos) ────────────────────────────────────────
+nao_pereciveis:
+  - # ex: "atum em água: 3 latas"
+  - # ex: "milho verde em conserva: 2 latas"
+
+# ── Bebidas ──────────────────────────────────────────────────────────────────
+bebidas:
+  - # ex: "café em pó: 500 g"
+  - # ex: "água de coco: 1 L"
+
+# ── Padaria / cereais / snacks ───────────────────────────────────────────────
+padaria_e_snacks:
+  - # ex: "pão francês: 6 un"
+  - # ex: "aveia em flocos: 500 g"
+  - # ex: "castanha-do-pará: 200 g"

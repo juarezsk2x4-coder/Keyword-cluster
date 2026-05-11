@@ -1,0 +1,381 @@
+# Person A — João Eduardo de Lucena Linhares
+# Last updated: 2026-05-10
+# See data/profiles/person_a_clinical.md for the interpretive clinical synthesis.
+
+name: João Eduardo de Lucena Linhares
+sex: male
+date_of_birth: 1994-06-27
+age_years: 31                  # turns 32 on 2026-06-27
+height_cm: 168                 # InBody measured; user-self-reported 166 (using InBody value)
+weight_kg: 64.5
+body_fat_pct: 16.3             # RelaxFit 15/12/2025 (most recent)
+neurotype: [tea_autismo_alto_funcionamento_cid11_6a02, tdah]
+neuropsych_evaluation:
+  date: 2025-10-11
+  evaluator: ana_ponilla_dores_ribeiro_crp_21_2767
+  psychiatrist: derek_moreira_crm_sp_190836
+  prior_dx_ruled_out: transtorno_afetivo_bipolar
+  current_dx: tea_sem_deficiencia_intelectual_dsm5_cid11_6a02
+  cognitive_profile:
+    iq: media_superior
+    atencao_concentrada_percentil: 80
+    atencao_dividida_percentil: 75
+    atencao_dividida_reaction_time: muito_rapido
+    atencao_alternada_percentil: 40        # flexibilidade cognitiva é o ponto fraco
+    memoria_reconhecimento_percentil: 80
+    paralisacao: baixo                      # engaja em comportamentos meta-direcionados
+  social_profile:
+    ihs2_geral_percentil: 10
+    ihs2_f1_enfrentamento_percentil: 5
+    ihs2_f3_conversa_percentil: 10
+    ihs2_f5_autocontrole_percentil: 15
+    presencial: dois_amigos_proximos
+    online: mais_amplo
+    relacionamento: estavel_desde_2019
+  symptomatic_manifestations:
+    - irritabilidade
+    - reatividade
+    - isolamento_social
+    - episodios_depressivos
+    - impulsividade
+    - baixo_limiar_frustracao
+    - limitacao_expressao_emocional
+    - hipersensibilidade_tatil_auditiva
+    - seletividade_alimentar               # FOOD-RELEVANT
+    - dificuldade_relacoes_sociais
+    - labilidade_emocional
+    - desregulacao_sono                    # FOOD-RELEVANT
+    - ruminacao_cognitiva
+    - tricotilomania
+    - hiperfoco                            # FOOD-RELEVANT (esquece de comer)
+    - baixa_tolerancia_rotina_imprevistos
+    - episodios_hipomania                  # MOOD-RELEVANT
+    - abuso_substancias_clinicamente_relevante
+  externalizing_clinically_relevant: [agressividade, uso_substancias, impulsividade, manipulacao]
+  thought_disorder_relevant: [desorganizacao_cognitiva, ideacao_magica]
+  anhedonia_clinically_relevant: true
+  hipomania_facet: presente_pouco_prejuizo
+  family_psychiatric_history:
+    - { relation: primo_materno, dx: esquizofrenia, outcome: suicidio }
+    - { relation: tia_paterna, dx: transtorno_personalidade_borderline }
+    - { theme: abuso_substancias, sides: ambos_lados }
+    - { theme: altas_habilidades, sides: ambos_lados }
+  current_psychotherapy:                             # CORRECTION: report wording was wrong
+    therapist: ana_ponilla_dores_ribeiro_crp_21_2767  # same neuropsicóloga
+    started: 2023-03-17                               # active since this date
+    status: ativo
+  recommendations:
+    - retomar_psicoterapia_estruturada_dbt_ou_tcc_adaptada_tea_adulto
+    - manejo_sensorial
+    - rotina_estruturada
+    - manejo_substancias
+
+# ── Body composition history ──────────────────────────────────────────────────
+body_comp_history:
+  - { date: 2023-11-12, source: InBody, weight_kg: 65.0, body_fat_pct: 18.4, musc_esq_kg: 29.7 }
+  - { date: 2025-11-11, source: InBody, weight_kg: 63.3, body_fat_pct: 17.5, musc_esq_kg: 29.3, proteina_kg: 10.4, bmr_kcal: 1497, gordura_visceral: 4 }
+  - { date: 2025-12-15, source: RelaxFit, weight_kg: 64.5, body_fat_pct: 16.3, massa_magra_kg: 54.0, proteina_kg: 12.3, bmr_kcal: 1535, body_age: 27, flags: [proteina_baixa] }
+estimated_bmr_kcal: 1535
+trajectory: active_recomp_working   # fat down, lean up over 5 weeks; protein still subdimensionado
+
+# ── Activity ──────────────────────────────────────────────────────────────────
+activity:
+  - type: skate
+    days_per_week_anchor: 2
+    days_of_week_anchor: [sunday, monday]
+    occasional_days: [wednesday, thursday]
+    minutes_per_session: 180
+    typical_time: morning
+    intensity: hard
+    estimated_kcal_per_session: 1300
+  - type: caminhada
+    days_per_week: 3
+    minutes_per_session: 30
+    typical_time: afternoon
+    intensity: moderate
+  - type: sex
+    days_per_week: 4              # user-updated
+    minutes_per_session: 30       # user-updated
+    typical_time: evening
+    intensity: very_hard
+  - type: racing_sim_direct_drive
+    days_per_week: 1
+    minutes_per_session: 120
+    typical_time: evening
+    intensity: light
+    notes: "force feedback DD wheel — physical effort + sweat, counts as light cardio"
+
+# ── Work schedule (drives skate-day distribution) ─────────────────────────────
+work_schedule:
+  work_days: [tuesday, wednesday, thursday, friday, saturday]
+  off_days: [sunday, monday]
+
+# ── Sleep ─────────────────────────────────────────────────────────────────────
+sleep:
+  bedtime: "00:00"
+  waketime: "07:00"               # user-updated
+  hours: 7.0
+  flag: short_for_metabolic_and_recovery_load
+
+# ── Substances ────────────────────────────────────────────────────────────────
+substances:
+  caffeine:
+    primary_source: mate_uruguayan
+    mate_liters_per_day: 1.5
+    estimated_caffeine_mg_per_day: 250    # uruguayan style is concentrated
+    last_dose_time: "16:30"               # 16-17h range; LATE for 00:00 bedtime
+    sleep_impact_flag: high               # ~50% caffeine still circulating at bedtime
+  alcohol:
+    frequency: weekly
+    typical_units_per_occasion: 3
+    typical_drinks: [cerveja_ipa, vinho_branco, fitzgerald_gin]
+  cannabis:
+    frequency: daily
+    joints_per_day: 5
+    distribution: throughout_day_heavy_evening
+    form: flor_pura                       # NO tobacco mixed in joints
+  nicotine:
+    frequency: weekly
+    primary_form: tabaco_amsterdam_seda_com_filtro
+    occasional: marlboro_vermelho
+    trend: reducing
+    notes: "smoked separately from cannabis; trying to cut down"
+  cocaine:
+    current_status: active_use_frequent_phase
+    pattern: "cyclical — fases de uso intercaladas com pausas de 1-2+ meses"
+    current_phase: actively_using
+    typical_use_days: [wednesday, friday]            # durante trabalho + simulador racing
+    typical_amount_grams_per_use: "1-2"
+    use_can_extend_multi_day: true                   # 1g pode durar 1-2 dias
+    purchase_frequency_when_active: "1-2x_per_week"
+    contexts: [trabalho, simulador_corrida]
+    intent: reducing_or_quitting
+    historical_severe_use: 2024_2025_chronic_binge_period
+    plan_strategy: log_driven                        # padrão é aleatório — sistema reage ao log
+    skate_collision_risk: HIGH                       # Sex use + Sun skate hard = pior cenário
+                                                     # Domingo é dia mais depletado se houve uso sex/sáb
+  psychedelics:
+    lsd: { frequency: rare, status: enjoys_uses_sparingly }
+    psilocibina_cogumelos: { frequency: rare, status: enjoys_uses_sparingly }
+  dissociatives:
+    ketamina: { frequency: rare, status: enjoys_uses_sparingly }
+  sedatives:
+    benzos:
+      frequency: "<1x_per_week"
+      purpose: [sleep, extreme_anxiety]
+      trend: reducing
+      flag: respiratory_cns_stack_risk_if_combined_with_alcohol_or_cannabis
+  other_drugs: none_additional
+  medications:
+    - name: venvanse
+      compound: lisdexamfetamina
+      dose_mg: 70                          # MAX DOSE
+      time: "08:00"
+      indication: tdah
+  supplements_prescribed:
+    - name: bedoze
+      compound: hidroxocobalamina_b12
+      dose: "5 mg ampola IM"
+      frequency: monthly
+      duration: 4_months
+      prescribed_by: dra_juliana_schlindwein
+      indication: deficiencia_b12_d51
+    - name: sany_d_caps
+      compound: colecalciferol_vit_d3
+      dose_ui: 7000
+      frequency: daily
+      until: novos_exames
+      indication: deficiencia_vit_d_e55
+    - name: fisiogen_ferro_forte
+      compound: "ferro_30mg + vit_c_64mg"
+      frequency: daily
+      until: novos_exames
+      indication: deficiencia_ferro_serico_d50
+
+# ── Medical flags (encoded for nutrition planning calibration) ────────────────
+medical_flags:
+  - asma_com_o2_volumes_reduzidos                 # explica eosinofilia + inflamação cronica baixa
+  - fenotipo_atopico                              # asma + alergia tomate + eosinofilia
+  - tea_autismo_alto_funcionamento_cid11_6a02
+  - tdah_em_uso_venvanse_70mg_max
+  - dx_anterior_tab_descartado                    # foi tratado como bipolar antes de descobrir TEA
+  - hipomania_episodios_facet_pouco_prejuizo
+  - anedonia_clinicamente_relevante
+  - tricotilomania
+  - desorganizacao_cognitiva_clinica
+  - seletividade_alimentar_tea
+  - desregulacao_sono_hipo_hipersonia
+  - hiperfoco_padrao
+  - psicoterapia_descontinuada_2023_recomendado_retomar
+  - sincope_vasovagal_postural_2025_10            # CID-10 R55
+  - plaquetopenia_leve_112k
+  - deficiencia_b12_em_tratamento                 # CID-10 D51
+  - deficiencia_vit_d_em_tratamento               # CID-10 E55
+  - deficiencia_ferro_serico_em_tratamento        # CID-10 D50
+  - homocisteinemia_elevada
+  - eosinofilia_leve_8pct
+  - historico_subnutricao_severa_2024_2025
+  - alergia_tomate
+  - massa_proteica_subdimensionada
+  - carga_adrenergica_cronica
+  - carga_substancia_polifarmacia_recreacional
+  - externalizante_clinico_substancias_impulsividade_agressividade
+  - historico_familiar_psiquiatrico_significativo
+  - padrao_atual_delivery_burger_cansaco_noturno      # CURRENT problem to solve
+
+# ── Bloodwork (24/10/2025, Lab. Santa Luzia) ──────────────────────────────────
+bloodwork:
+  date: 2025-10-24
+  hemograma:
+    hemacias_milhoes_mm3: 4.99
+    hemoglobina_g_dl: 15.2
+    hematocrito_pct: 43.8
+    vcm_fl: 87.8
+    plaquetas_mm3: 112000             # LOW (ref 150k-450k)
+    eosinofilos_pct: 8.0              # HIGH (ref 0-7)
+    eosinofilos_mm3: 503              # HIGH (ref 30-460)
+  iron_panel:
+    ferro_serico_ug_dl: 65            # floor for male
+    ferritina_ng_ml: 167.2
+    sat_transferrina_pct: 21          # floor
+    ctcf_ug_dl: 307
+    clcf_ug_dl: 242                   # HIGH (ref 140-238)
+  vitamins:
+    vit_d_25oh_ng_ml: 16.2            # DEFICIENT (target 40-60)
+    vit_b12_pg_ml: 241                # functional deficient (optimal >400)
+    acido_folico_ng_ml: 9.34
+    homocisteina: elevada              # per medical report
+  endocrine:
+    tsh_uiu_ml: 1.11
+    t4_livre_ng_dl: 1.27
+    testosterona_total_ng_dl: 473     # suboptimal for lean 31yo male
+  metabolic:
+    glicose_mg_dl: 95
+    hba1c_pct: 5.3
+    insulina_uui_ml: 4.6
+    homa_ir_calc: 1.08                # excellent
+    colesterol_total_mg_dl: 144
+    hdl_mg_dl: 57
+    ldl_mg_dl: 69
+    triglicerideos_mg_dl: 95
+  liver:
+    ast_u_l: 19
+    alt_u_l: 16
+    ggt_u_l: 17
+  renal:
+    creatinina_mg_dl: 0.96
+    ureia_mg_dl: 31
+  electrolytes:
+    magnesio_total_mg_dl: 1.9         # serum total — poor marker of tissue Mg
+
+# ── Nutrition targets (derived; see clinical brief for reasoning) ─────────────
+nutrition_targets:
+  protein_g_per_kg: 2.0               # high end — recovery from subnutrition + skate demand
+  protein_g_per_day: 130
+  hydration_l_per_day: 4.0            # high — stimulant + cannabis + tobacco + mate + skate
+  carb_strategy: high_on_skate_days_eucaloric_otherwise
+  carb_g_per_kg_skate_day: 6.0        # ~390g
+  carb_g_per_kg_normal_day: 3.5       # ~225g
+  fat_strategy: adequate_for_steroidogenesis  # gemas, queijo colonial, ghee, abacate, azeite
+  micronutrient_emphasis: [iron_bioavailable, b12, vit_d, magnesium, zinc, omega3, polyphenols, fermentados]
+  anti_inflammatory_priority: high
+  total_kcal_target_off_day: 2500      # eucaloric recomp baseline
+  total_kcal_target_skate_day: 3300    # +800 for hard session
+
+# ── Goals ─────────────────────────────────────────────────────────────────────
+goals:
+  primary: recomp_with_micronutrient_repletion
+  performance_focus: [skate_endurance, strength, core_stability]
+  philosophical: "balanced so my body gets what it needs; stronger with a healthy body"
+
+# ── Meal times ────────────────────────────────────────────────────────────────
+meal_times:
+  cafe_da_manha: "07:30"      # post-Venvanse, liquid-dense (no appetite)
+  lanche_manha: "10:30"
+  almoco: "12:30"             # appetite returning, robust meal
+  lanche_tarde: "16:00"       # pre-skate on skate days
+  jantar: "20:00"             # post-skate on skate days
+  snack_noturno: "22:30"      # cannabis-induced; protein + Mg + tryptophan, NO industrializados
+
+# ── Food preferences ──────────────────────────────────────────────────────────
+food_preferences:
+  hard_no: [tomate, gema_mole]                       # tomate alergia + gema mole textura aversiva
+  texture_aversions:
+    - texturas_untuosas_gordurosas_escorregadias
+    - gema_mole_escorrendo                            # ovo poché, mole, sunny side up — NÃO
+    - molho_branco_com_queijo_excessivo_ou_separado   # AMA molho branco emulsionado e equilibrado
+    - gordura_visivel_em_carne                        # remove sempre antes de comer
+  egg_acceptable_preparations:
+    - mexido_bem_passado
+    - cozido_dura
+    - frito_gema_dura
+    - omelete_firme
+    - usado_em_receita_panqueca_bolo_etc            # adora ovo "que vem disso"
+  egg_unacceptable_preparations:
+    - poche
+    - mole
+    - sunny_side_up
+    - benedict_runny
+  molho_branco_preference:
+    loved: bechamel_emulsionado_equilibrado
+    avoid_excessive_cheese: true
+    avoid_separated_oily: true
+  soft_dislikes: [figado, couve_flor, mamao, azeitonas]
+  seletividade_alimentar_clinica: true
+  current_chicken_phase: tolerant                    # fase atual: tolera peito_frango pelo intake proteico fácil
+  current_burger_delivery_pattern: high              # CURRENT PROBLEM: cansaço + casa grande -> hambúrguer + delivery noites
+  abacate_acceptable_in: [pao, salada, poke]         # NÃO em pasta livre
+  iogurte_granola_loved: true                        # combinação favorita — usar como anchor de café/lanche
+  manga_smoothie_signature: "manga + gengibre + limão"  # ele faz regularmente — manter como receita reconhecida
+  entrecot_pattern:
+    frequency: rara
+    preparation: gordura_removida
+    role: condutor_de_sabor                           # não como proteína primária
+  mood_dependent: [ovos]                              # mexidos ou cozidos, depende do humor
+  fish_dislikes: [tainha, anchova, camarao]
+  fish_loved: [atum_fresco, linguado, robalo, salmao]  # explicitly preferred
+  fish_acceptable: [sardinha, pescada, merluza, polvo, lula]  # tolerated, lower priority
+  loved_cuisines: [italiana_sem_tomate, indiana, coreana, tailandesa, japonesa, peruana, fermentados]
+  fermentados_interest: [kimchi, chucrute, kefir, kombucha, misso, iogurte_natural]
+  favorite_proteins: [patinho_moido, peito_frango, lombo_suino, file_mignon, entrecot, cogumelos, quinoa]
+  favorite_carbs: [macarrao_integral, macarrao_grao_de_bico, quinoa, cuscuz, pao_integral_forma, pao_maca_passas, batata_doce_roxa, batata_doce_laranja, batata_inglesa_frita_ocasional, lasanha_sem_tomate, doces]
+  doces_cadence: treat_slot_1_2_per_week              # not daily
+  favorite_vegetables: [brocolis, abobrinha, rucula, cenoura, repolho, alface, gengibre, grao_de_bico, feijao_branco]
+  favorite_fruits: [banana_branca, morango, framboesa, cereja, manga, limao]
+  beverages:
+    coffee_cups_per_day: 0
+    mate_style: uruguayan
+    mate_liters_per_day: 1.5
+    last_mate_time: "16:30"
+
+# ── Structural guardrails (autism + ADHD + neuropsych-driven) ────────────────
+guardrails:
+  hyperfocus_undernutrition_risk: high                # primary structural risk
+  scheduled_meals_not_hunger_driven: true             # interocepção autística + Venvanse + cannabis
+  cannot_identify_hunger_clinically: true             # documented in neuropsych — comumente não identifica fome
+  alert_after_missed_meal_minutes: 240
+  red_alert_after_missed_hours: 6
+  always_available_snacks: [oleaginosas, fruta, queijo_colonial, iogurte_natural]
+  prep_ahead_required: true                           # food must be queue-ready when alert fires
+  anhedonia_compensation:                             # anedonia clinicamente relevante
+    minimize_cooking_friction: true                   # he won't cook if it requires motivation
+    use_loved_cuisines_for_novelty: true              # indiana/coreana/peruana/fermentados
+    avoid_repetitive_boring_meals: true               # rotate aggressively
+  texture_strategy:
+    avoid_oily_greasy_textures: true
+    prefer_firm_defined_textures: true
+    separate_sauce_from_protein: true
+    chicken_preparation_pending_confirmation: false   # resolved — tolerant phase
+  prep_time_adaptive:                                 # NEW — adapt on the go
+    sunday_batch_minutes: variable                    # ask weekly: "quanto tempo hoje?"
+    weekday_meal_prep_minutes: variable               # uses meal-card toggle to match
+    user_logs_available_time_daily: true              # dashboard input drives card defaults
+    default_state_mapping:                            # when user says X min available
+      "<=5_min": liquid_or_easy
+      "6_to_15_min": easy
+      "16_to_30_min": original_simple
+      ">30_min": original_full
+  mood_logging_recommended: true
+  sleep_variability_aware: true
+
+clinical_brief_path: data/profiles/person_a_clinical.md
