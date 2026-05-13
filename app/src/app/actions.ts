@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { getDb, ensureMigrated } from "@/lib/db";
 import type { CardState, MealSlot } from "@/lib/types";
+import { estimateNutrition, isAiEnabled, type NutritionEstimate } from "@/lib/nutrition-ai";
 
 function todayIso() {
   return new Date().toISOString().slice(0, 10);
@@ -126,4 +127,24 @@ export async function deleteBeverageLog(id: number) {
   await ensureMigrated();
   await getDb().execute({ sql: `DELETE FROM beverage_logs WHERE id = ?`, args: [id] });
   revalidatePath("/");
+}
+
+export async function estimateNutritionAction(
+  description: string,
+  lang: "pt" | "en"
+): Promise<{ ok: true; data: NutritionEstimate } | { ok: false; error: string }> {
+  if (!isAiEnabled()) {
+    return { ok: false, error: "ai_disabled" };
+  }
+  try {
+    const data = await estimateNutrition(description, lang);
+    return { ok: true, data };
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "unknown_error";
+    return { ok: false, error: message };
+  }
+}
+
+export async function isAiEnabledAction(): Promise<boolean> {
+  return isAiEnabled();
 }

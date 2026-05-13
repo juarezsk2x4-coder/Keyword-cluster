@@ -73,6 +73,13 @@ Ainda na tela de import, **antes** de clicar Deploy:
 3. Adiciona a segunda:
    - **Name**: `TURSO_AUTH_TOKEN`
    - **Value**: cola o token enorme do Turso (`eyJ...`)
+4. **Opcional (mas recomendado pra estimativa de nutrição via IA):**
+   - Cria conta em **https://console.anthropic.com** (GitHub login OK)
+   - Vai em **Settings → API Keys → Create Key** → copia
+   - Adiciona terceira env var:
+     - **Name**: `ANTHROPIC_API_KEY`
+     - **Value**: cola a key (`sk-ant-api03-...`)
+   - Sem essa key, o botão "Estimar nutrição com IA" mostra "IA não configurada" e você preenche kcal/proteína na mão.
 4. **Branch importante**: Vercel by default usa a `main`. Mas o código tá na branch `claude/meal-planning-agents-0gn0Q`. Vai precisar mudar isso. Veja Passo 8.
 
 ## Passo 7: Deploy! (1 min)
