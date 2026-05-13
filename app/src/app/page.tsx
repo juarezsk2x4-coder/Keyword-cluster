@@ -12,6 +12,7 @@ import {
 import MealCard from "@/components/MealCard";
 import DayHeader from "@/components/DayHeader";
 import DateNavigator from "@/components/DateNavigator";
+import MealNotifications from "@/components/MealNotifications";
 import type { CardState } from "@/lib/types";
 import { getLang } from "@/lib/lang";
 
@@ -79,6 +80,8 @@ export default async function TodayPage({ searchParams }: PageProps) {
   return (
     <div>
       <DateNavigator current={selectedDate} lang={lang} />
+
+      <MealNotifications meals={dayPlan.meals} lang={lang} date={selectedDate} />
 
       <DayHeader
         date={dayPlan.date}

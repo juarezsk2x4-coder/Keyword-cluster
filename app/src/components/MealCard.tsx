@@ -4,7 +4,7 @@ import { useMemo, useState, useTransition } from "react";
 import type { CardState, MealCard as MealCardType, MealLog } from "@/lib/types";
 import type { Lang } from "@/lib/i18n";
 import { t } from "@/lib/i18n";
-import { logMeal, deleteMealLog } from "@/app/actions";
+import { logMeal, deleteMealLog, estimateNutritionAction } from "@/app/actions";
 
 const ORDER: CardState[] = ["original", "easy", "liquid", "no_hunger"];
 
@@ -29,6 +29,9 @@ export default function MealCard({ card, date, log, defaultState, lang }: Props)
   const [customLabel, setCustomLabel] = useState(log?.actual_label ?? "");
   const [customKcal, setCustomKcal] = useState<string>(log?.kcal != null ? String(log.kcal) : "");
   const [customProtein, setCustomProtein] = useState<string>(log?.protein_g != null ? String(log.protein_g) : "");
+  const [aiNotes, setAiNotes] = useState<string | null>(null);
+  const [aiError, setAiError] = useState<string | null>(null);
+  const [aiPending, startAiTransition] = useTransition();
 
   const version = useMemo(() => card.alternatives[state], [card, state]);
   const isLogged = !!loggedState;
@@ -65,6 +68,24 @@ export default function MealCard({ card, date, log, defaultState, lang }: Props)
         protein_g: customProtein.trim() ? Number(customProtein) : undefined,
       });
       setEditing(false);
+      setAiNotes(null);
+      setAiError(null);
+    });
+  };
+
+  const handleEstimate = () => {
+    if (!customLabel.trim()) return;
+    setAiError(null);
+    setAiNotes(null);
+    startAiTransition(async () => {
+      const result = await estimateNutritionAction(customLabel.trim(), lang);
+      if (result.ok) {
+        setCustomKcal(String(result.data.kcal));
+        setCustomProtein(String(result.data.protein_g));
+        setAiNotes(`${tr.ai_confidence[result.data.confidence]} · ${result.data.notes}`);
+      } else {
+        setAiError(result.error === "ai_disabled" ? tr.ai_not_configured : tr.ai_estimate_failed);
+      }
     });
   };
 
@@ -145,6 +166,16 @@ export default function MealCard({ card, date, log, defaultState, lang }: Props)
             placeholder={tr.custom_label}
             className="w-full bg-surface border border-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-accent"
           />
+          <button
+            type="button"
+            onClick={handleEstimate}
+            disabled={aiPending || !customLabel.trim()}
+            className="btn btn-ghost text-xs w-full disabled:opacity-50 active:scale-95 transition-transform"
+          >
+            {aiPending ? `🤖 ${tr.estimating}` : `🤖 ${tr.estimate_with_ai}`}
+          </button>
+          {aiError && <p className="text-xs text-danger">{aiError}</p>}
+          {aiNotes && <p className="text-xs text-accent italic">{aiNotes}</p>}
           <div className="grid grid-cols-2 gap-2">
             <input
               type="number"
@@ -175,7 +206,7 @@ export default function MealCard({ card, date, log, defaultState, lang }: Props)
             </button>
             <button
               type="button"
-              onClick={() => setEditing(false)}
+              onClick={() => { setEditing(false); setAiNotes(null); setAiError(null); }}
               disabled={pending}
               className="btn btn-ghost"
             >
