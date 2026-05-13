@@ -1,11 +1,38 @@
+# Dependencies + build artifacts
 node_modules/
 .next/
 out/
+dist/
 *.tsbuildinfo
 next-env.d.ts
-.env
-.env*.local
+
+# Local databases (SQLite + libSQL local file mode)
 data/*.db
 data/*.db-journal
 data/*.db-shm
 data/*.db-wal
+
+# ── SECRETS — never commit these ────────────────────────────────────────────
+# Real secrets go in Vercel Environment Variables, not in files in this repo.
+# `.env.example` is the only env-style file that should ever be tracked,
+# and it must contain ONLY placeholders (e.g., `sk-ant-...your-key...`).
+.env
+.env.*
+!.env.example
+.env.local
+.env.development
+.env.development.local
+.env.test
+.env.test.local
+.env.production
+.env.production.local
+
+# Catch-all: anything that looks like a key file
+*.pem
+*.key
+*.cert
+*.crt
+secrets/
+secret.json
+credentials.json
+service-account*.json

@@ -1,0 +1,31 @@
+# Root-level secret guards. The Next.js app has its own .gitignore at app/
+# which is more granular. This file is the belt-and-suspenders layer for the
+# repo root.
+
+# Secrets — never commit
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.cert
+*.crt
+secrets/
+secret.json
+credentials.json
+service-account*.json
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
