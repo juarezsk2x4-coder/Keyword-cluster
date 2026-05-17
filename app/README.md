@@ -50,11 +50,11 @@ Veja [`DEPLOY.md`](../DEPLOY.md) na raiz do repo. Tudo via navegador, ~15 min.
 
 ## What's NOT in v1 (intentionally)
 
-- Reconciler (auto-adjusting future days based on deficits) — comes after a week of real logging.
-- Habit Analyst — needs ≥7 days of data first.
+- Reconciler (auto-adjusting future days based on deficits) — comes after 2 days of real logging.
+- Habit Analyst — needs ≥2 days of data first.
 - Price Scout (iFood/Forte/Imperatriz scraping) — manual pricing for now.
 - Multi-person (Persona B) — duplicates trivially once Person A is validated.
-- Recipe LLM generation — week 1 is hand-crafted; the Meal Plan Designer agent generates week 2+ once we plug it in.
+- Recipe LLM generation — week 1 is hand-crafted; the Meal Plan Designer agent generates day 2+ once we plug it in.
 - Authentication — local-network only, no need.
 
 ## File map
