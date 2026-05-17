@@ -1,6 +1,7 @@
 import "./globals.css";
 import type { Metadata, Viewport } from "next";
 import Link from "next/link";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { getLang } from "@/lib/lang";
 import { t } from "@/lib/i18n";
 import LangToggle from "@/components/LangToggle";
@@ -36,6 +37,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           </div>
         </nav>
         <main className="max-w-2xl mx-auto px-4 py-6 pb-24">{children}</main>
+        <SpeedInsights />
       </body>
     </html>
   );
