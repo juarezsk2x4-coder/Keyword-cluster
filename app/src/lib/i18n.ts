@@ -95,6 +95,26 @@ interface Dict {
   notifications_unsupported: string;
   notification_title: (slot: string) => string;
   notification_body: (label: string, time: string) => string;
+  predictions_title: string;
+  predictions_no_data: string;
+  predictions_avg_summary: (kcal: number, protein: number, days: number) => string;
+  predictions_adjustments_title: string;
+  predictions_protein_boost: (g: number) => string;
+  predictions_kcal_boost: (kcal: number) => string;
+  predictions_hydration_extra: (l: number) => string;
+  insight: {
+    protein_deficit: (pct: number, boost: number) => string;
+    kcal_deficit: (pct: number, boost: number) => string;
+    kcal_surplus: (pct: number) => string;
+    missed_meals: (count: number) => string;
+    easy_streak: (days: number) => string;
+    fatigue_streak: (days: number) => string;
+    post_substance: string;
+    post_alcohol: string;
+    sleep_short: (hours: number) => string;
+    sleep_long: (hours: number) => string;
+    on_track: string;
+  };
 }
 
 const pt: Dict = {
@@ -223,6 +243,26 @@ const pt: Dict = {
   notifications_unsupported: "Este navegador não suporta notificações.",
   notification_title: (slot) => `${slot} agora`,
   notification_body: (label, time) => `${time} · ${label}`,
+  predictions_title: "📊 Análise dos últimos 3 dias",
+  predictions_no_data: "Loga algumas refeições e o sistema começa a sugerir ajustes baseados no que você comeu.",
+  predictions_avg_summary: (kcal, protein, days) => `Média: ${kcal} kcal · ${protein}g proteína (${days} dia${days === 1 ? "" : "s"} com dados)`,
+  predictions_adjustments_title: "Ajustes recomendados hoje",
+  predictions_protein_boost: (g) => `+${g}g de proteína (compensar déficit recente)`,
+  predictions_kcal_boost: (kcal) => `+${kcal} kcal (compensar déficit recente)`,
+  predictions_hydration_extra: (l) => `+${l}L de hidratação extra hoje`,
+  insight: {
+    protein_deficit: (pct, boost) => `Proteína ${pct}% abaixo do alvo nos últimos dias. Hoje +${boost}g pra compensar.`,
+    kcal_deficit: (pct, boost) => `Kcal ${pct}% abaixo da meta. Hoje +${boost} kcal sugerido.`,
+    kcal_surplus: (pct) => `Kcal ${pct}% acima da meta nos últimos dias. Considera pegar mais leve hoje.`,
+    missed_meals: (count) => `Pulou ${count} refeição${count === 1 ? "" : "es"} ontem. Próximas refeições aumentadas.`,
+    easy_streak: (days) => `${days} dias seguidos no modo "fácil/líquido". Cansaço crônico ou trabalho pesado?`,
+    fatigue_streak: (days) => `${days} dias seguidos com cansaço de casa. Considera meal-prep no domingo.`,
+    post_substance: "Cocaína ontem: hidratação +1L, magnésio (cacau/castanhas/folhas), evita álcool, prioriza sono.",
+    post_alcohol: "Álcool ontem: hidratação extra + B-complex (ovo/folhas/lentilha).",
+    sleep_short: (hours) => `Só ${hours}h de sono. AM mais líquido + cafeína moderada, PM mais carbo.`,
+    sleep_long: (hours) => `${hours}h de sono — corpo ainda processando. AM gentil, sem forçar.`,
+    on_track: "Tudo nos eixos nos últimos dias. Mantém o ritmo.",
+  },
 };
 
 const en: Dict = {
@@ -351,6 +391,26 @@ const en: Dict = {
   notifications_unsupported: "Your browser doesn't support notifications.",
   notification_title: (slot) => `${slot} now`,
   notification_body: (label, time) => `${time} · ${label}`,
+  predictions_title: "📊 Last 3 days analysis",
+  predictions_no_data: "Log a few meals and the system will start suggesting adjustments based on what you actually ate.",
+  predictions_avg_summary: (kcal, protein, days) => `Average: ${kcal} kcal · ${protein}g protein (${days} day${days === 1 ? "" : "s"} with data)`,
+  predictions_adjustments_title: "Recommended adjustments today",
+  predictions_protein_boost: (g) => `+${g}g protein (compensate recent deficit)`,
+  predictions_kcal_boost: (kcal) => `+${kcal} kcal (compensate recent deficit)`,
+  predictions_hydration_extra: (l) => `+${l}L extra hydration today`,
+  insight: {
+    protein_deficit: (pct, boost) => `Protein ${pct}% below target in recent days. Today +${boost}g to compensate.`,
+    kcal_deficit: (pct, boost) => `Kcal ${pct}% below target. Today +${boost} kcal suggested.`,
+    kcal_surplus: (pct) => `Kcal ${pct}% above target recently. Consider going lighter today.`,
+    missed_meals: (count) => `Skipped ${count} meal${count === 1 ? "" : "s"} yesterday. Next meals boosted.`,
+    easy_streak: (days) => `${days} days in a row in "easy/liquid" mode. Chronic fatigue or heavy work?`,
+    fatigue_streak: (days) => `${days} days in a row with house fatigue. Consider Sunday batch-cooking.`,
+    post_substance: "Cocaine yesterday: hydration +1L, magnesium (cacao/nuts/greens), avoid alcohol, prioritize sleep.",
+    post_alcohol: "Alcohol yesterday: extra hydration + B-complex (egg/greens/lentil).",
+    sleep_short: (hours) => `Only ${hours}h sleep. AM more liquid + moderate caffeine, PM more carbs.`,
+    sleep_long: (hours) => `${hours}h sleep — body still processing. Gentle AM, no forcing.`,
+    on_track: "All on track over recent days. Keep the rhythm.",
+  },
 };
 
 const dicts: Record<Lang, Dict> = { pt, en };
