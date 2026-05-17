@@ -13,6 +13,8 @@ import MealCard from "@/components/MealCard";
 import DayHeader from "@/components/DayHeader";
 import DateNavigator from "@/components/DateNavigator";
 import MealNotifications from "@/components/MealNotifications";
+import PredictionBanner from "@/components/PredictionBanner";
+import { getPredictions } from "@/lib/predictions";
 import type { CardState } from "@/lib/types";
 import { getLang } from "@/lib/lang";
 
@@ -64,7 +66,7 @@ export default async function TodayPage({ searchParams }: PageProps) {
   const plan = buildWeeklyPlan(weekStart);
   const dayPlan = plan.find((d) => d.date === selectedDate) ?? plan[0];
 
-  const [logs, sleep, fatigued, prepMin, totals, daySubs, prevDaySubs, beverages] = await Promise.all([
+  const [logs, sleep, fatigued, prepMin, totals, daySubs, prevDaySubs, beverages, predictions] = await Promise.all([
     getDayMealLogs(selectedDate),
     getDaySleep(selectedDate),
     getDayFatigue(selectedDate),
@@ -73,6 +75,7 @@ export default async function TodayPage({ searchParams }: PageProps) {
     getDaySubstances(selectedDate),
     getPreviousDaySubstances(selectedDate),
     getDayBeverages(selectedDate),
+    getPredictions(selectedDate, dayPlan.is_skate_day),
   ]);
   const logsByslot = Object.fromEntries(logs.map((l) => [l.slot, l]));
   const hadCocaineYesterday = prevDaySubs.some((s) => s.substance === "cocaine");
@@ -82,6 +85,8 @@ export default async function TodayPage({ searchParams }: PageProps) {
       <DateNavigator current={selectedDate} lang={lang} />
 
       <MealNotifications meals={dayPlan.meals} lang={lang} date={selectedDate} />
+
+      <PredictionBanner prediction={predictions} lang={lang} />
 
       <DayHeader
         date={dayPlan.date}
