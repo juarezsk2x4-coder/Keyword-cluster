@@ -29,6 +29,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             <Link href="/" className="font-semibold tracking-tight">{tr.app_name}</Link>
             <div className="ml-auto flex items-center gap-3 text-sm text-muted">
               <Link href="/" className="hover:text-text">{tr.nav.today}</Link>
+              <Link href="/plan" className="hover:text-text">{tr.nav.plan}</Link>
+              <Link href="/analyst" className="hover:text-text">{tr.nav.analyst}</Link>
               <Link href="/shopping" className="hover:text-text">{tr.nav.shopping}</Link>
               <Link href="/profile" className="hover:text-text">{tr.nav.profile}</Link>
               <Link href="/history" className="hover:text-text">{tr.nav.history}</Link>

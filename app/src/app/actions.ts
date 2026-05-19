@@ -4,6 +4,10 @@ import { revalidatePath } from "next/cache";
 import { getDb, ensureMigrated } from "@/lib/db";
 import type { CardState, MealSlot } from "@/lib/types";
 import { estimateNutrition, isAiEnabled, type NutritionEstimate } from "@/lib/nutrition-ai";
+import { generateWeeklyPlan, summarizeMealLogs } from "@/lib/meal-plan-ai";
+import { getMealLogsForPast, saveWeeklyPlan } from "@/lib/query";
+import { loadPersonA } from "@/lib/profile";
+import { getLang } from "@/lib/lang";
 
 function todayIso() {
   return new Date().toISOString().slice(0, 10);
@@ -147,4 +151,49 @@ export async function estimateNutritionAction(
 
 export async function isAiEnabledAction(): Promise<boolean> {
   return isAiEnabled();
+}
+
+export async function generateWeekPlanAction(
+  weekStart: string
+): Promise<{ ok: true; source: "ai"; days: number } | { ok: false; error: string }> {
+  if (!isAiEnabled()) {
+    return { ok: false, error: "ai_disabled" };
+  }
+  try {
+    const lang = await getLang();
+    const profile = loadPersonA();
+    const dayBeforeWeekStart = new Date(weekStart + "T00:00:00");
+    dayBeforeWeekStart.setDate(dayBeforeWeekStart.getDate() - 1);
+    const priorLogs = await getMealLogsForPast(
+      dayBeforeWeekStart.toISOString().slice(0, 10),
+      7
+    );
+    const summary = summarizeMealLogs(priorLogs);
+    const days = await generateWeeklyPlan(profile, summary, weekStart, lang);
+    await saveWeeklyPlan(weekStart, JSON.stringify(days), "ai");
+    revalidatePath("/");
+    revalidatePath("/plan");
+    return { ok: true, source: "ai", days: days.length };
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "unknown_error";
+    return { ok: false, error: message };
+  }
+}
+
+export async function deleteWeekPlanAction(
+  weekStart: string
+): Promise<{ ok: true } | { ok: false; error: string }> {
+  try {
+    await ensureMigrated();
+    await getDb().execute({
+      sql: `DELETE FROM weekly_plans WHERE week_start = ?`,
+      args: [weekStart],
+    });
+    revalidatePath("/");
+    revalidatePath("/plan");
+    return { ok: true };
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "unknown_error";
+    return { ok: false, error: message };
+  }
 }

@@ -1,4 +1,5 @@
 import type { DailyPlan, MealCard, MealVersion, MealSlot } from "./types";
+import { getStoredWeeklyPlan } from "./query";
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
@@ -577,6 +578,29 @@ export function buildWeeklyPlan(weekStartIso: string): DailyPlan[] {
       ],
     },
   ];
+}
+
+// ─── Plan resolution (DB-backed > hand-crafted seed) ──────────────────────────
+
+export interface ResolvedWeeklyPlan {
+  days: DailyPlan[];
+  source: "seed" | "ai";
+  generated_at?: string;
+}
+
+export async function resolveWeeklyPlan(weekStartIso: string): Promise<ResolvedWeeklyPlan> {
+  const stored = await getStoredWeeklyPlan(weekStartIso);
+  if (stored) {
+    try {
+      const days = JSON.parse(stored.plan_json) as DailyPlan[];
+      if (Array.isArray(days) && days.length === 7) {
+        return { days, source: stored.source, generated_at: stored.generated_at };
+      }
+    } catch {
+      // Fall through to seed
+    }
+  }
+  return { days: buildWeeklyPlan(weekStartIso), source: "seed" };
 }
 
 // ─── Shopping list (derived from week plan) ───────────────────────────────────

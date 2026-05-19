@@ -4,7 +4,7 @@ export type Lang = "pt" | "en";
 
 interface Dict {
   app_name: string;
-  nav: { today: string; shopping: string; profile: string; history: string };
+  nav: { today: string; shopping: string; profile: string; history: string; plan: string; analyst: string };
   today: string;
   yesterday: string;
   tomorrow: string;
@@ -115,11 +115,54 @@ interface Dict {
     sleep_long: (hours: number) => string;
     on_track: string;
   };
+  plan_title: string;
+  plan_week_label: string;
+  plan_this_week: string;
+  plan_next_week: string;
+  plan_source_label: string;
+  plan_source_seed: string;
+  plan_source_ai: string;
+  plan_generate_button: string;
+  plan_generating: string;
+  plan_generate_hint: string;
+  plan_generate_success: (n: number) => string;
+  plan_generate_failed: string;
+  plan_revert_to_seed: string;
+  plan_revert_success: string;
+  plan_revert_failed: string;
+  plan_show_alternatives: string;
+  analyst_title: string;
+  analyst_window_7: string;
+  analyst_window_14: string;
+  analyst_window_30: string;
+  analyst_empty: string;
+  analyst_days_with_data: (n: number) => string;
+  analyst_avg_kcal: (kcal: number) => string;
+  analyst_avg_protein: (g: number) => string;
+  analyst_by_dow_title: string;
+  analyst_dow_names: string[];
+  analyst_most_missed_title: string;
+  analyst_state_distribution_title: string;
+  analyst_easy_streak_max: (days: number) => string;
+  analyst_fatigue_days: (n: number) => string;
+  analyst_substance_days: (n: number) => string;
+  analyst_patterns_title: string;
+  habit_insight: {
+    chronic_under_kcal: (pct: number) => string;
+    chronic_under_protein: (pct: number) => string;
+    weekday_dip: (dow: string) => string;
+    slot_chronically_missed: (slot: string, pct: number) => string;
+    easy_dominance: (pct: number) => string;
+    substance_correlation: string;
+    fatigue_frequent: (days: number) => string;
+    sleep_kcal_link: string;
+    on_track: string;
+  };
 }
 
 const pt: Dict = {
   app_name: "Plano A",
-  nav: { today: "Hoje", shopping: "Compras", profile: "Perfil", history: "Histórico" },
+  nav: { today: "Hoje", shopping: "Compras", profile: "Perfil", history: "Histórico", plan: "Plano", analyst: "Analista" },
   today: "Hoje",
   yesterday: "Ontem",
   tomorrow: "Amanhã",
@@ -263,11 +306,54 @@ const pt: Dict = {
     sleep_long: (hours) => `${hours}h de sono — corpo ainda processando. AM gentil, sem forçar.`,
     on_track: "Tudo nos eixos nos últimos dias. Mantém o ritmo.",
   },
+  plan_title: "🗓 Plano semanal",
+  plan_week_label: "Semana começando em",
+  plan_this_week: "Esta semana",
+  plan_next_week: "Próxima semana",
+  plan_source_label: "Origem do plano:",
+  plan_source_seed: "Hand-crafted (semente)",
+  plan_source_ai: "Gerado por IA",
+  plan_generate_button: "Gerar com IA baseado na semana passada",
+  plan_generating: "Gerando plano... (até 30s)",
+  plan_generate_hint: "A IA usa o seu perfil + últimos 7 dias logados pra adaptar o plano.",
+  plan_generate_success: (n) => `Plano gerado com sucesso (${n} dias). Veja abaixo.`,
+  plan_generate_failed: "Erro ao gerar. Tente novamente ou veja os logs.",
+  plan_revert_to_seed: "Voltar pro plano hand-crafted",
+  plan_revert_success: "Plano IA removido. Voltou pra semente.",
+  plan_revert_failed: "Erro ao reverter.",
+  plan_show_alternatives: "Ver alternativas (easy / liquid / sem fome)",
+  analyst_title: "📈 Analista de hábitos",
+  analyst_window_7: "7 dias",
+  analyst_window_14: "14 dias",
+  analyst_window_30: "30 dias",
+  analyst_empty: "Sem dados suficientes ainda. Loga refeições por alguns dias e o analista começa a mostrar padrões.",
+  analyst_days_with_data: (n) => `${n} dias com dados`,
+  analyst_avg_kcal: (kcal) => `Média kcal/dia: ${kcal}`,
+  analyst_avg_protein: (g) => `Média proteína/dia: ${g}g`,
+  analyst_by_dow_title: "Por dia da semana",
+  analyst_dow_names: ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"],
+  analyst_most_missed_title: "Slots mais pulados",
+  analyst_state_distribution_title: "Distribuição de estados",
+  analyst_easy_streak_max: (days) => `Maior sequência easy/líquido: ${days} dias`,
+  analyst_fatigue_days: (n) => `Dias com cansaço de casa: ${n}`,
+  analyst_substance_days: (n) => `Dias com substâncias: ${n}`,
+  analyst_patterns_title: "Padrões detectados",
+  habit_insight: {
+    chronic_under_kcal: (pct) => `Você está ${pct}% abaixo da meta de kcal de forma recorrente. Pode estar perdendo massa magra.`,
+    chronic_under_protein: (pct) => `Proteína ${pct}% abaixo da meta de forma recorrente. Anabolismo comprometido.`,
+    weekday_dip: (dow) => `${dow} é seu dia mais fraco em kcal. Considera meal-prep ou comida pronta.`,
+    slot_chronically_missed: (slot, pct) => `${slot} foi pulado em ${pct}% dos dias. Slot não-funcional — revise o horário ou o tipo.`,
+    easy_dominance: (pct) => `${pct}% das refeições foram "easy" ou "liquid". Indica cansaço persistente ou rotina sobrecarregada.`,
+    substance_correlation: "Dias com substâncias coincidem com baixa ingestão. Recovery food no dia seguinte ajuda.",
+    fatigue_frequent: (days) => `${days} dias com cansaço de casa registrado. Considera fixar batch-cook no domingo.`,
+    sleep_kcal_link: "Sono curto (<6h) coincide com kcal mais alto (compensação). Prioriza sono.",
+    on_track: "Padrões estáveis dentro das metas. Boa cadência.",
+  },
 };
 
 const en: Dict = {
   app_name: "Plan A",
-  nav: { today: "Today", shopping: "Shopping", profile: "Profile", history: "History" },
+  nav: { today: "Today", shopping: "Shopping", profile: "Profile", history: "History", plan: "Plan", analyst: "Analyst" },
   today: "Today",
   yesterday: "Yesterday",
   tomorrow: "Tomorrow",
@@ -410,6 +496,49 @@ const en: Dict = {
     sleep_short: (hours) => `Only ${hours}h sleep. AM more liquid + moderate caffeine, PM more carbs.`,
     sleep_long: (hours) => `${hours}h sleep — body still processing. Gentle AM, no forcing.`,
     on_track: "All on track over recent days. Keep the rhythm.",
+  },
+  plan_title: "🗓 Weekly plan",
+  plan_week_label: "Week starting",
+  plan_this_week: "This week",
+  plan_next_week: "Next week",
+  plan_source_label: "Plan source:",
+  plan_source_seed: "Hand-crafted (seed)",
+  plan_source_ai: "AI-generated",
+  plan_generate_button: "Generate with AI based on last week",
+  plan_generating: "Generating... (up to 30s)",
+  plan_generate_hint: "The AI uses your profile + last 7 days of logs to adapt the plan.",
+  plan_generate_success: (n) => `Plan generated (${n} days). See below.`,
+  plan_generate_failed: "Failed to generate. Try again or check logs.",
+  plan_revert_to_seed: "Revert to hand-crafted plan",
+  plan_revert_success: "AI plan removed. Reverted to seed.",
+  plan_revert_failed: "Failed to revert.",
+  plan_show_alternatives: "Show alternatives (easy / liquid / not hungry)",
+  analyst_title: "📈 Habit analyst",
+  analyst_window_7: "7 days",
+  analyst_window_14: "14 days",
+  analyst_window_30: "30 days",
+  analyst_empty: "Not enough data yet. Log meals for a few days and the analyst will start surfacing patterns.",
+  analyst_days_with_data: (n) => `${n} days with data`,
+  analyst_avg_kcal: (kcal) => `Avg kcal/day: ${kcal}`,
+  analyst_avg_protein: (g) => `Avg protein/day: ${g}g`,
+  analyst_by_dow_title: "By day of week",
+  analyst_dow_names: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+  analyst_most_missed_title: "Most-missed slots",
+  analyst_state_distribution_title: "State distribution",
+  analyst_easy_streak_max: (days) => `Longest easy/liquid streak: ${days} days`,
+  analyst_fatigue_days: (n) => `House-fatigue days: ${n}`,
+  analyst_substance_days: (n) => `Days with substances: ${n}`,
+  analyst_patterns_title: "Detected patterns",
+  habit_insight: {
+    chronic_under_kcal: (pct) => `You're chronically ${pct}% under kcal target. May be losing lean mass.`,
+    chronic_under_protein: (pct) => `Protein chronically ${pct}% under target. Anabolism compromised.`,
+    weekday_dip: (dow) => `${dow} is your lowest-kcal day. Consider meal-prep or pre-cooked food.`,
+    slot_chronically_missed: (slot, pct) => `${slot} skipped on ${pct}% of days. Non-functional slot — revisit time or type.`,
+    easy_dominance: (pct) => `${pct}% of meals were "easy" or "liquid". Indicates persistent fatigue or overloaded routine.`,
+    substance_correlation: "Substance-use days coincide with low intake. Recovery food the next day helps.",
+    fatigue_frequent: (days) => `${days} house-fatigue days logged. Consider fixing Sunday batch-cook.`,
+    sleep_kcal_link: "Short sleep (<6h) correlates with higher kcal (compensation). Prioritize sleep.",
+    on_track: "Patterns stable within targets. Good cadence.",
   },
 };
 
