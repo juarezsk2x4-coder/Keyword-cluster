@@ -1,4 +1,4 @@
-import { buildWeeklyPlan } from "@/lib/seed-plan";
+import { resolveWeeklyPlan } from "@/lib/seed-plan";
 import {
   getDayMealLogs,
   getDaySleep,
@@ -63,8 +63,8 @@ export default async function TodayPage({ searchParams }: PageProps) {
   const lang = await getLang();
   const selectedDate = sp.date ?? todayIso();
   const weekStart = getSundayOfWeek(selectedDate);
-  const plan = buildWeeklyPlan(weekStart);
-  const dayPlan = plan.find((d) => d.date === selectedDate) ?? plan[0];
+  const resolved = await resolveWeeklyPlan(weekStart);
+  const dayPlan = resolved.days.find((d) => d.date === selectedDate) ?? resolved.days[0];
 
   const [logs, sleep, fatigued, prepMin, totals, daySubs, prevDaySubs, beverages, predictions] = await Promise.all([
     getDayMealLogs(selectedDate),

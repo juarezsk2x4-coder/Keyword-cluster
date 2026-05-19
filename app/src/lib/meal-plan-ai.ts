@@ -1,0 +1,256 @@
+import Anthropic from "@anthropic-ai/sdk";
+import type { DailyPlan, MealLog, PersonProfile } from "./types";
+
+let clientInstance: Anthropic | null = null;
+
+function getClient(): Anthropic {
+  if (clientInstance) return clientInstance;
+  if (!process.env.ANTHROPIC_API_KEY) {
+    throw new Error("ANTHROPIC_API_KEY not configured");
+  }
+  clientInstance = new Anthropic();
+  return clientInstance;
+}
+
+export interface RecentLogSummary {
+  date: string;
+  total_kcal: number;
+  total_protein_g: number;
+  meals_logged: number;
+  missed_slots: string[];
+  states_picked: string[];
+}
+
+const MEAL_VERSION_SCHEMA = {
+  type: "object",
+  properties: {
+    label: { type: "string" },
+    ingredients: { type: "array", items: { type: "string" } },
+    prep_minutes: { type: "integer" },
+    kcal: { type: "integer" },
+    protein_g: { type: "number" },
+    carbs_g: { type: "number" },
+    fat_g: { type: "number" },
+    prep_steps: { type: "array", items: { type: "string" } },
+    notes: { type: "string" },
+  },
+  required: ["label", "ingredients", "prep_minutes", "kcal", "protein_g", "carbs_g", "fat_g"],
+  additionalProperties: false,
+} as const;
+
+const MEAL_CARD_SCHEMA = {
+  type: "object",
+  properties: {
+    slot: {
+      type: "string",
+      enum: ["cafe_da_manha", "lanche_manha", "almoco", "lanche_tarde", "jantar", "snack_noturno"],
+    },
+    scheduled_time: { type: "string", description: "HH:MM 24-hour" },
+    alternatives: {
+      type: "object",
+      properties: {
+        original: MEAL_VERSION_SCHEMA,
+        easy: MEAL_VERSION_SCHEMA,
+        liquid: MEAL_VERSION_SCHEMA,
+        no_hunger: MEAL_VERSION_SCHEMA,
+      },
+      required: ["original", "easy", "liquid", "no_hunger"],
+      additionalProperties: false,
+    },
+  },
+  required: ["slot", "scheduled_time", "alternatives"],
+  additionalProperties: false,
+} as const;
+
+const DAILY_PLAN_SCHEMA = {
+  type: "object",
+  properties: {
+    date: { type: "string", description: "ISO YYYY-MM-DD" },
+    day_of_week: { type: "string" },
+    is_skate_day: { type: "boolean" },
+    is_work_day: { type: "boolean" },
+    kcal_target: { type: "integer" },
+    protein_g_target: { type: "integer" },
+    carb_g_target: { type: "integer" },
+    fat_g_target: { type: "integer" },
+    meals: { type: "array", items: MEAL_CARD_SCHEMA, minItems: 6, maxItems: 6 },
+  },
+  required: [
+    "date",
+    "day_of_week",
+    "is_skate_day",
+    "is_work_day",
+    "kcal_target",
+    "protein_g_target",
+    "carb_g_target",
+    "fat_g_target",
+    "meals",
+  ],
+  additionalProperties: false,
+} as const;
+
+const WEEKLY_PLAN_SCHEMA = {
+  type: "object",
+  properties: {
+    days: { type: "array", items: DAILY_PLAN_SCHEMA, minItems: 7, maxItems: 7 },
+  },
+  required: ["days"],
+  additionalProperties: false,
+} as const;
+
+function buildSystemPrompt(profile: PersonProfile, lang: "pt" | "en"): string {
+  const hardNo = profile.food_preferences.hard_no.join(", ");
+  const textures = profile.food_preferences.texture_aversions.join(", ");
+  const dislikes = profile.food_preferences.soft_dislikes.join(", ");
+  const flags = profile.medical_flags.join(", ");
+
+  if (lang === "en") {
+    return `You design 7-day meal plans for Person A. Output a JSON object {"days": DailyPlan[]} matching the schema.
+
+Person A snapshot:
+- Age ${profile.age_years}, ${profile.height_cm}cm, ${profile.weight_kg}kg, ~${profile.body_fat_pct}% BF, BMR ~${profile.estimated_bmr_kcal} kcal.
+- Goal: ${profile.goals.primary}. Performance: ${profile.goals.performance_focus.join(", ")}.
+- Clinical flags: ${flags}.
+- HARD NO (absolute block, never include in any form including sauces or hidden): ${hardNo}.
+- Texture aversions: ${textures}.
+- Soft dislikes: ${dislikes}.
+
+Day-type rules (Sunday-anchored):
+- Sun + Mon = skate days (kcal_target ${profile.nutrition_targets.total_kcal_target_skate_day}, ~390g carbs). Pre-skate fuel breakfast (cuscuz/banana/mel/peanut butter type), electrolytes mid-morning, post-skate recovery lunch (fast carbs + whey).
+- Tue–Sat = work days (kcal_target ${profile.nutrition_targets.total_kcal_target_off_day}, protein ${profile.nutrition_targets.protein_g_per_day}g, ~225g carbs).
+- Thu + Sat AM defaults to "liquid" recovery shake (post-stim recovery).
+- Friday dinner slot is reserved for delivery — acceptable list: poke, sushi, Peruvian, Japanese, never burgers/fast-food junk.
+- 6 slots every day: cafe_da_manha (07:30), lanche_manha (10:30), almoco (12:30 weekdays / 13:00 skate), lanche_tarde (16:00), jantar (20:00), snack_noturno (22:30).
+
+For every slot, provide 4 alternatives:
+- original = the planned full version
+- easy = <8min prep, grab-and-eat, anti-burger marmita default
+- liquid = smoothie, shake, or soup
+- no_hunger = minimum viable (kombucha + banana style)
+
+Brazilian / southern (sulista) cuisine references:
+- Lean cuts (patinho, peito frango sem pele, filé mignon, lombo suíno) ~150-200 kcal/100g cooked.
+- Fattier cuts (entrecot, costela, picanha) ~250-350 kcal/100g cooked.
+- White rice ~130 kcal/100g, beans ~75 kcal/100g, cassava/sweet potato ~120 kcal/100g.
+- Standard protein portion: 120-150g cooked. Standard carb portion: 100-150g cooked.
+
+Each ingredient string must include quantity (e.g., "patinho moído 150g", "arroz integral 1 xícara"). Prep_minutes integer. Macros realistic. Notes optional but if present <120 chars.
+
+Respond ONLY with the JSON object {"days": [...]}.`;
+  }
+
+  return `Você projeta planos alimentares de 7 dias para a Pessoa A. Retorne objeto JSON {"days": DailyPlan[]} seguindo o schema.
+
+Pessoa A:
+- ${profile.age_years} anos, ${profile.height_cm}cm, ${profile.weight_kg}kg, ~${profile.body_fat_pct}% BF, BMR ~${profile.estimated_bmr_kcal} kcal.
+- Objetivo: ${profile.goals.primary}. Performance: ${profile.goals.performance_focus.join(", ")}.
+- Flags clínicas: ${flags}.
+- BLOQUEIO ABSOLUTO (nunca incluir nem em molhos / forma escondida): ${hardNo}.
+- Aversões de textura: ${textures}.
+- Não curte: ${dislikes}.
+
+Regras por dia (semana ancorada em domingo):
+- Dom + Seg = skate days (kcal_target ${profile.nutrition_targets.total_kcal_target_skate_day}, ~390g carbo). Café da manhã pré-skate (cuscuz/banana/mel/pasta de amendoim), eletrólito mid-manhã, almoço pós-skate recovery (carbo rápido + whey).
+- Ter–Sáb = dias de trabalho (kcal_target ${profile.nutrition_targets.total_kcal_target_off_day}, proteína ${profile.nutrition_targets.protein_g_per_day}g, ~225g carbo).
+- Qui + Sáb manhã: default "liquid" recovery (pós-estimulante).
+- Sexta jantar: slot reservado pra delivery — lista aceitável: poke, sushi, peruano, japonês, NUNCA burger/fast-food.
+- 6 slots/dia: cafe_da_manha (07:30), lanche_manha (10:30), almoco (12:30 dia útil / 13:00 skate), lanche_tarde (16:00), jantar (20:00), snack_noturno (22:30).
+
+Pra cada slot, 4 alternativas:
+- original = versão planejada completa
+- easy = <8min prep, pegar e comer, marmita anti-burger
+- liquid = smoothie, shake ou sopa
+- no_hunger = mínimo viável (kombucha + banana)
+
+Referência sulista/brasileira:
+- Cortes magros (patinho, peito de frango sem pele, filé mignon, lombo suíno) ~150-200 kcal/100g cozido.
+- Cortes mais gordos (entrecot, costela, picanha) ~250-350 kcal/100g cozido.
+- Arroz branco ~130 kcal/100g, feijão ~75 kcal/100g, aipim/batata-doce ~120 kcal/100g.
+- Porção padrão proteína: 120-150g cozido. Porção padrão carbo: 100-150g cozido.
+
+Cada ingrediente inclui quantidade (ex: "patinho moído 150g", "arroz integral 1 xícara"). Prep_minutes inteiro. Macros realistas. Notes opcional, se houver <120 chars.
+
+Responda APENAS com o objeto JSON {"days": [...]}.`;
+}
+
+function buildUserMessage(
+  weekStartIso: string,
+  recentLogs: RecentLogSummary[],
+  lang: "pt" | "en"
+): string {
+  const lines = recentLogs.map(
+    (r) =>
+      `${r.date}: ${r.total_kcal} kcal, ${r.total_protein_g}g protein, ${r.meals_logged}/6 slots, states=[${r.states_picked.join("|")}], missed=[${r.missed_slots.join("|")}]`
+  );
+
+  if (lang === "en") {
+    return `Generate the meal plan for the week starting Sunday ${weekStartIso}.
+
+Last 7 days of logs (most recent first):
+${lines.length ? lines.join("\n") : "(no prior logs — first week)"}
+
+Adapt based on patterns: if recent kcal is low, prefer denser meals; if protein is low, push protein-forward versions; if many "easy/liquid" states were picked, lean into easy defaults; if certain slots were repeatedly missed, simplify those slots.`;
+  }
+
+  return `Gere o plano da semana começando domingo ${weekStartIso}.
+
+Últimos 7 dias de logs (mais recente primeiro):
+${lines.length ? lines.join("\n") : "(sem logs anteriores — primeira semana)"}
+
+Adapte aos padrões: se kcal recente baixo, priorize refeições mais densas; se proteína baixa, versões protein-forward; se muitos estados "easy/liquid" foram escolhidos, ajuste easy defaults; se slots foram repetidamente pulados, simplifique-os.`;
+}
+
+export async function generateWeeklyPlan(
+  profile: PersonProfile,
+  recentLogs: RecentLogSummary[],
+  weekStartIso: string,
+  lang: "pt" | "en"
+): Promise<DailyPlan[]> {
+  const client = getClient();
+  const response = await client.messages.create({
+    model: "claude-opus-4-7",
+    max_tokens: 16000,
+    output_config: {
+      format: {
+        type: "json_schema",
+        schema: WEEKLY_PLAN_SCHEMA,
+      },
+      effort: "medium",
+    },
+    system: buildSystemPrompt(profile, lang),
+    messages: [{ role: "user", content: buildUserMessage(weekStartIso, recentLogs, lang) }],
+  });
+
+  const textBlock = response.content.find((b) => b.type === "text");
+  if (!textBlock || textBlock.type !== "text") {
+    throw new Error("No text in response");
+  }
+
+  const parsed = JSON.parse(textBlock.text) as { days: DailyPlan[] };
+  if (!Array.isArray(parsed.days) || parsed.days.length !== 7) {
+    throw new Error("Invalid plan: expected 7 days");
+  }
+  return parsed.days;
+}
+
+export function summarizeMealLogs(logs: MealLog[]): RecentLogSummary[] {
+  const ALL_SLOTS = ["cafe_da_manha", "lanche_manha", "almoco", "lanche_tarde", "jantar", "snack_noturno"];
+  const byDate = new Map<string, MealLog[]>();
+  for (const log of logs) {
+    const arr = byDate.get(log.date) ?? [];
+    arr.push(log);
+    byDate.set(log.date, arr);
+  }
+  const out: RecentLogSummary[] = [];
+  for (const [date, dayLogs] of byDate) {
+    out.push({
+      date,
+      total_kcal: dayLogs.reduce((acc, m) => acc + (m.kcal ?? 0), 0),
+      total_protein_g: dayLogs.reduce((acc, m) => acc + (m.protein_g ?? 0), 0),
+      meals_logged: dayLogs.length,
+      missed_slots: ALL_SLOTS.filter((s) => !dayLogs.find((m) => m.slot === s)),
+      states_picked: dayLogs.map((m) => m.selected_state),
+    });
+  }
+  return out.sort((a, b) => (a.date < b.date ? 1 : -1));
+}

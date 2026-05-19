@@ -62,3 +62,89 @@ export async function getDayTotals(date: string): Promise<{ kcal: number; protei
   const row = r.rows[0] as unknown as { kcal: number; protein_g: number };
   return { kcal: Number(row.kcal ?? 0), protein_g: Number(row.protein_g ?? 0) };
 }
+
+export async function getMealLogsBetween(startIso: string, endIso: string): Promise<MealLog[]> {
+  await ensureMigrated();
+  const r = await getDb().execute({
+    sql: `SELECT * FROM meal_logs WHERE date >= ? AND date <= ? ORDER BY date DESC, slot ASC`,
+    args: [startIso, endIso],
+  });
+  return r.rows as unknown as MealLog[];
+}
+
+export async function getMealLogsForPast(endIso: string, days: number): Promise<MealLog[]> {
+  await ensureMigrated();
+  const end = new Date(endIso + "T00:00:00");
+  const start = new Date(end);
+  start.setDate(end.getDate() - (days - 1));
+  return getMealLogsBetween(start.toISOString().slice(0, 10), endIso);
+}
+
+export interface StoredWeeklyPlan {
+  week_start: string;
+  plan_json: string;
+  source: "seed" | "ai";
+  generated_at: string;
+}
+
+export async function getStoredWeeklyPlan(weekStart: string): Promise<StoredWeeklyPlan | null> {
+  await ensureMigrated();
+  const r = await getDb().execute({
+    sql: `SELECT * FROM weekly_plans WHERE week_start = ?`,
+    args: [weekStart],
+  });
+  return (r.rows[0] as unknown as StoredWeeklyPlan | undefined) ?? null;
+}
+
+export async function saveWeeklyPlan(
+  weekStart: string,
+  planJson: string,
+  source: "seed" | "ai"
+): Promise<void> {
+  await ensureMigrated();
+  await getDb().execute({
+    sql: `INSERT INTO weekly_plans (week_start, plan_json, source, generated_at)
+          VALUES (?, ?, ?, datetime('now'))
+          ON CONFLICT(week_start) DO UPDATE SET
+            plan_json = excluded.plan_json,
+            source = excluded.source,
+            generated_at = datetime('now')`,
+    args: [weekStart, planJson, source],
+  });
+}
+
+export async function getSleepLogsForPast(endIso: string, days: number): Promise<SleepLog[]> {
+  await ensureMigrated();
+  const end = new Date(endIso + "T00:00:00");
+  const start = new Date(end);
+  start.setDate(end.getDate() - (days - 1));
+  const r = await getDb().execute({
+    sql: `SELECT * FROM sleep_logs WHERE date >= ? AND date <= ? ORDER BY date DESC`,
+    args: [start.toISOString().slice(0, 10), endIso],
+  });
+  return r.rows as unknown as SleepLog[];
+}
+
+export async function getSubstanceLogsForPast(endIso: string, days: number): Promise<SubstanceLog[]> {
+  await ensureMigrated();
+  const end = new Date(endIso + "T00:00:00");
+  const start = new Date(end);
+  start.setDate(end.getDate() - (days - 1));
+  const r = await getDb().execute({
+    sql: `SELECT * FROM substance_logs WHERE date >= ? AND date <= ? ORDER BY date DESC, logged_at DESC`,
+    args: [start.toISOString().slice(0, 10), endIso],
+  });
+  return r.rows as unknown as SubstanceLog[];
+}
+
+export async function getFatigueDatesForPast(endIso: string, days: number): Promise<string[]> {
+  await ensureMigrated();
+  const end = new Date(endIso + "T00:00:00");
+  const start = new Date(end);
+  start.setDate(end.getDate() - (days - 1));
+  const r = await getDb().execute({
+    sql: `SELECT date FROM fatigue_logs WHERE date >= ? AND date <= ?`,
+    args: [start.toISOString().slice(0, 10), endIso],
+  });
+  return (r.rows as unknown as { date: string }[]).map((row) => row.date);
+}
