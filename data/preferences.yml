@@ -1,5 +1,5 @@
-# Shared food preferences for the household.
-# Hard rules apply to BOTH people. Personal lists are split per person.
+# Food preferences for Person A.
+# Single-person mode — Persona B was removed; keys are scalar (no per-person split).
 
 # ── Hard restrictions (NEVER include) ────────────────────────────────────────
 # Allergies and absolute blocks. The Meal Plan Designer will reject any recipe
@@ -12,9 +12,7 @@ hard_no:
   # add more if needed (ex: amendoim, frutos_do_mar, lactose_estrita, gluten_estrito)
 
 # ── Soft dislikes (avoid but not banned) ─────────────────────────────────────
-soft_dislikes:
-  person_a: []          # ex: ["beterraba", "fígado", "quiabo"]
-  person_b: []
+soft_dislikes: []       # ex: ["beterraba", "fígado", "quiabo"]
 
 # ── Loved cuisines (anchor the rotation around these) ────────────────────────
 loved_cuisines:         # ex: comida_caseira_brasileira, italiana_sem_tomate, japonesa,
@@ -46,13 +44,7 @@ eating_out:
 
 # ── Beverages ────────────────────────────────────────────────────────────────
 beverages:
-  coffee_cups_per_day:
-    person_a: FILL_IN
-    person_b: FILL_IN
-  chimarrao:
-    person_a: false
-    person_b: false
-  water_target_l_per_day:
-    person_a:           # leave blank = auto-calculate from weight + activity
-    person_b:
-  other_regular: []     # ex: ["cha_verde", "kombucha", "agua_de_coco"]
+  coffee_cups_per_day: FILL_IN
+  chimarrao: false
+  water_target_l_per_day:  # leave blank = auto-calculate from weight + activity
+  other_regular: []        # ex: ["cha_verde", "kombucha", "agua_de_coco"]

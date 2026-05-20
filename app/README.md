@@ -50,11 +50,7 @@ Veja [`DEPLOY.md`](../DEPLOY.md) na raiz do repo. Tudo via navegador, ~15 min.
 
 ## What's NOT in v1 (intentionally)
 
-- Reconciler (auto-adjusting future days based on deficits) — comes after 2 days of real logging.
-- Habit Analyst — needs ≥2 days of data first.
 - Price Scout (iFood/Forte/Imperatriz scraping) — manual pricing for now.
-- Multi-person (Persona B) — duplicates trivially once Person A is validated.
-- Recipe LLM generation — week 1 is hand-crafted; the Meal Plan Designer agent generates day 2+ once we plug it in.
 - Authentication — local-network only, no need.
 
 ## File map
@@ -98,9 +94,8 @@ The dev server binds to `0.0.0.0` by default (see `package.json` `dev` script), 
 ## Iteration plan
 
 1. **Week 1** (this app): use it daily, log meals, see what works and what doesn't.
-2. **Week 2**: based on what you actually consumed and how you toggled, I'll calibrate week 2 with the lessons learned.
-3. **Week 3+**: add the Reconciler (deficit/surplus carry-forward), then the Habit Analyst (pattern reports).
-4. **Week 4+**: spin up Persona B with her own profile + cross-meal optimization for the couple.
+2. **Week 2+**: the AI Meal Plan Designer generates the plan from the previous week's logs and your profile.
+3. **Ongoing**: Reconciler (predictions banner) adjusts each day; Habit Analyst surfaces 7/14/30-day patterns.
 
 ## Troubleshooting
 
