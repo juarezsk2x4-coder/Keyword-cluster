@@ -1,5 +1,13 @@
 import { getDb, ensureMigrated } from "./db";
-import type { MealLog, SleepLog, SubstanceLog, BeverageLog } from "./types";
+import type {
+  MealLog,
+  SleepLog,
+  SubstanceLog,
+  BeverageLog,
+  StoredWeeklyPlan,
+  DailyPlan,
+  WeeklyPlanSource,
+} from "./types";
 
 export async function getDayBeverages(date: string): Promise<BeverageLog[]> {
   await ensureMigrated();
@@ -51,6 +59,64 @@ export async function getRecentMealLogs(limit = 30): Promise<MealLog[]> {
   await ensureMigrated();
   const r = await getDb().execute({ sql: `SELECT * FROM meal_logs ORDER BY date DESC, slot ASC LIMIT ?`, args: [limit] });
   return r.rows as unknown as MealLog[];
+}
+
+export async function getStoredWeeklyPlan(weekStartIso: string): Promise<StoredWeeklyPlan | null> {
+  await ensureMigrated();
+  const r = await getDb().execute({
+    sql: `SELECT week_start, plan_json, source, generated_at FROM weekly_plans WHERE week_start = ?`,
+    args: [weekStartIso],
+  });
+  const row = r.rows[0] as unknown as
+    | { week_start: string; plan_json: string; source: WeeklyPlanSource; generated_at: string }
+    | undefined;
+  if (!row) return null;
+  try {
+    return {
+      week_start: row.week_start,
+      plan: JSON.parse(row.plan_json) as DailyPlan[],
+      source: row.source,
+      generated_at: row.generated_at,
+    };
+  } catch {
+    return null;
+  }
+}
+
+export async function getMealLogsInRange(startIso: string, endIso: string): Promise<MealLog[]> {
+  await ensureMigrated();
+  const r = await getDb().execute({
+    sql: `SELECT * FROM meal_logs WHERE date >= ? AND date <= ? ORDER BY date ASC, slot ASC`,
+    args: [startIso, endIso],
+  });
+  return r.rows as unknown as MealLog[];
+}
+
+export async function getSleepLogsInRange(startIso: string, endIso: string): Promise<SleepLog[]> {
+  await ensureMigrated();
+  const r = await getDb().execute({
+    sql: `SELECT * FROM sleep_logs WHERE date >= ? AND date <= ? ORDER BY date ASC`,
+    args: [startIso, endIso],
+  });
+  return r.rows as unknown as SleepLog[];
+}
+
+export async function getSubstanceLogsInRange(startIso: string, endIso: string): Promise<SubstanceLog[]> {
+  await ensureMigrated();
+  const r = await getDb().execute({
+    sql: `SELECT * FROM substance_logs WHERE date >= ? AND date <= ? ORDER BY date ASC`,
+    args: [startIso, endIso],
+  });
+  return r.rows as unknown as SubstanceLog[];
+}
+
+export async function getFatigueDatesInRange(startIso: string, endIso: string): Promise<string[]> {
+  await ensureMigrated();
+  const r = await getDb().execute({
+    sql: `SELECT date FROM fatigue_logs WHERE date >= ? AND date <= ?`,
+    args: [startIso, endIso],
+  });
+  return (r.rows as unknown as { date: string }[]).map((x) => x.date);
 }
 
 export async function getDayTotals(date: string): Promise<{ kcal: number; protein_g: number }> {

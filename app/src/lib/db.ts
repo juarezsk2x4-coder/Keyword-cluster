@@ -69,6 +69,13 @@ export async function ensureMigrated() {
       logged_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
     );
 
+    CREATE TABLE IF NOT EXISTS weekly_plans (
+      week_start TEXT PRIMARY KEY,
+      plan_json TEXT NOT NULL,
+      source TEXT NOT NULL,
+      generated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+    );
+
     CREATE INDEX IF NOT EXISTS idx_meal_logs_date ON meal_logs(date);
     CREATE INDEX IF NOT EXISTS idx_substance_logs_date ON substance_logs(date);
     CREATE INDEX IF NOT EXISTS idx_beverage_logs_date ON beverage_logs(date);

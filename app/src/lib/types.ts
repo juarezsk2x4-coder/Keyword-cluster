@@ -145,3 +145,12 @@ export interface BeverageLog {
   notes?: string;
   logged_at: string;
 }
+
+export type WeeklyPlanSource = "seed" | "ai";
+
+export interface StoredWeeklyPlan {
+  week_start: string;
+  plan: DailyPlan[];
+  source: WeeklyPlanSource;
+  generated_at: string;
+}

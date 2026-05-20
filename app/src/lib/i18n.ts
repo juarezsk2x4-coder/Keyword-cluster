@@ -4,7 +4,7 @@ export type Lang = "pt" | "en";
 
 interface Dict {
   app_name: string;
-  nav: { today: string; shopping: string; profile: string; history: string };
+  nav: { today: string; shopping: string; profile: string; history: string; plan: string; analyst: string };
   today: string;
   yesterday: string;
   tomorrow: string;
@@ -115,11 +115,53 @@ interface Dict {
     sleep_long: (hours: number) => string;
     on_track: string;
   };
+  plan_title: string;
+  plan_intro: string;
+  plan_source_seed: string;
+  plan_source_ai: (when: string) => string;
+  plan_source_fallback: string;
+  plan_generate_button: string;
+  plan_generating: string;
+  plan_regenerate_button: string;
+  plan_clear_button: string;
+  plan_ai_disabled: string;
+  plan_generation_failed: (msg: string) => string;
+  plan_week_starting: (date: string) => string;
+  plan_next_week_button: string;
+  plan_prev_week_button: string;
+  plan_this_week_button: string;
+  plan_day_summary: (kcal: number, protein: number, meals: number) => string;
+  analyst_title: string;
+  analyst_intro: string;
+  analyst_window_7: string;
+  analyst_window_14: string;
+  analyst_window_30: string;
+  analyst_no_data: string;
+  analyst_days_with_data: (n: number, window: number) => string;
+  analyst_section_macros_by_dow: string;
+  analyst_section_missed_slots: string;
+  analyst_section_state_distribution: string;
+  analyst_section_correlations: string;
+  analyst_section_insights: string;
+  analyst_dow_short: { sun: string; mon: string; tue: string; wed: string; thu: string; fri: string; sat: string };
+  analyst_correlation_sleep: (low: number, high: number) => string;
+  analyst_correlation_substance: (kcal: number) => string;
+  analyst_max_easy_streak: (days: number) => string;
+  analyst_fatigue_days: (days: number) => string;
+  habit_insight: {
+    chronic_protein_deficit: (avg: number, target: number) => string;
+    chronic_kcal_deficit: (avg: number, target: number) => string;
+    most_missed_slot: (slot: string, count: number) => string;
+    weekend_heavier: (delta: number) => string;
+    workday_lighter: (delta: number) => string;
+    sleep_short_pattern: (count: number) => string;
+    on_track: string;
+  };
 }
 
 const pt: Dict = {
   app_name: "Plano A",
-  nav: { today: "Hoje", shopping: "Compras", profile: "Perfil", history: "Histórico" },
+  nav: { today: "Hoje", shopping: "Compras", profile: "Perfil", history: "Histórico", plan: "Plano", analyst: "Padrões" },
   today: "Hoje",
   yesterday: "Ontem",
   tomorrow: "Amanhã",
@@ -263,11 +305,53 @@ const pt: Dict = {
     sleep_long: (hours) => `${hours}h de sono — corpo ainda processando. AM gentil, sem forçar.`,
     on_track: "Tudo nos eixos nos últimos dias. Mantém o ritmo.",
   },
+  plan_title: "Plano semanal",
+  plan_intro: "Veja o plano da semana e gere o da próxima com IA baseado no que você comeu.",
+  plan_source_seed: "Plano hand-crafted (semana 1)",
+  plan_source_ai: (when) => `Gerado por IA · ${when}`,
+  plan_source_fallback: "Usando plano padrão (sem geração específica pra esta semana)",
+  plan_generate_button: "Gerar com IA usando logs recentes",
+  plan_generating: "Gerando plano…",
+  plan_regenerate_button: "Regerar com IA",
+  plan_clear_button: "Voltar pro plano padrão",
+  plan_ai_disabled: "IA não configurada (falta ANTHROPIC_API_KEY no Vercel).",
+  plan_generation_failed: (msg) => `Falhou: ${msg}`,
+  plan_week_starting: (date) => `Semana começando ${date}`,
+  plan_next_week_button: "Próxima semana →",
+  plan_prev_week_button: "← Semana anterior",
+  plan_this_week_button: "Esta semana",
+  plan_day_summary: (kcal, protein, meals) => `${kcal} kcal · ${protein}g prot · ${meals} refeições`,
+  analyst_title: "Padrões",
+  analyst_intro: "Análise dos últimos dias logados.",
+  analyst_window_7: "7 dias",
+  analyst_window_14: "14 dias",
+  analyst_window_30: "30 dias",
+  analyst_no_data: "Loga pelo menos 3 dias pra ver padrões.",
+  analyst_days_with_data: (n, w) => `${n} de ${w} dias com dados`,
+  analyst_section_macros_by_dow: "Média por dia da semana",
+  analyst_section_missed_slots: "Refeições mais puladas",
+  analyst_section_state_distribution: "Distribuição de estados",
+  analyst_section_correlations: "Correlações",
+  analyst_section_insights: "Padrões detectados",
+  analyst_dow_short: { sun: "Dom", mon: "Seg", tue: "Ter", wed: "Qua", thu: "Qui", fri: "Sex", sat: "Sáb" },
+  analyst_correlation_sleep: (low, high) => `Sono curto (<6h): média ${low} kcal · Sono normal: média ${high} kcal`,
+  analyst_correlation_substance: (kcal) => `Dia pós-substância: média ${kcal} kcal`,
+  analyst_max_easy_streak: (days) => `Maior streak de fácil/líquido: ${days} dias`,
+  analyst_fatigue_days: (days) => `Cansaço de casa logado em ${days} dias`,
+  habit_insight: {
+    chronic_protein_deficit: (avg, target) => `Proteína média de ${avg}g/dia (alvo ${target}g). Considere shake noturno extra ou ajuste de porções.`,
+    chronic_kcal_deficit: (avg, target) => `Média de ${avg} kcal/dia abaixo do alvo (${target}). Pode estar perdendo composição corporal.`,
+    most_missed_slot: (slot, count) => `${slot} foi pulado ${count}x — considere mover horário ou simplificar a opção.`,
+    weekend_heavier: (delta) => `Finais de semana ${delta} kcal acima da média de dia útil.`,
+    workday_lighter: (delta) => `Dias úteis ${delta} kcal abaixo dos fins de semana — risco de déficit acumulado.`,
+    sleep_short_pattern: (count) => `${count} noites com <6h de sono. Padrão consistente afeta tudo (apetite, recuperação, humor).`,
+    on_track: "Padrão consistente com os alvos. Mantém.",
+  },
 };
 
 const en: Dict = {
   app_name: "Plan A",
-  nav: { today: "Today", shopping: "Shopping", profile: "Profile", history: "History" },
+  nav: { today: "Today", shopping: "Shopping", profile: "Profile", history: "History", plan: "Plan", analyst: "Patterns" },
   today: "Today",
   yesterday: "Yesterday",
   tomorrow: "Tomorrow",
@@ -410,6 +494,48 @@ const en: Dict = {
     sleep_short: (hours) => `Only ${hours}h sleep. AM more liquid + moderate caffeine, PM more carbs.`,
     sleep_long: (hours) => `${hours}h sleep — body still processing. Gentle AM, no forcing.`,
     on_track: "All on track over recent days. Keep the rhythm.",
+  },
+  plan_title: "Weekly plan",
+  plan_intro: "See this week's plan and generate next week with AI based on what you actually ate.",
+  plan_source_seed: "Hand-crafted plan (week 1)",
+  plan_source_ai: (when) => `AI-generated · ${when}`,
+  plan_source_fallback: "Using default plan (no specific generation for this week)",
+  plan_generate_button: "Generate with AI from recent logs",
+  plan_generating: "Generating plan…",
+  plan_regenerate_button: "Regenerate with AI",
+  plan_clear_button: "Revert to default plan",
+  plan_ai_disabled: "AI not configured (ANTHROPIC_API_KEY missing in Vercel).",
+  plan_generation_failed: (msg) => `Failed: ${msg}`,
+  plan_week_starting: (date) => `Week starting ${date}`,
+  plan_next_week_button: "Next week →",
+  plan_prev_week_button: "← Previous week",
+  plan_this_week_button: "This week",
+  plan_day_summary: (kcal, protein, meals) => `${kcal} kcal · ${protein}g protein · ${meals} meals`,
+  analyst_title: "Patterns",
+  analyst_intro: "Analysis of recent logged days.",
+  analyst_window_7: "7 days",
+  analyst_window_14: "14 days",
+  analyst_window_30: "30 days",
+  analyst_no_data: "Log at least 3 days to see patterns.",
+  analyst_days_with_data: (n, w) => `${n} of ${w} days with data`,
+  analyst_section_macros_by_dow: "Average by day of week",
+  analyst_section_missed_slots: "Most-skipped meals",
+  analyst_section_state_distribution: "State distribution",
+  analyst_section_correlations: "Correlations",
+  analyst_section_insights: "Detected patterns",
+  analyst_dow_short: { sun: "Sun", mon: "Mon", tue: "Tue", wed: "Wed", thu: "Thu", fri: "Fri", sat: "Sat" },
+  analyst_correlation_sleep: (low, high) => `Short sleep (<6h): avg ${low} kcal · Normal sleep: avg ${high} kcal`,
+  analyst_correlation_substance: (kcal) => `Post-substance day: avg ${kcal} kcal`,
+  analyst_max_easy_streak: (days) => `Longest easy/liquid streak: ${days} days`,
+  analyst_fatigue_days: (days) => `House-fatigue logged on ${days} days`,
+  habit_insight: {
+    chronic_protein_deficit: (avg, target) => `Average protein ${avg}g/day (target ${target}g). Consider adding a nighttime shake or larger portions.`,
+    chronic_kcal_deficit: (avg, target) => `Average ${avg} kcal/day below target (${target}). You may be losing body composition.`,
+    most_missed_slot: (slot, count) => `${slot} was skipped ${count}x — consider moving the time or simplifying the option.`,
+    weekend_heavier: (delta) => `Weekends ${delta} kcal above weekday average.`,
+    workday_lighter: (delta) => `Workdays ${delta} kcal below weekends — risk of cumulative deficit.`,
+    sleep_short_pattern: (count) => `${count} nights with <6h sleep. Consistent pattern affects everything (appetite, recovery, mood).`,
+    on_track: "Pattern consistent with targets. Keep going.",
   },
 };
 

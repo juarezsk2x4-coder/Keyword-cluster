@@ -2,8 +2,22 @@
 
 import { revalidatePath } from "next/cache";
 import { getDb, ensureMigrated } from "@/lib/db";
-import type { CardState, MealSlot } from "@/lib/types";
+import type { CardState, MealSlot, DailyPlan } from "@/lib/types";
 import { estimateNutrition, isAiEnabled, type NutritionEstimate } from "@/lib/nutrition-ai";
+import {
+  generateWeeklyPlan,
+  isAiEnabled as isPlanAiEnabled,
+  type RecentLogSummary,
+  type ProfileSummary,
+} from "@/lib/meal-plan-ai";
+import { loadPersonA } from "@/lib/profile";
+import {
+  getMealLogsInRange,
+  getSleepLogsInRange,
+  getSubstanceLogsInRange,
+  getFatigueDatesInRange,
+} from "@/lib/query";
+import { MEAL_SLOTS } from "@/lib/types";
 
 function todayIso() {
   return new Date().toISOString().slice(0, 10);
@@ -147,4 +161,105 @@ export async function estimateNutritionAction(
 
 export async function isAiEnabledAction(): Promise<boolean> {
   return isAiEnabled();
+}
+
+function shiftDate(iso: string, days: number): string {
+  const d = new Date(iso + "T00:00:00");
+  d.setDate(d.getDate() + days);
+  return d.toISOString().slice(0, 10);
+}
+
+async function buildRecentLogSummaries(endIsoExclusive: string): Promise<RecentLogSummary[]> {
+  const start = shiftDate(endIsoExclusive, -7);
+  const end = shiftDate(endIsoExclusive, -1);
+  const [meals, sleeps, subs, fatigueDates] = await Promise.all([
+    getMealLogsInRange(start, end),
+    getSleepLogsInRange(start, end),
+    getSubstanceLogsInRange(start, end),
+    getFatigueDatesInRange(start, end),
+  ]);
+  const dates: string[] = [];
+  for (let i = 0; i < 7; i++) dates.push(shiftDate(start, i));
+  return dates.map((d) => {
+    const dayMeals = meals.filter((m) => m.date === d);
+    const stateCounts: Record<string, number> = {};
+    for (const m of dayMeals) {
+      stateCounts[m.selected_state] = (stateCounts[m.selected_state] ?? 0) + 1;
+    }
+    const sleepRow = sleeps.find((s) => s.date === d);
+    return {
+      date: d,
+      meals_logged: dayMeals.length,
+      total_kcal: dayMeals.reduce((a, m) => a + (m.kcal ?? 0), 0),
+      total_protein_g: dayMeals.reduce((a, m) => a + (m.protein_g ?? 0), 0),
+      missed_slots: MEAL_SLOTS.filter((s) => !dayMeals.find((m) => m.slot === s)),
+      state_counts: stateCounts,
+      substances: subs.filter((s) => s.date === d).map((s) => s.substance),
+      sleep_hours: sleepRow?.hours ?? null,
+      was_fatigued: fatigueDates.includes(d),
+    };
+  });
+}
+
+function profileToSummary(): ProfileSummary {
+  const p = loadPersonA();
+  return {
+    hard_no: p.food_preferences.hard_no ?? [],
+    texture_aversions: p.food_preferences.texture_aversions ?? [],
+    soft_dislikes: p.food_preferences.soft_dislikes ?? [],
+    medical_flags: p.medical_flags ?? [],
+    protein_g_target: p.nutrition_targets.protein_g_per_day,
+    hydration_l_target: p.nutrition_targets.hydration_l_per_day,
+    kcal_target_off: p.nutrition_targets.total_kcal_target_off_day,
+    kcal_target_skate: p.nutrition_targets.total_kcal_target_skate_day,
+  };
+}
+
+export async function generateNextWeekPlanAction(
+  weekStartIso: string,
+  lang: "pt" | "en"
+): Promise<
+  | { ok: true; plan: DailyPlan[]; generated_at: string }
+  | { ok: false; error: string }
+> {
+  if (!isPlanAiEnabled()) {
+    return { ok: false, error: "ai_disabled" };
+  }
+  try {
+    await ensureMigrated();
+    const profile = profileToSummary();
+    const recentLogs = await buildRecentLogSummaries(weekStartIso);
+    const plan = await generateWeeklyPlan({
+      weekStartIso,
+      profile,
+      recentLogs,
+      lang,
+    });
+    const generatedAt = new Date().toISOString();
+    await getDb().execute({
+      sql: `INSERT INTO weekly_plans (week_start, plan_json, source, generated_at)
+            VALUES (?, ?, 'ai', ?)
+            ON CONFLICT(week_start) DO UPDATE SET
+              plan_json = excluded.plan_json,
+              source = 'ai',
+              generated_at = excluded.generated_at`,
+      args: [weekStartIso, JSON.stringify(plan), generatedAt],
+    });
+    revalidatePath("/");
+    revalidatePath("/plan");
+    return { ok: true, plan, generated_at: generatedAt };
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "unknown_error";
+    return { ok: false, error: message };
+  }
+}
+
+export async function deleteStoredWeeklyPlanAction(weekStartIso: string): Promise<void> {
+  await ensureMigrated();
+  await getDb().execute({
+    sql: `DELETE FROM weekly_plans WHERE week_start = ?`,
+    args: [weekStartIso],
+  });
+  revalidatePath("/");
+  revalidatePath("/plan");
 }
