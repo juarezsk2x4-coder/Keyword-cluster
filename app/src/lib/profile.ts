@@ -44,6 +44,15 @@ const PersonProfileSchema = z.object({
   }),
   has_custom_meal_plan: z.boolean().optional(),
   clinical_brief_path: z.string().optional(),
+  location: z
+    .object({
+      city: z.string(),
+      state: z.string(),
+      country: z.string(),
+      lat: z.number(),
+      lon: z.number(),
+    })
+    .optional(),
 });
 
 function loadFromYaml(profilePath: string): PersonProfile {

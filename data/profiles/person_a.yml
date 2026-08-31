@@ -110,6 +110,14 @@ work_schedule:
   work_days: [tuesday, wednesday, thursday, friday, saturday]
   off_days: [sunday, monday]
 
+# ── Location (drives the home-page weather lookup / skate-weather nudge) ──────
+location:
+  city: "Florianópolis"
+  state: "SC"
+  country: "BR"
+  lat: -27.5969
+  lon: -48.5495
+
 # ── Sleep ─────────────────────────────────────────────────────────────────────
 sleep:
   bedtime: "00:00"
