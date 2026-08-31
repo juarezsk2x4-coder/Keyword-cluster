@@ -127,7 +127,7 @@ export interface SubstanceLog {
   id?: number;
   person_id?: PersonId;
   date: string;
-  substance: "cocaine" | "alcohol" | "cannabis" | "tobacco" | "benzo" | "psychedelic" | "ketamine";
+  substance: "stimulant" | "alcohol" | "cannabis" | "tobacco" | "benzo" | "psychedelic" | "ketamine";
   amount?: string;
   notes?: string;
   logged_at: string;

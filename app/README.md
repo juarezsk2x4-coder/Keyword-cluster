@@ -17,7 +17,7 @@ See [`HANDOVER.md`](../HANDOVER.md) at the repo root for the full picture: what'
   - Prep time chosen ≤5min → `liquid`; ≤15min → `easy`
 - **Meal logging** with macro tally per day (kcal / protein progress bars vs target).
 - **Sleep input** (4–10h chips, one tap).
-- **Substance log** (coca / álcool / cannabis / tabaco / benzo — one tap each, today's date).
+- **Substance log** (stimulant / álcool / cannabis / tabaco / benzo — one tap each, today's date).
 - **Prep time today** input.
 - **Shopping list** view: split into `🚚 Delivery` and `🚶 Subir`, grouped by store, with per-item weight and total kg load — ships with a small generic starter list, replace with your own staples.
 - **Profile view**: reads the active profile YAML and shows targets, restrictions, medical flags.

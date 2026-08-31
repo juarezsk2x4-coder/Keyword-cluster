@@ -18,7 +18,7 @@ interface Props {
   sleepHours?: number;
   isFatigued: boolean;
   prepMinutes: number | null;
-  hadCocaineYesterday: boolean;
+  hadStimulantYesterday: boolean;
   substanceLogs: SubstanceLog[];
   beverages: BeverageLog[];
   lang: Lang;
@@ -41,7 +41,7 @@ export default function DayHeader(props: Props) {
           </div>
           <div className="flex gap-2 flex-wrap justify-end">
             {props.isSkateDay && <span className="chip chip-active">{tr.skate_day}</span>}
-            {props.hadCocaineYesterday && <span className="chip" style={{ background: "#e87b6b", color: "#0b0d0f", borderColor: "#e87b6b" }}>{tr.recovery}</span>}
+            {props.hadStimulantYesterday && <span className="chip" style={{ background: "#e87b6b", color: "#0b0d0f", borderColor: "#e87b6b" }}>{tr.recovery}</span>}
             {props.isFatigued && <span className="chip" style={{ background: "#e8b06b", color: "#0b0d0f", borderColor: "#e8b06b" }}>{tr.house_fatigue}</span>}
           </div>
         </div>
@@ -131,7 +131,7 @@ export default function DayHeader(props: Props) {
       <div className="card">
         <div className="label mb-2">{tr.substance_log}</div>
         <div className="flex flex-wrap gap-1.5 mb-2">
-          {(["cocaine", "alcohol", "cannabis", "tobacco", "benzo"] as const).map((s) => (
+          {(["stimulant", "alcohol", "cannabis", "tobacco", "benzo"] as const).map((s) => (
             <button
               key={s}
               type="button"

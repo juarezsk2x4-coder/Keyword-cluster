@@ -181,7 +181,7 @@ export async function generateWeeklyPlan(
   // (which would otherwise silently truncate the JSON and fail to parse).
   const response = await client.messages
     .stream({
-      model: "claude-opus-4-7",
+      model: "claude-opus-5",
       max_tokens: 48000,
       output_config: {
         format: {
