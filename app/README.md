@@ -1,6 +1,6 @@
-# Plano A — Test App (Person A only)
+# Plano A — Test App
 
-Meal-planning + logging app calibrated for Person A. Next.js 15 + libSQL (Turso) + Tailwind.
+Meal-planning + logging app, shared between two profiles via an A/B switcher — plan and targets are calibrated per active profile. Next.js 15 + libSQL (Turso) + Tailwind.
 
 **Quer rodar do celular sem instalar nada?** Veja [`DEPLOY.md`](../DEPLOY.md) na raiz — guia passo a passo pra subir no Vercel + Turso (15 min, free, só navegador).
 
@@ -18,8 +18,8 @@ Meal-planning + logging app calibrated for Person A. Next.js 15 + libSQL (Turso)
 - **Substance log** (stimulant / álcool / cannabis / tabaco / benzo — one tap each, today's date).
 - **Prep time today** input.
 - **Shopping list** view: split into `🚚 Delivery` and `🚶 Subir`, grouped by store (Forte mensal, Imperatriz semanal, iFood), with per-item weight and total kg load.
-- **Profile view**: reads `data/profiles/person_a.yml` and shows targets, restrictions, medical flags.
-- **History view**: last 60 logs grouped by day, with kcal + protein totals and state-distribution chips.
+- **Profile view**: reads the active person's profile (`data/profiles/person_a.yml` or `person_b.yml`, via `loadProfile(personId)`) and shows targets, restrictions, medical flags.
+- **History view**: last 14 days of logs grouped by day, with kcal + protein totals and state-distribution chips.
 
 ## Quick start (rodar localmente — precisa Node + pnpm instalado)
 
@@ -39,7 +39,7 @@ Veja [`DEPLOY.md`](../DEPLOY.md) na raiz do repo. Tudo via navegador, ~15 min.
 
 ## Architecture
 
-- **Profile data**: read from `../data/profiles/person_a.yml` at request time (via `js-yaml`).
+- **Profile data**: read from the active person's YAML (`../data/profiles/person_a.yml` or `person_b.yml`, selected by the A/B toggle's cookie) at request time (via `js-yaml`).
 - **Meal plan**: hardcoded for week 1 in `src/lib/seed-plan.ts`, anchored to Sunday. Calibrated for:
   - Skate days (Sun + Mon): high-carb (~3300 kcal target, refeed pre/post-skate fuel)
   - Work days (Tue–Sat): eucaloric recomp (~2500 kcal, 130g protein)
@@ -85,7 +85,7 @@ app/
     └── lib/
         ├── types.ts                    # MealSlot, CardState, MealVersion, etc.
         ├── db.ts                       # SQLite connection + migrations
-        ├── profile.ts                  # YAML loader for person_a.yml
+        ├── profile.ts                  # YAML loader for the active person's profile (person_a.yml / person_b.yml)
         ├── query.ts                    # Read queries
         └── seed-plan.ts                # Hand-crafted week 1 plan + shopping list
 ```
@@ -110,4 +110,4 @@ The dev server binds to `0.0.0.0` by default (see `package.json` `dev` script), 
 - **`better-sqlite3` install fails**: needs Node ≥18 and Python + build tools available for the native compile. On Ubuntu: `sudo apt install build-essential python3`. On macOS: `xcode-select --install`.
 - **Port 3000 in use**: edit the `dev` script in `package.json` or pass `--port 3001`.
 - **Phone can't reach the IP**: check macOS firewall / Windows Defender. Sometimes you need to allow the port explicitly.
-- **YAML parse error**: `data/profiles/person_a.yml` got out of sync — restore from git.
+- **YAML parse error**: `data/profiles/person_a.yml` or `person_b.yml` got out of sync — restore from git.
