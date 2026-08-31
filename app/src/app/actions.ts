@@ -67,7 +67,7 @@ export async function logSleep(hours: number, date?: string, quality?: number) {
 
 export async function logSubstance(input: {
   date?: string;
-  substance: "cocaine" | "alcohol" | "cannabis" | "tobacco" | "benzo" | "psychedelic" | "ketamine";
+  substance: "stimulant" | "alcohol" | "cannabis" | "tobacco" | "benzo" | "psychedelic" | "ketamine";
   amount?: string;
   notes?: string;
 }) {

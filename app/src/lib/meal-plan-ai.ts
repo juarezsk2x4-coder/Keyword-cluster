@@ -268,7 +268,7 @@ export async function generateWeeklyPlan(
 ): Promise<DailyPlan[]> {
   const client = getClient();
   const response = await client.messages.create({
-    model: "claude-opus-4-7",
+    model: "claude-opus-5",
     max_tokens: 16000,
     output_config: {
       format: {

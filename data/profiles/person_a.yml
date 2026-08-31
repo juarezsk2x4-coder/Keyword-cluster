@@ -140,7 +140,7 @@ substances:
     occasional: marlboro_vermelho
     trend: reducing
     notes: "smoked separately from cannabis; trying to cut down"
-  cocaine:
+  stimulant:
     current_status: active_use_frequent_phase
     pattern: "cyclical — fases de uso intercaladas com pausas de 1-2+ meses"
     current_phase: actively_using

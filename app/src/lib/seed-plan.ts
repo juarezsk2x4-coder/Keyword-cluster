@@ -278,7 +278,7 @@ const KOMBUCHA_BANANA_CASTANHA = v({
   protein_g: 4,
   carbs_g: 33,
   fat_g: 8,
-  notes: "Sem fome com Se + Mg. Útil em dia pós-coca.",
+  notes: "Sem fome com Se + Mg. Útil em dia pós-estimulante.",
 });
 
 const IOGURTE_MEL = v({
@@ -504,7 +504,7 @@ export function buildWeeklyPlan(weekStartIso: string): DailyPlan[] {
         card("snack_noturno", "22:30", SNACK_NOTURNO_PROT, SNACK_QUEIJO_MACA, KOMBUCHA_MEL, KOMBUCHA_MEL),
       ],
     },
-    /* WEDNESDAY — work + possible coca use day → next day will need recovery */
+    /* WEDNESDAY — work + possible stimulant use day → next day will need recovery */
     {
       date: dates[3],
       day_of_week: "Quarta",
@@ -520,7 +520,7 @@ export function buildWeeklyPlan(weekStartIso: string): DailyPlan[] {
         card("snack_noturno", "22:30", SNACK_NOTURNO_PROT, SNACK_QUEIJO_MACA, KOMBUCHA_MEL, KOMBUCHA_MEL),
       ],
     },
-    /* THURSDAY — work, possibly post-coca recovery */
+    /* THURSDAY — work, possibly post-stimulant recovery */
     {
       date: dates[4],
       day_of_week: "Quinta",
@@ -533,14 +533,14 @@ export function buildWeeklyPlan(weekStartIso: string): DailyPlan[] {
           IOGURTE_GRANOLA, SHAKE_MANGA, KOMBUCHA_BANANA_CASTANHA),
         card("lanche_manha", "10:30", IOGURTE_GRANOLA, IOGURTE_GRANOLA, SHAKE_MANGA, KOMBUCHA_BANANA_CASTANHA),
         card("almoco", "12:30",
-          v({ ...PATINHO_QUINOA, label: "Recovery: " + PATINHO_QUINOA.label, notes: "Tirosina + Mg + B6. Pós-coca." }),
+          v({ ...PATINHO_QUINOA, label: "Recovery: " + PATINHO_QUINOA.label, notes: "Tirosina + Mg + B6. Pós-estimulante." }),
           MARMITA_BATCH, SOPA_MISSO, KOMBUCHA_BANANA_CASTANHA),
         card("lanche_tarde", "16:00", PAO_ABACATE, SNACK_QUEIJO_MACA, SHAKE_MANGA, IOGURTE_MEL),
         card("jantar", "20:00", SALMAO_BATATA, MARMITA_BATCH, SHAKE_DENSO, IOGURTE_MEL),
         card("snack_noturno", "22:30", SNACK_NOTURNO_PROT, SNACK_QUEIJO_MACA, KOMBUCHA_MEL, KOMBUCHA_MEL),
       ],
     },
-    /* FRIDAY — work, possible coca, jantar fora reserved */
+    /* FRIDAY — work, possible stimulant use, jantar fora reserved */
     {
       date: dates[5],
       day_of_week: "Sexta",
@@ -558,7 +558,7 @@ export function buildWeeklyPlan(weekStartIso: string): DailyPlan[] {
         card("snack_noturno", "22:30", SNACK_NOTURNO_PROT, SNACK_QUEIJO_MACA, KOMBUCHA_MEL, KOMBUCHA_MEL),
       ],
     },
-    /* SATURDAY — work, possibly post-coca recovery */
+    /* SATURDAY — work, possibly post-stimulant recovery */
     {
       date: dates[6],
       day_of_week: "Sábado",

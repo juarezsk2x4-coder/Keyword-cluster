@@ -36,11 +36,11 @@ function todayIso(): string {
 function defaultStateFor(opts: {
   isFatigued: boolean;
   prepMinutes: number | null;
-  hadCocaineYesterday: boolean;
+  hadStimulantYesterday: boolean;
   sleepHours?: number;
   slot: string;
 }): CardState {
-  if (opts.hadCocaineYesterday) {
+  if (opts.hadStimulantYesterday) {
     if (opts.slot === "cafe_da_manha" || opts.slot === "lanche_manha") return "liquid";
   }
   if (opts.sleepHours !== undefined) {
@@ -86,7 +86,7 @@ export default async function TodayPage({ searchParams }: PageProps) {
     }),
   ]);
   const logsByslot = Object.fromEntries(logs.map((l) => [l.slot, l]));
-  const hadCocaineYesterday = prevDaySubs.some((s) => s.substance === "cocaine");
+  const hadStimulantYesterday = prevDaySubs.some((s) => s.substance === "stimulant");
 
   return (
     <div>
@@ -107,7 +107,7 @@ export default async function TodayPage({ searchParams }: PageProps) {
         sleepHours={sleep?.hours}
         isFatigued={fatigued}
         prepMinutes={prepMin}
-        hadCocaineYesterday={hadCocaineYesterday}
+        hadStimulantYesterday={hadStimulantYesterday}
         substanceLogs={daySubs}
         beverages={beverages}
         lang={lang}
@@ -119,7 +119,7 @@ export default async function TodayPage({ searchParams }: PageProps) {
           const defaultState = defaultStateFor({
             isFatigued: fatigued,
             prepMinutes: prepMin,
-            hadCocaineYesterday,
+            hadStimulantYesterday,
             sleepHours: sleep?.hours,
             slot: card.slot,
           });

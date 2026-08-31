@@ -44,7 +44,7 @@ interface Dict {
   custom_kcal: string;
   custom_protein: string;
   custom_hint: string;
-  sub: { cocaine: string; alcohol: string; cannabis: string; tobacco: string; benzo: string };
+  sub: { stimulant: string; alcohol: string; cannabis: string; tobacco: string; benzo: string };
   carbs: string;
   fat: string;
   beverages: string;
@@ -224,7 +224,7 @@ const pt: Dict = {
   custom_kcal: "kcal (opcional)",
   custom_protein: "proteína em g (opcional)",
   custom_hint: "Substitui a sugestão. Deixa kcal/proteína em branco se não souber.",
-  sub: { cocaine: "coca", alcohol: "álcool", cannabis: "cannabis", tobacco: "tabaco", benzo: "benzo" },
+  sub: { stimulant: "estimulante", alcohol: "álcool", cannabis: "cannabis", tobacco: "tabaco", benzo: "benzo" },
   carbs: "C",
   fat: "G",
   beverages: "Bebidas (mate / café / chá / guloseimas)",
@@ -310,7 +310,7 @@ const pt: Dict = {
     missed_meals: (count) => `Pulou ${count} refeição${count === 1 ? "" : "es"} ontem. Próximas refeições aumentadas.`,
     easy_streak: (days) => `${days} dias seguidos no modo "fácil/líquido". Cansaço crônico ou trabalho pesado?`,
     fatigue_streak: (days) => `${days} dias seguidos com cansaço de casa. Considera meal-prep no domingo.`,
-    post_substance: "Cocaína ontem: hidratação +1L, magnésio (cacau/castanhas/folhas), evita álcool, prioriza sono.",
+    post_substance: "Estimulante ontem: hidratação +1L, magnésio (cacau/castanhas/folhas), evita álcool, prioriza sono.",
     post_alcohol: "Álcool ontem: hidratação extra + B-complex (ovo/folhas/lentilha).",
     sleep_short: (hours) => `Só ${hours}h de sono. AM mais líquido + cafeína moderada, PM mais carbo.`,
     sleep_long: (hours) => `${hours}h de sono — corpo ainda processando. AM gentil, sem forçar.`,
@@ -420,7 +420,7 @@ const en: Dict = {
   custom_kcal: "kcal (optional)",
   custom_protein: "protein in g (optional)",
   custom_hint: "Overrides the suggestion. Leave kcal/protein blank if unknown.",
-  sub: { cocaine: "coke", alcohol: "alcohol", cannabis: "cannabis", tobacco: "tobacco", benzo: "benzo" },
+  sub: { stimulant: "stimulant", alcohol: "alcohol", cannabis: "cannabis", tobacco: "tobacco", benzo: "benzo" },
   carbs: "C",
   fat: "F",
   beverages: "Beverages (mate / coffee / tea / treats)",
@@ -506,7 +506,7 @@ const en: Dict = {
     missed_meals: (count) => `Skipped ${count} meal${count === 1 ? "" : "s"} yesterday. Next meals boosted.`,
     easy_streak: (days) => `${days} days in a row in "easy/liquid" mode. Chronic fatigue or heavy work?`,
     fatigue_streak: (days) => `${days} days in a row with house fatigue. Consider Sunday batch-cooking.`,
-    post_substance: "Cocaine yesterday: hydration +1L, magnesium (cacao/nuts/greens), avoid alcohol, prioritize sleep.",
+    post_substance: "Stimulant yesterday: hydration +1L, magnesium (cacao/nuts/greens), avoid alcohol, prioritize sleep.",
     post_alcohol: "Alcohol yesterday: extra hydration + B-complex (egg/greens/lentil).",
     sleep_short: (hours) => `Only ${hours}h sleep. AM more liquid + moderate caffeine, PM more carbs.`,
     sleep_long: (hours) => `${hours}h sleep — body still processing. Gentle AM, no forcing.`,

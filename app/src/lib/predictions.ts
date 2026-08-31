@@ -26,7 +26,7 @@ export interface Prediction {
   consecutive_easy_or_liquid: number;
   consecutive_low_kcal_days: number;
   missed_meals_yesterday: string[];
-  cocaine_in_last_3d: boolean;
+  stimulant_in_last_3d: boolean;
   alcohol_in_last_3d: boolean;
   sleep_short_today: boolean;
   sleep_long_today: boolean;
@@ -153,7 +153,7 @@ export async function getPredictions(
 
   // Substance / sleep flags
   const yesterday = rollups[1];
-  const cocaine_in_last_3d = past.some((r) => r.substances.includes("cocaine"));
+  const stimulant_in_last_3d = past.some((r) => r.substances.includes("stimulant"));
   const alcohol_in_last_3d = past.some((r) => r.substances.includes("alcohol"));
   const today = rollups[0];
   const sleep_short_today = today.sleep_hours !== null && today.sleep_hours < 5;
@@ -172,7 +172,7 @@ export async function getPredictions(
   if (kcal_deficit_pct < -15) {
     kcal_boost = Math.round(KCAL_TARGET_NORMAL * Math.abs(kcal_deficit_pct) / 100 / 2);
   }
-  if (cocaine_in_last_3d || alcohol_in_last_3d) {
+  if (stimulant_in_last_3d || alcohol_in_last_3d) {
     hydration_extra_l += 1;
   }
   if (sleep_short_today) {
@@ -224,7 +224,7 @@ export async function getPredictions(
       payload: { days: fatigue_streak },
     });
   }
-  if (yesterday.substances.includes("cocaine")) {
+  if (yesterday.substances.includes("stimulant")) {
     insights.push({ severity: "alert", key: "post_substance" });
   }
   if (yesterday.substances.includes("alcohol")) {
@@ -259,7 +259,7 @@ export async function getPredictions(
     consecutive_easy_or_liquid,
     consecutive_low_kcal_days,
     missed_meals_yesterday,
-    cocaine_in_last_3d,
+    stimulant_in_last_3d,
     alcohol_in_last_3d,
     sleep_short_today,
     sleep_long_today,

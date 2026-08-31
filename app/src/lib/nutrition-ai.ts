@@ -110,7 +110,7 @@ export async function estimateNutrition(
 
   const client = getClient();
   const response = await client.messages.create({
-    model: "claude-opus-4-7",
+    model: "claude-sonnet-5",
     max_tokens: 500,
     output_config: {
       format: {

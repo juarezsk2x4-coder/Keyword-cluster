@@ -9,13 +9,13 @@ Meal-planning + logging app calibrated for Person A. Next.js 15 + libSQL (Turso)
 - **Today dashboard** with 6 meal cards (café / lanche manhã / almoço / lanche tarde / jantar / snack noturno).
 - **Card state toggle** with 4 alternatives per slot: `Original` / `Fácil` / `Líquido` / `Sem fome`. Single tap cycles between them.
 - **Smart defaults driven by overlays**:
-  - Cocaine logged yesterday → AM defaults to `liquid` (post-stim recovery)
+  - Stimulant logged yesterday → AM defaults to `liquid` (post-stim recovery)
   - Slept <5h → AM defaults to `liquid`; slept ≥9h → AM defaults to `no_hunger`
   - "Tô cansado da casa hoje" button → all defaults shift to `easy`
   - Prep time chosen ≤5min → `liquid`; ≤15min → `easy`
 - **Meal logging** with macro tally per day (kcal / protein progress bars vs target).
 - **Sleep input** (4–10h chips, one tap).
-- **Substance log** (coca / álcool / cannabis / tabaco / benzo — one tap each, today's date).
+- **Substance log** (stimulant / álcool / cannabis / tabaco / benzo — one tap each, today's date).
 - **Prep time today** input.
 - **Shopping list** view: split into `🚚 Delivery` and `🚶 Subir`, grouped by store (Forte mensal, Imperatriz semanal, iFood), with per-item weight and total kg load.
 - **Profile view**: reads `data/profiles/person_a.yml` and shows targets, restrictions, medical flags.
@@ -44,7 +44,7 @@ Veja [`DEPLOY.md`](../DEPLOY.md) na raiz do repo. Tudo via navegador, ~15 min.
   - Skate days (Sun + Mon): high-carb (~3300 kcal target, refeed pre/post-skate fuel)
   - Work days (Tue–Sat): eucaloric recomp (~2500 kcal, 130g protein)
   - Friday jantar slot: reserved for delivery (acceptable list — never burger junk)
-  - Cocaine-aware: Thu and Sat AM defaults to recovery shake when Wed/Fri use is logged
+  - Stimulant-aware: Thu and Sat AM defaults to recovery shake when Wed/Fri use is logged
 - **DB**: SQLite at `app/data/app.db` (auto-created). Tables: `meal_logs`, `sleep_logs`, `substance_logs`, `fatigue_logs`, `prep_time_logs`.
 - **UI**: Mobile-first Tailwind. Dark theme. Server components + server actions (no client-side fetching).
 

@@ -4,7 +4,7 @@
 
 ## Headline
 
-Lean 31-year-old male, neurodivergent (TEA + TDAH on lisdexamfetamina 70mg/d max dose), athletically active (skate hard 180min 2×/wk + other), with a documented ~6-month period of severe undernutrition during chronic cocaine + crypto-trading hyperfocus that left him with **established deficiencies in B12, vitamin D, and circulating iron**, plus a recent vasovagal syncope, mild thrombocytopenia, and an underlying **low-grade inflammatory + functional-iron-sequestration pattern**. Metabolism (insulin sensitivity, lipids, liver, kidney, thyroid) is excellent. Testosterone is suboptimal-not-pathological for his age and lean mass.
+Lean 31-year-old male, neurodivergent (TEA + TDAH on lisdexamfetamina 70mg/d max dose), athletically active (skate hard 180min 2×/wk + other), with a documented ~6-month period of severe undernutrition during chronic stimulant + crypto-trading hyperfocus that left him with **established deficiencies in B12, vitamin D, and circulating iron**, plus a recent vasovagal syncope, mild thrombocytopenia, and an underlying **low-grade inflammatory + functional-iron-sequestration pattern**. Metabolism (insulin sensitivity, lipids, liver, kidney, thyroid) is excellent. Testosterone is suboptimal-not-pathological for his age and lean mass.
 
 He is being correctly treated by Dra. Schlindwein (B12 IM, D3 7000 UI/d, ferro 30mg + vit C/d). Nutrition's job is to (a) accelerate repletion through food, (b) support the autonomic system stressed by the stimulant + cannabis stack, (c) fuel hard skate days without crashing recovery, and (d) structurally prevent the "hyperfocus → don't eat" pattern that caused the deficits.
 
@@ -62,7 +62,7 @@ He is being correctly treated by Dra. Schlindwein (B12 IM, D3 7000 UI/d, ferro 3
 - Total serum Mg 1.9 mg/dl, "normal." **But total serum Mg is a poor marker** — only ~1% of body Mg is in serum; tissue/RBC Mg can be 30%+ depleted while serum stays normal.
 - Why I suspect functional Mg insufficiency:
   - **Lisdexamfetamina (Venvanse) 70 mg/d max dose** — stimulants accelerate Mg excretion (renal).
-  - **Past cocaine binge** — same renal Mg loss mechanism, sustained for months.
+  - **Past stimulant binge** — same renal Mg loss mechanism, sustained for months.
   - **Daily cannabis** — variable but some Mg-binding evidence.
   - **Mate 1.5 L/d uruguayo** — diuretic load.
   - **Hard skate sessions** — Mg lost in sweat.
@@ -133,7 +133,7 @@ Neuropsych (Ana Ponilla, CRP 21/2767, set–out 2025) + laudo psiquiátrico (Der
 6. **Episódios de hipomania documentados** + facet "Mania clinicamente relevante" no TriA + diagnóstico anterior de TAB (depois descartado). Implicação:
    - **Estabilidade glicêmica é prioridade**: refeições espaçadas regularmente, sem picos açúcar, fibra adequada, ômega-3 sustentado (evidência de estabilização de humor).
    - **Log de humor opcional**: padrões podem aparecer (energia alta + apetite baixo + sono curto = possível janela hipomaníaca).
-   - Cocaína + Venvanse + mate em dose alta podem precipitar episódio — outro motivo pra harm reduction.
+   - Estimulante + Venvanse + mate em dose alta podem precipitar episódio — outro motivo pra harm reduction.
    - Mg + omega-3 + B-complex são neurotróficos relevantes nesse contexto.
 
 7. **Tricotilomania** — comportamento de auto-regulação, possivelmente associado a desregulação dopaminérgica. Não muda o plano diretamente, mas reforça que os substratos catecolaminérgicos via comida importam (tirosina + B6 + Mg + omega-3 + folato).
@@ -163,7 +163,7 @@ Updated stack after follow-up questions:
 |---|---|---|---|
 | Lisdexamfetamina (Venvanse) 70 mg | Daily AM | +++ max dose | Prescribed, central para função TDAH |
 | Mate uruguayano 1.5 L | Daily, última 16:30 | ++ | ~250 mg cafeína; horário tardio compromete sono |
-| Cocaína | **2×/sem atual, ciclos de 1–2 meses off** | +++ acute | Quer reduzir/parar |
+| Estimulante | **2×/sem atual, ciclos de 1–2 meses off** | +++ acute | Quer reduzir/parar |
 | Cannabis flor | Daily, 5 joints | — (anti-adrenérgico) | Counterbalance + sleep aid |
 | Álcool | Semanal, 3 unidades | (transitório) | IPA, vinho branco, gin |
 | Tabaco Amsterdam/Marlboro | Semanal, reduzindo | ++ acute | Inflamatório + alta demanda vit C |
@@ -171,15 +171,15 @@ Updated stack after follow-up questions:
 | Ketamina | Rara | (transitório) | Recreacional |
 | Benzodiazepínicos | **<1×/sem** | +++ GABA | Sono ou ansiedade extrema; reduzindo |
 
-**This is significant polysubstance load — clinicamente relevante, não patológico.** O corpo está processando cinco sistemas neurotransmissores em rotação: dopaminérgico (Venvanse + coca), GABAérgico (benzos + álcool + cannabis CB1 indireto), endocanabinoide (cannabis diário), serotonérgico (LSD/cogu quando), glutamatérgico (ketamina). O framework TEA + TDAH explica boa parte disso como **lógica de auto-regulação**, não excesso recreacional.
+**This is significant polysubstance load — clinicamente relevante, não patológico.** O corpo está processando cinco sistemas neurotransmissores em rotação: dopaminérgico (Venvanse + estimulante), GABAérgico (benzos + álcool + cannabis CB1 indireto), endocanabinoide (cannabis diário), serotonérgico (LSD/cogu quando), glutamatérgico (ketamina). O framework TEA + TDAH explica boa parte disso como **lógica de auto-regulação**, não excesso recreacional.
 
 **The plan works *with* this reality, not around it.** Dois princípios:
 
-1. **Dias de uso são déficits nutricionais previsíveis.** Coca → próximo dia: apetite baixo, hidratação ruim, Mg depletado. Álcool → próximo dia: hidratação + B-complex. Benzo → próxima manhã: groggy + apetite baixo. O sistema precisa de **templates de "dia de recuperação"** que ativam baseados no logging.
+1. **Dias de uso são déficits nutricionais previsíveis.** Estimulante → próximo dia: apetite baixo, hidratação ruim, Mg depletado. Álcool → próximo dia: hidratação + B-complex. Benzo → próxima manhã: groggy + apetite baixo. O sistema precisa de **templates de "dia de recuperação"** que ativam baseados no logging.
 
-2. **O plano apoia a direção de harm-reduction que ele já está perseguindo.** Quer reduzir coca + tabaco. Nutrição genuinamente ajuda estabilizando os substratos que o craving explora (glicemia, Mg, precursores dopaminérgicos, sono).
+2. **O plano apoia a direção de harm-reduction que ele já está perseguindo.** Quer reduzir estimulante + tabaco. Nutrição genuinamente ajuda estabilizando os substratos que o craving explora (glicemia, Mg, precursores dopaminérgicos, sono).
 
-### Cocaine-day recovery protocol (~2 dias/semana)
+### Stimulant-day recovery protocol (~2 dias/semana)
 
 Aplica no dia *seguinte* ao uso:
 
@@ -192,9 +192,9 @@ Aplica no dia *seguinte* ao uso:
 - **Cannabis pode** (efeito anti-adrenérgico ajuda transição).
 - **Sono prioritário**: corte mate às 14h max no dia seguinte; ritual wind-down às 22h.
 
-**Critical scheduling question:** quais dias da semana caem as noites de coca tipicamente? Se sexta/sábado (mais comum), o **domingo de skate hard é exatamente o dia mais depletado** — Mg baixo + desidratação prévia + eletrólitos shiftados + carga cardíaca acumulada da semana = **risco aumentado de re-síncope vasovagal**. Posso programar:
+**Critical scheduling question:** quais dias da semana caem as noites de uso de estimulante tipicamente? Se sexta/sábado (mais comum), o **domingo de skate hard é exatamente o dia mais depletado** — Mg baixo + desidratação prévia + eletrólitos shiftados + carga cardíaca acumulada da semana = **risco aumentado de re-síncope vasovagal**. Posso programar:
 - (a) Mover skate hard pra dia mais distante do uso, OU
-- (b) Refeed/repleção super-robusto no sábado se coca for sexta, OU
+- (b) Refeed/repleção super-robusto no sábado se estimulante for sexta, OU
 - (c) Pré-skate eletrolítico mais agressivo nos domingos pós-uso, OU
 - (d) Sistema sinaliza pular skate hard se logging indica uso recente <36h.
 
