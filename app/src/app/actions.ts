@@ -9,10 +9,7 @@ import { getMealLogsForPast, saveWeeklyPlan } from "@/lib/query";
 import { loadProfile } from "@/lib/profile";
 import { getLang } from "@/lib/lang";
 import { getActivePerson } from "@/lib/person";
-
-function todayIso() {
-  return new Date().toISOString().slice(0, 10);
-}
+import { todayIso } from "@/lib/dates";
 
 export async function logMeal(input: {
   date?: string;
@@ -26,6 +23,8 @@ export async function logMeal(input: {
   await ensureMigrated();
   const personId = await getActivePerson();
   const date = input.date ?? todayIso();
+  const kcal = typeof input.kcal === "number" && Number.isFinite(input.kcal) ? input.kcal : null;
+  const protein_g = typeof input.protein_g === "number" && Number.isFinite(input.protein_g) ? input.protein_g : null;
   await getDb().execute({
     sql: `INSERT INTO meal_logs (person_id, date, slot, selected_state, actual_label, kcal, protein_g, notes, logged_at)
           VALUES (?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
@@ -36,7 +35,7 @@ export async function logMeal(input: {
             protein_g = excluded.protein_g,
             notes = excluded.notes,
             logged_at = datetime('now')`,
-    args: [personId, date, input.slot, input.selected_state, input.actual_label ?? null, input.kcal ?? null, input.protein_g ?? null, input.notes ?? null],
+    args: [personId, date, input.slot, input.selected_state, input.actual_label ?? null, kcal, protein_g, input.notes ?? null],
   });
   revalidatePath("/");
   revalidatePath("/history");
@@ -84,7 +83,11 @@ export async function logSubstance(input: {
 
 export async function deleteSubstanceLog(id: number) {
   await ensureMigrated();
-  await getDb().execute({ sql: `DELETE FROM substance_logs WHERE id = ?`, args: [id] });
+  const personId = await getActivePerson();
+  await getDb().execute({
+    sql: `DELETE FROM substance_logs WHERE id = ? AND person_id = ?`,
+    args: [id, personId],
+  });
   revalidatePath("/");
   revalidatePath("/history");
 }
@@ -144,7 +147,11 @@ export async function logBeverage(input: {
 
 export async function deleteBeverageLog(id: number) {
   await ensureMigrated();
-  await getDb().execute({ sql: `DELETE FROM beverage_logs WHERE id = ?`, args: [id] });
+  const personId = await getActivePerson();
+  await getDb().execute({
+    sql: `DELETE FROM beverage_logs WHERE id = ? AND person_id = ?`,
+    args: [id, personId],
+  });
   revalidatePath("/");
 }
 

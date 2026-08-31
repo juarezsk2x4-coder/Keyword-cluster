@@ -68,15 +68,6 @@ export async function getDayPrepMinutes(personId: PersonId, date: string): Promi
   return row?.available_minutes ?? null;
 }
 
-export async function getRecentMealLogs(personId: PersonId, limit = 30): Promise<MealLog[]> {
-  await ensureMigrated();
-  const r = await getDb().execute({
-    sql: `SELECT * FROM meal_logs WHERE person_id = ? ORDER BY date DESC, slot ASC LIMIT ?`,
-    args: [personId, limit],
-  });
-  return r.rows as unknown as MealLog[];
-}
-
 export async function getDayTotals(personId: PersonId, date: string): Promise<{ kcal: number; protein_g: number }> {
   await ensureMigrated();
   const r = await getDb().execute({

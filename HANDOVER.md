@@ -99,6 +99,110 @@ list, in case that's ever useful to you — or ignore the second slot entirely.
   AI generate will be in whichever language you write/prompt it in — the UI
   chrome (buttons, labels, nav) toggles independently of that.
 
+## Pre-handover QA pass
+
+Before finalizing this handover, the whole codebase (not just the diff that
+stripped personal content) got a full read-through — every file under
+`app/src`, correctness bugs, security, data integrity, code quality,
+performance, type safety. Here's what that found and what was actually
+changed as a result, so you know what you're inheriting and don't have to
+re-discover any of it yourself.
+
+**Fixed — real bugs:**
+
+- **DB migration wasn't transactional.** The one-time upgrade that adds
+  `person_id` to a pre-existing database (`app/src/lib/db.ts`,
+  `migrateLegacyTables`) ran its rename→create→copy→drop→rename sequence as
+  separate statements with no rollback — a dropped connection mid-migration
+  could delete a table and never finish its replacement. Now wrapped in a
+  real transaction (`client.batch(..., "write")`); re-tested against a
+  simulated pre-existing database (real rows, old schema) to confirm data
+  still survives intact.
+- **"Today" was computed in server time (UTC), not the household's actual
+  timezone**, duplicated across six files. On Vercel that meant a meal
+  logged at 9–11pm in Brazil got silently attributed to tomorrow. Centralized
+  into `app/src/lib/dates.ts` (fixed to `America/Sao_Paulo` — change the one
+  constant there if that's ever not the right timezone) and every caller now
+  imports it instead of re-deriving `new Date().toISOString()`.
+- **Two delete actions weren't scoped by the active profile.**
+  `deleteSubstanceLog`/`deleteBeverageLog` in `app/src/app/actions.ts` could
+  delete a row belonging to the *other* profile, breaking the person-isolation
+  every other action in that file respects. Both now filter by `person_id`
+  like the rest.
+- **AI plan generation was at real risk of failing on its own output size** —
+  a 7-day, 4-alternative-per-slot plan is a large structured response, and it
+  was using a non-streaming call with a token budget tight enough to
+  plausibly truncate mid-JSON. Switched to `.stream().finalMessage()` with a
+  larger budget, and a truncated response now surfaces a clear "ran out of
+  output space, try again" error instead of an opaque JSON-parse failure.
+- **An unfilled profile could turn every stat into a literal "NaN%"** in the
+  Habit Analyst and predictions banner, since nothing guarded against
+  dividing by a zero/invalid target. Both now fall back to no-insight instead
+  of garbage output.
+- **No startup check for a missing database URL in production** — without
+  `TURSO_DATABASE_URL` set, the app would silently fall back to a local
+  SQLite file that doesn't persist on Vercel, failing unpredictably deep
+  inside a random request instead of with a clear message. Now throws a
+  specific, actionable error at startup when running on Vercel without it.
+- **Hardened (not proven broken) the profile YAML loading path** — it reads
+  `../data/profiles/*.yml` via `fs` at request time with a dynamically-built
+  path, which Vercel's serverless bundler can't always statically trace.
+  This has been working in production throughout this whole project, so it
+  isn't a confirmed outage, but it's a fragile pattern worth not leaving to
+  chance — `next.config.mjs` now explicitly force-includes those files in
+  the deployed function bundle regardless of what the tracer infers.
+
+**Fixed — smaller correctness/consistency issues:**
+
+- Notification on/off preference was stored under one `localStorage` key
+  shared by both profiles — switching profiles silently changed the other
+  profile's notification setting. Now namespaced per profile.
+- `/history` fetched a fixed row count (`LIMIT 60`) rather than a day range,
+  which could cut a day's meals in half with no indication it was partial.
+  Switched to a proper 14-day window, matching the pattern every other
+  "recent" query in the codebase already uses.
+- Free-text kcal/protein entry (the "ate something else" form) had no
+  validation — non-numeric input silently became `NaN` and could reach the
+  database. Now validated both client- and server-side.
+- Cookies (`lang`, `person`) didn't set the `Secure` flag. Added, gated to
+  production only — local phone-over-Wi-Fi testing (see `app/README.md`
+  "Mobile setup") uses plain HTTP, which a `Secure` cookie would never be
+  sent back over.
+- Cleaned up duplication: the "get today's date" / "get this week's Sunday"
+  helpers were copy-pasted across 4+ files, and the Anthropic API client
+  singleton was duplicated between the two AI-calling modules. Both
+  consolidated into single shared modules (`lib/dates.ts`,
+  `lib/anthropic-client.ts`).
+- Removed dead weight: an npm script pointing at a `scripts/seed.ts` that
+  doesn't exist in this repo, two unused dependencies (`date-fns`, `zod`),
+  and an unused query function left behind by the `/history` fix above.
+
+**Deliberately left alone, with reasoning:**
+
+- **Did not cache the profile YAML in memory**, despite it being re-read and
+  re-parsed on every request. It's cheap (single-digit KB, single-digit ms),
+  and caching it would break the exact workflow this handover teaches:
+  "edit your profile YAML, refresh the page, see it reflected." A stale
+  in-memory cache would silently show old values until the server process
+  restarted — a worse bug than the I/O it would save.
+- **Did not delete the "skate day" / high-activity-day machinery**
+  (`is_skate_day`, `total_kcal_target_skate_day`) even though nothing in
+  this starter kit currently sets it to `true`. It's a real, working
+  extension point — write your own plan builder that varies it per day (the
+  way the original hand-authored plan did) and the kcal-target logic already
+  knows what to do with it. Left a comment on the type explaining this so
+  it doesn't read as leftover cruft.
+- **Did not upgrade the pinned Claude model** (`claude-opus-4-7`, used for
+  both AI features) to a newer generation. That's a deliberate product
+  decision with cost/behavior tradeoffs, not something to change silently in
+  a cleanup pass — worth a conscious look before you rely on it heavily.
+
+**Verified after every fix:** `pnpm build` and `npx tsc --noEmit` clean, a
+full route smoke test (all 6 pages, both profiles, completely blank
+templates) with nothing crashing, and the migration re-tested end-to-end
+against a simulated pre-existing database to confirm the transactional
+rewrite still upgrades an old schema correctly.
+
 ## Taking ownership
 
 This repo currently lives under the GitHub account that built it for you.

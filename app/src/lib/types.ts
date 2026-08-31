@@ -63,6 +63,13 @@ export interface MealCard {
 export interface DailyPlan {
   date: string;
   day_of_week: string;
+  // Named "skate_day" from the original build (a real high-intensity training
+  // day for that household); functions generically as "high-activity day
+  // gets extra kcal" everywhere it's consumed. The generic starter plan and
+  // the AI prompt both hardcode this to false today (see seed-plan.ts,
+  // meal-plan-ai.ts) — it's a dormant extension point, not dead code: write
+  // your own plan builder that sets it per-day and the kcal-target logic in
+  // predictions.ts already knows what to do with it.
   is_skate_day: boolean;
   is_work_day: boolean;
   kcal_target: number;

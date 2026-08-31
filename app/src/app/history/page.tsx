@@ -1,14 +1,20 @@
-import { getRecentMealLogs } from "@/lib/query";
+import { getMealLogsForPast } from "@/lib/query";
 import { getLang } from "@/lib/lang";
 import { getActivePerson } from "@/lib/person";
 import { t } from "@/lib/i18n";
+import { todayIso } from "@/lib/dates";
 import type { MealSlot, CardState } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 
+const HISTORY_WINDOW_DAYS = 14;
+
 export default async function HistoryPage() {
   const personId = await getActivePerson();
-  const logs = await getRecentMealLogs(personId, 60);
+  // Day-range query rather than a row LIMIT — a row cutoff can slice a day's
+  // logs in half with no indication it's incomplete (e.g. showing 2 of 6
+  // meals for the oldest visible date with a misleadingly-low kcal total).
+  const logs = await getMealLogsForPast(personId, todayIso(), HISTORY_WINDOW_DAYS);
   const lang = await getLang();
   const tr = t(lang);
 

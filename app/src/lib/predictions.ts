@@ -1,4 +1,5 @@
 import { getDb, ensureMigrated } from "./db";
+import { MEAL_SLOTS } from "./types";
 import type { MealLog, SleepLog, SubstanceLog, PersonId } from "./types";
 
 export interface DayRollup {
@@ -103,7 +104,7 @@ export async function getPredictions(
   const subs = subsResp.rows as unknown as SubstanceLog[];
   const fatigues = fatigueResp.rows as unknown as { date: string }[];
 
-  const ALL_SLOTS = ["cafe_da_manha", "lanche_manha", "almoco", "lanche_tarde", "jantar", "snack_noturno"];
+  const ALL_SLOTS = MEAL_SLOTS;
 
   const rollups: DayRollup[] = dates.map((d) => {
     const dayMeals = meals.filter((m) => m.date === d);
@@ -133,11 +134,13 @@ export async function getPredictions(
 
   const kcalTargetToday = isSkateDayToday ? KCAL_TARGET_SKATE : KCAL_TARGET_NORMAL;
   const proteinTarget = PROTEIN_TARGET;
+  // Guard against an unfilled profile (targets not yet set to real numbers).
+  const hasValidTargets = KCAL_TARGET_NORMAL > 0 && proteinTarget > 0;
 
-  const kcal_deficit_pct = daysWithData > 0
+  const kcal_deficit_pct = daysWithData > 0 && hasValidTargets
     ? Math.round(((avg_kcal - KCAL_TARGET_NORMAL) / KCAL_TARGET_NORMAL) * 100)
     : 0;
-  const protein_deficit_pct = daysWithData > 0
+  const protein_deficit_pct = daysWithData > 0 && hasValidTargets
     ? Math.round(((avg_protein - proteinTarget) / proteinTarget) * 100)
     : 0;
 

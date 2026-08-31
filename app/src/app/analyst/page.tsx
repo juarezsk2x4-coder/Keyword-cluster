@@ -3,13 +3,10 @@ import { getLang } from "@/lib/lang";
 import { getActivePerson } from "@/lib/person";
 import { loadProfile } from "@/lib/profile";
 import { t } from "@/lib/i18n";
+import { todayIso } from "@/lib/dates";
 import type { MealSlot, CardState } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
-
-function todayIso(): string {
-  return new Date().toISOString().slice(0, 10);
-}
 
 function severityStyle(s: "info" | "warning" | "alert"): { bg: string; border: string; color: string } {
   if (s === "alert") return { bg: "#3a1d1a", border: "#e87b6b", color: "#e87b6b" };

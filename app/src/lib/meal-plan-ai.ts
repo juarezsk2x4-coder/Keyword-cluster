@@ -1,16 +1,6 @@
-import Anthropic from "@anthropic-ai/sdk";
+import { getAnthropicClient } from "./anthropic-client";
+import { MEAL_SLOTS } from "./types";
 import type { DailyPlan, MealLog, PersonProfile } from "./types";
-
-let clientInstance: Anthropic | null = null;
-
-function getClient(): Anthropic {
-  if (clientInstance) return clientInstance;
-  if (!process.env.ANTHROPIC_API_KEY) {
-    throw new Error("ANTHROPIC_API_KEY not configured");
-  }
-  clientInstance = new Anthropic();
-  return clientInstance;
-}
 
 export interface RecentLogSummary {
   date: string;
@@ -184,20 +174,30 @@ export async function generateWeeklyPlan(
   weekStartIso: string,
   lang: "pt" | "en"
 ): Promise<DailyPlan[]> {
-  const client = getClient();
-  const response = await client.messages.create({
-    model: "claude-opus-4-7",
-    max_tokens: 16000,
-    output_config: {
-      format: {
-        type: "json_schema",
-        schema: WEEKLY_PLAN_SCHEMA,
+  const client = getAnthropicClient();
+  // 7 days x 6 slots x 4 meal versions (label, ingredients, prep_steps,
+  // macros, notes) is a large structured payload — stream it and use a
+  // generous token budget so a long plan doesn't hit max_tokens mid-response
+  // (which would otherwise silently truncate the JSON and fail to parse).
+  const response = await client.messages
+    .stream({
+      model: "claude-opus-4-7",
+      max_tokens: 48000,
+      output_config: {
+        format: {
+          type: "json_schema",
+          schema: WEEKLY_PLAN_SCHEMA,
+        },
+        effort: "medium",
       },
-      effort: "medium",
-    },
-    system: buildSystemPrompt(profile, lang),
-    messages: [{ role: "user", content: buildUserMessage(weekStartIso, recentLogs, lang) }],
-  });
+      system: buildSystemPrompt(profile, lang),
+      messages: [{ role: "user", content: buildUserMessage(weekStartIso, recentLogs, lang) }],
+    })
+    .finalMessage();
+
+  if (response.stop_reason === "max_tokens") {
+    throw new Error("Plan generation ran out of output space (max_tokens) — try again");
+  }
 
   const textBlock = response.content.find((b) => b.type === "text");
   if (!textBlock || textBlock.type !== "text") {
@@ -212,7 +212,6 @@ export async function generateWeeklyPlan(
 }
 
 export function summarizeMealLogs(logs: MealLog[]): RecentLogSummary[] {
-  const ALL_SLOTS = ["cafe_da_manha", "lanche_manha", "almoco", "lanche_tarde", "jantar", "snack_noturno"];
   const byDate = new Map<string, MealLog[]>();
   for (const log of logs) {
     const arr = byDate.get(log.date) ?? [];
@@ -226,7 +225,7 @@ export function summarizeMealLogs(logs: MealLog[]): RecentLogSummary[] {
       total_kcal: dayLogs.reduce((acc, m) => acc + (m.kcal ?? 0), 0),
       total_protein_g: dayLogs.reduce((acc, m) => acc + (m.protein_g ?? 0), 0),
       meals_logged: dayLogs.length,
-      missed_slots: ALL_SLOTS.filter((s) => !dayLogs.find((m) => m.slot === s)),
+      missed_slots: MEAL_SLOTS.filter((s) => !dayLogs.find((m) => m.slot === s)),
       states_picked: dayLogs.map((m) => m.selected_state),
     });
   }

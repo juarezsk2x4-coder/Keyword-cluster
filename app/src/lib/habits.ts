@@ -5,16 +5,10 @@ import {
   getSubstanceLogsForPast,
   getFatigueDatesForPast,
 } from "./query";
-import type { MealSlot, CardState, PersonId } from "./types";
+import { MEAL_SLOTS } from "./types";
+import type { CardState, MealSlot, PersonId } from "./types";
 
-const ALL_SLOTS: MealSlot[] = [
-  "cafe_da_manha",
-  "lanche_manha",
-  "almoco",
-  "lanche_tarde",
-  "jantar",
-  "snack_noturno",
-];
+const ALL_SLOTS = MEAL_SLOTS;
 
 export interface HabitTargets {
   kcal: number;
@@ -216,8 +210,12 @@ export async function getHabitRollup(
 
   // Build insights
   const insights: HabitInsight[] = [];
-  const kcalUnderPct = Math.round(((targets.kcal - avgKcal) / targets.kcal) * 100);
-  const proteinUnderPct = Math.round(((targets.protein - avgProtein) / targets.protein) * 100);
+  // Guard against an unfilled profile (targets not yet set to real numbers) —
+  // without this, dividing by a zero/invalid target turns every insight
+  // into a literal "NaN%" instead of just producing no insight.
+  const hasValidTargets = targets.kcal > 0 && targets.protein > 0;
+  const kcalUnderPct = hasValidTargets ? Math.round(((targets.kcal - avgKcal) / targets.kcal) * 100) : 0;
+  const proteinUnderPct = hasValidTargets ? Math.round(((targets.protein - avgProtein) / targets.protein) * 100) : 0;
 
   if (kcalUnderPct >= 15 && daysWithData >= 3) {
     insights.push({

@@ -28,8 +28,8 @@ export default function DayHeader(props: Props) {
   const [pending, startTransition] = useTransition();
   const tr = t(props.lang);
 
-  const kcalPct = Math.min(100, Math.round((props.kcalLogged / props.kcalTarget) * 100));
-  const protPct = Math.min(100, Math.round((props.proteinLogged / props.proteinTarget) * 100));
+  const kcalPct = props.kcalTarget > 0 ? Math.min(100, Math.round((props.kcalLogged / props.kcalTarget) * 100)) : 0;
+  const protPct = props.proteinTarget > 0 ? Math.min(100, Math.round((props.proteinLogged / props.proteinTarget) * 100)) : 0;
 
   return (
     <div className="space-y-3 mb-6">
