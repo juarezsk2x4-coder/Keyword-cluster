@@ -1,6 +1,6 @@
 import { getAnthropicClient } from "./anthropic-client";
 import { MEAL_SLOTS } from "./types";
-import type { DailyPlan, MealLog, PersonId, PersonProfile, SubstanceLog } from "./types";
+import type { DailyPlan, MealLog, PersonProfile, SubstanceLog } from "./types";
 
 export interface RecentLogSummary {
   date: string;
@@ -89,16 +89,16 @@ const WEEKLY_PLAN_SCHEMA = {
   additionalProperties: false,
 } as const;
 
-function buildPersonASystemPrompt(profile: PersonProfile, lang: "pt" | "en"): string {
+function buildCustomSystemPrompt(profile: PersonProfile, lang: "pt" | "en"): string {
   const hardNo = profile.food_preferences.hard_no.join(", ");
   const textures = profile.food_preferences.texture_aversions.join(", ");
   const dislikes = profile.food_preferences.soft_dislikes.join(", ");
   const flags = profile.medical_flags.join(", ");
 
   if (lang === "en") {
-    return `You design 7-day meal plans for Person A. Output a JSON object {"days": DailyPlan[]} matching the schema.
+    return `You design 7-day meal plans for ${profile.name}. Output a JSON object {"days": DailyPlan[]} matching the schema.
 
-Person A snapshot:
+${profile.name} snapshot:
 - Age ${profile.age_years}, ${profile.height_cm}cm, ${profile.weight_kg}kg, ~${profile.body_fat_pct}% BF, BMR ~${profile.estimated_bmr_kcal} kcal.
 - Goal: ${profile.goals.primary}. Performance: ${profile.goals.performance_focus.join(", ")}.
 - Clinical flags: ${flags}.
@@ -130,9 +130,9 @@ Each ingredient string must include quantity (e.g., "patinho moído 150g", "arro
 Respond ONLY with the JSON object {"days": [...]}.`;
   }
 
-  return `Você projeta planos alimentares de 7 dias para a Pessoa A. Retorne objeto JSON {"days": DailyPlan[]} seguindo o schema.
+  return `Você projeta planos alimentares de 7 dias para ${profile.name}. Retorne objeto JSON {"days": DailyPlan[]} seguindo o schema.
 
-Pessoa A:
+${profile.name}:
 - ${profile.age_years} anos, ${profile.height_cm}cm, ${profile.weight_kg}kg, ~${profile.body_fat_pct}% BF, BMR ~${profile.estimated_bmr_kcal} kcal.
 - Objetivo: ${profile.goals.primary}. Performance: ${profile.goals.performance_focus.join(", ")}.
 - Flags clínicas: ${flags}.
@@ -217,9 +217,9 @@ Cada ingrediente inclui quantidade. Prep_minutes inteiro. Macros realistas. Note
 Responda APENAS com o objeto JSON {"days": [...]}.`;
 }
 
-function buildSystemPrompt(profile: PersonProfile, lang: "pt" | "en", personId: PersonId): string {
-  return personId === "person_a"
-    ? buildPersonASystemPrompt(profile, lang)
+function buildSystemPrompt(profile: PersonProfile, lang: "pt" | "en"): string {
+  return profile.has_custom_meal_plan
+    ? buildCustomSystemPrompt(profile, lang)
     : buildGenericSystemPrompt(profile, lang);
 }
 
@@ -257,8 +257,7 @@ export async function generateWeeklyPlan(
   profile: PersonProfile,
   recentLogs: RecentLogSummary[],
   weekStartIso: string,
-  lang: "pt" | "en",
-  personId: PersonId
+  lang: "pt" | "en"
 ): Promise<DailyPlan[]> {
   const client = getAnthropicClient();
   // 7 days x 6 slots x 4 meal versions (label, ingredients, prep_steps,
@@ -276,7 +275,7 @@ export async function generateWeeklyPlan(
         },
         effort: "medium",
       },
-      system: buildSystemPrompt(profile, lang, personId),
+      system: buildSystemPrompt(profile, lang),
       messages: [{ role: "user", content: buildUserMessage(weekStartIso, recentLogs, lang) }],
     })
     .finalMessage();

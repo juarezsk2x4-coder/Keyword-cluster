@@ -725,10 +725,11 @@ export async function resolveWeeklyPlan(personId: PersonId, weekStartIso: string
       // Fall through to seed
     }
   }
-  if (personId === "person_a") {
+  const profile = loadProfile(personId);
+  if (profile.has_custom_meal_plan) {
     return { days: buildWeeklyPlan(weekStartIso), source: "seed" };
   }
-  return { days: buildGenericSeedPlan(weekStartIso, loadProfile(personId)), source: "seed" };
+  return { days: buildGenericSeedPlan(weekStartIso, profile), source: "seed" };
 }
 
 // ─── Shopping list (derived from week plan) ───────────────────────────────────

@@ -8,7 +8,7 @@ export default async function ProfilePage() {
   const p = loadProfile(personId);
   const lang = await getLang();
   const tr = t(lang);
-  const profileFile = personId === "person_b" ? "person_b.yml" : "person_a.yml";
+  const profileFile = `${personId}.yml`;
 
   return (
     <div className="space-y-4">
@@ -67,8 +67,8 @@ export default async function ProfilePage() {
 
       <div className="card text-xs text-muted">
         {lang === "en"
-          ? <>Profile loaded from <code className="text-text">data/profiles/{profileFile}</code>.{personId === "person_a" && <> Full clinical synthesis in <code className="text-text">data/profiles/person_a_clinical.md</code>.</>}</>
-          : <>Perfil carregado de <code className="text-text">data/profiles/{profileFile}</code>.{personId === "person_a" && <> Síntese clínica completa em <code className="text-text">data/profiles/person_a_clinical.md</code>.</>}</>}
+          ? <>Profile loaded from <code className="text-text">data/profiles/{profileFile}</code>.{p.clinical_brief_path && <> Full clinical synthesis in <code className="text-text">{p.clinical_brief_path}</code>.</>}</>
+          : <>Perfil carregado de <code className="text-text">data/profiles/{profileFile}</code>.{p.clinical_brief_path && <> Síntese clínica completa em <code className="text-text">{p.clinical_brief_path}</code>.</>}</>}
       </div>
     </div>
   );

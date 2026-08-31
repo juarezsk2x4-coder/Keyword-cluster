@@ -195,7 +195,7 @@ export async function generateWeekPlanAction(
       getSubstanceLogsForPast(personId, dayBeforeWeekStartIso, 7),
     ]);
     const summary = summarizeMealLogs(priorLogs, priorSubstanceLogs);
-    const days = await generateWeeklyPlan(profile, summary, weekStart, lang, personId);
+    const days = await generateWeeklyPlan(profile, summary, weekStart, lang);
     await saveWeeklyPlan(personId, weekStart, JSON.stringify(days), "ai");
     revalidatePath("/");
     revalidatePath("/plan");

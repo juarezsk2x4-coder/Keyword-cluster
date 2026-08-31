@@ -92,6 +92,12 @@ export interface PersonProfile {
     texture_aversions: string[];
     soft_dislikes: string[];
   };
+  // These two are data-driven opt-ins rather than hardcoded to a specific
+  // person_id — any profile (not just "person_a") can set them and get the
+  // same treatment, so adding a third/fourth person never requires a code
+  // change, just their own YAML.
+  has_custom_meal_plan?: boolean; // true = has a hand-authored seed-plan.ts week + tailored AI prompt
+  clinical_brief_path?: string;   // optional path to a fuller clinical write-up, shown on /profile if set
 }
 
 export interface MealLog {
