@@ -1,10 +1,10 @@
-# Person B profile (default: the woman, less cardio-active, more caffeine, no tobacco)
+# Person B profile — starter template.
 # Same schema as person_a.yml — fill in the same fields.
 #
 # The app (app/src/lib/profile.ts) reads: name, age_years, height_cm, weight_kg,
 # body_fat_pct, estimated_bmr_kcal, goals, nutrition_targets, medical_flags,
 # food_preferences. Fill those in first — they're what unlocks the meal plan
-# and the AI Meal Plan Designer for her profile. Everything else below is
+# and the AI Meal Plan Designer for this profile. Everything else below is
 # richer context for future clinical/activity-aware planning, same spirit as
 # person_a.yml.
 
@@ -33,7 +33,7 @@ sleep:
 # ── Substances ────────────────────────────────────────────────────────────────
 substances:
   caffeine:
-    mg_per_day: FILL_IN          # likely higher than partner per the briefing
+    mg_per_day: FILL_IN
     last_dose_time: "16:00"
   alcohol:
     frequency: weekly            # daily | weekly | monthly | rarely | never
@@ -44,7 +44,7 @@ substances:
     typical_time: evening
     typical_form: flor
   nicotine:
-    frequency: never             # confirmed: she doesn't smoke
+    frequency: never
     form: none
   medications: []                # ex: contraceptive ["pílula_combinada"], hormonal therapy, antidepressants — relevant for B6/B12/folato/Mg targets
   supplements: []
@@ -70,7 +70,7 @@ nutrition_targets:
 
 # ── Goal ──────────────────────────────────────────────────────────────────────
 goals:
-  primary: recomp                # confirmed: recomp for both
+  primary: FILL_IN                # ex: recomp, cutting, bulking, maintenance
   performance_focus: []          # ex: [forca, mobilidade, resistencia]
   philosophical: FILL_IN
 
@@ -84,7 +84,6 @@ meal_times:
 
 # ── Food preferences (required by the app — fill in the specifics) ────────────
 food_preferences:
-  hard_no: [tomate]              # shared household-kitchen default (partner's confirmed
-                                  # allergy) — adjust if this isn't actually a restriction for her
+  hard_no: []                    # allergies / absolute blocks, e.g. [tomate, amendoim]
   texture_aversions: []
   soft_dislikes: []

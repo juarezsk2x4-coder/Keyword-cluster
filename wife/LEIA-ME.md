@@ -1,6 +1,6 @@
 # Olá! 💛
 
-Estamos montando um sistema que vai planejar nossa alimentação pra semana, gerar a lista de compras automática (Forte, Imperatriz, iFood) e ajustar tudo conforme a gente come no dia a dia. Pra ele dar conta da **sua parte**, preciso que você preencha 2 arquivinhos aqui nessa pasta:
+Esse app agora é **todo seu** — planeja a alimentação da semana, gera lista de compras, e ajusta tudo conforme você vai comendo no dia a dia. É só seu, pra você continuar do seu jeito, adicionar suas próprias referências, mudar o que quiser. Pra começar, preencha 2 arquivinhos aqui nessa pasta:
 
 1. **`meu-perfil.yml`** — seus dados (idade, altura, peso, treinos, café, etc.)
 2. **`minhas-preferencias.yml`** — o que você gosta, o que não gosta, o que não pode
@@ -32,14 +32,12 @@ O sistema pergunta sobre **café, álcool, maconha, cigarro, anticoncepcional, c
 
 **Nada disso é julgamento, é só pra calibrar.** Se algum item te incomoda responder, pula. O agente trabalha com o que você der.
 
-## Já está confirmado
+## Sobre a alergia a tomate
 
-- **Tomate é proibido total** (sua alergia). O sistema NUNCA vai sugerir nada com tomate em forma alguma — nem molho, nem extrato, nem ketchup, nem lasanha tradicional, nem pizza marinara. Tudo será adaptado.
-- Você é menos cardio-ativa que ele e toma mais café — já registrado.
-- Objetivo dos dois: **recomp** (manter peso, melhorar composição corporal).
+Se tomate for uma alergia ou restrição sua também, deixe marcado — o sistema NUNCA vai sugerir nada com tomate em forma alguma (nem molho, nem extrato, nem ketchup, nem lasanha tradicional, nem pizza marinara). Se não for uma restrição sua, é só remover — os arquivos aqui são só seus, ajuste como quiser.
 
 ## Quando terminar
 
-Manda os dois arquivos de volta (ou cola o conteúdo no chat com ele). Ele coloca no sistema e em ~10 min temos o primeiro plano da semana e a lista de compras prontos.
+Esses dois arquivos alimentam `data/profiles/person_b.yml` e `data/preferences.yml` — que é o que o app de fato lê. Se estiver usando o Claude Code (ou outra IA), é só pedir pra ele transcrever o que você preencheu aqui pros arquivos técnicos — leva menos de um minuto. Se preferir, edite `data/profiles/person_b.yml` diretamente (mesma ideia, só que em inglês).
 
-Qualquer dúvida sobre o que algum campo quer dizer, pergunta. Beijo! 🥗
+Qualquer dúvida sobre o que algum campo quer dizer, pergunta pra IA ou ajusta como fizer sentido pra você. Beijo! 🥗

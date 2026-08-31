@@ -1,10 +1,10 @@
 # Suas preferências alimentares pessoais.
-# (As preferências comuns do casal — orçamento, lojas, etc. — ele já preencheu.)
+# Preferências compartilhadas (orçamento, lojas, etc.) ficam em data/preferences.yml
+# e data/logistics.yml, na raiz do repo.
 
-# ── Coisas que você não come, além do tomate ─────────────────────────────────
-# Tomate já está bloqueado pra todo mundo. Adicione aqui o que VOCÊ não come
-# por alergia, intolerância ou nojo profundo.
-nao_como_de_jeito_nenhum: []   # ex: ["fígado", "bucho", "camarão"]
+# ── Coisas que você não come ──────────────────────────────────────────────────
+# Alergia, intolerância ou nojo profundo — o que for.
+nao_como_de_jeito_nenhum: []   # ex: ["tomate", "fígado", "bucho", "camarão"]
 
 # ── Coisas que você não gosta, mas não é o fim do mundo ──────────────────────
 # O agente vai evitar, mas pode aparecer ocasionalmente em receitas que

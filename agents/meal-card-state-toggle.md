@@ -2,6 +2,8 @@
 
 > Design spec for the meal-logging UI in the Next.js app. Each meal card carries multiple state-aware alternatives so the user can swap suggestions in real time based on how he's actually feeling at the moment.
 
+> **Starter-kit note:** this doc was originally written around a specific person's real clinical profile (autism, ADHD, substance use) to explain *why* the 4-state toggle pattern exists. The pattern itself — original / easy / liquid / no-hunger, with sleep/substance/fatigue-driven defaults — is generic and already implemented in the code as-is. The example below is left intact as a worked illustration of how to reason about your own overlays; swap in your own real context (or delete the illustrative parts) before treating any of the clinical specifics as advice for someone else.
+
 ## Problem
 
 The user has documented:

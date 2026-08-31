@@ -2,7 +2,7 @@
 
 5–15 recipes you already love and rotate through. The Meal Plan Designer uses these as anchors and fills the rest of the week around them. Optional but high-leverage: more anchors = less novelty fatigue.
 
-**Hard rule reminder: no tomate.** Adapt any recipe that traditionally uses tomato (replace with molho branco, pesto, refogado de cebola/alho, redução de vinho, molho de mostarda e mel, leite de coco com curry, etc.).
+**Hard rule reminder:** whatever you listed under `hard_no` in your profile YAML applies here too — adapt any recipe that uses a blocked ingredient (ex: swap tomato-based sauces for molho branco, pesto, refogado de cebola/alho, redução de vinho, molho de mostarda e mel, leite de coco com curry, etc.).
 
 ---
 

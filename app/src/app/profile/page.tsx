@@ -67,8 +67,8 @@ export default async function ProfilePage() {
 
       <div className="card text-xs text-muted">
         {lang === "en"
-          ? <>Profile loaded from <code className="text-text">data/profiles/{profileFile}</code>.{personId === "person_a" && <> Full clinical synthesis in <code className="text-text">data/profiles/person_a_clinical.md</code>.</>}</>
-          : <>Perfil carregado de <code className="text-text">data/profiles/{profileFile}</code>.{personId === "person_a" && <> Síntese clínica completa em <code className="text-text">data/profiles/person_a_clinical.md</code>.</>}</>}
+          ? <>Profile loaded from <code className="text-text">data/profiles/{profileFile}</code>.</>
+          : <>Perfil carregado de <code className="text-text">data/profiles/{profileFile}</code>.</>}
       </div>
     </div>
   );

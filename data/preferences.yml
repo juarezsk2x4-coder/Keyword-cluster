@@ -7,12 +7,10 @@
 # ── Hard restrictions (NEVER include) ────────────────────────────────────────
 # Allergies and absolute blocks. The Meal Plan Designer will reject any recipe
 # containing any of these in any form.
-hard_no:
-  - tomate              # confirmed allergy: nada de tomate em forma alguma
-                        # bloqueia: molho de tomate, extrato, ketchup, sugo, polpa,
-                        #           tomate seco, lasanha tradicional, pizza marinara,
-                        #           rondelli ao sugo, vinagrete tradicional, gazpacho
-  # add more if needed (ex: amendoim, frutos_do_mar, lactose_estrita, gluten_estrito)
+hard_no: []
+  # ex: tomate (bloqueia molho de tomate, extrato, ketchup, sugo, polpa, tomate
+  #     seco, lasanha tradicional, pizza marinara, vinagrete tradicional, etc.)
+  # add anything household-wide here (ex: amendoim, frutos_do_mar, lactose_estrita, gluten_estrito)
 
 # ── Eating out ───────────────────────────────────────────────────────────────
 # Reserve N meal slots per week so the planner doesn't waste ingredients on

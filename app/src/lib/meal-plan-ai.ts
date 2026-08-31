@@ -1,5 +1,5 @@
 import Anthropic from "@anthropic-ai/sdk";
-import type { DailyPlan, MealLog, PersonId, PersonProfile } from "./types";
+import type { DailyPlan, MealLog, PersonProfile } from "./types";
 
 let clientInstance: Anthropic | null = null;
 
@@ -98,82 +98,7 @@ const WEEKLY_PLAN_SCHEMA = {
   additionalProperties: false,
 } as const;
 
-function buildPersonASystemPrompt(profile: PersonProfile, lang: "pt" | "en"): string {
-  const hardNo = profile.food_preferences.hard_no.join(", ");
-  const textures = profile.food_preferences.texture_aversions.join(", ");
-  const dislikes = profile.food_preferences.soft_dislikes.join(", ");
-  const flags = profile.medical_flags.join(", ");
-
-  if (lang === "en") {
-    return `You design 7-day meal plans for Person A. Output a JSON object {"days": DailyPlan[]} matching the schema.
-
-Person A snapshot:
-- Age ${profile.age_years}, ${profile.height_cm}cm, ${profile.weight_kg}kg, ~${profile.body_fat_pct}% BF, BMR ~${profile.estimated_bmr_kcal} kcal.
-- Goal: ${profile.goals.primary}. Performance: ${profile.goals.performance_focus.join(", ")}.
-- Clinical flags: ${flags}.
-- HARD NO (absolute block, never include in any form including sauces or hidden): ${hardNo}.
-- Texture aversions: ${textures}.
-- Soft dislikes: ${dislikes}.
-
-Day-type rules (Sunday-anchored):
-- Sun + Mon = skate days (kcal_target ${profile.nutrition_targets.total_kcal_target_skate_day}, ~390g carbs). Pre-skate fuel breakfast (cuscuz/banana/mel/peanut butter type), electrolytes mid-morning, post-skate recovery lunch (fast carbs + whey).
-- Tue–Sat = work days (kcal_target ${profile.nutrition_targets.total_kcal_target_off_day}, protein ${profile.nutrition_targets.protein_g_per_day}g, ~225g carbs).
-- Thu + Sat AM defaults to "liquid" recovery shake (post-stim recovery).
-- Friday dinner slot is reserved for delivery — acceptable list: poke, sushi, Peruvian, Japanese, never burgers/fast-food junk.
-- 6 slots every day: cafe_da_manha (07:30), lanche_manha (10:30), almoco (12:30 weekdays / 13:00 skate), lanche_tarde (16:00), jantar (20:00), snack_noturno (22:30).
-
-For every slot, provide 4 alternatives:
-- original = the planned full version
-- easy = <8min prep, grab-and-eat, anti-burger marmita default
-- liquid = smoothie, shake, or soup
-- no_hunger = minimum viable (kombucha + banana style)
-
-Brazilian / southern (sulista) cuisine references:
-- Lean cuts (patinho, peito frango sem pele, filé mignon, lombo suíno) ~150-200 kcal/100g cooked.
-- Fattier cuts (entrecot, costela, picanha) ~250-350 kcal/100g cooked.
-- White rice ~130 kcal/100g, beans ~75 kcal/100g, cassava/sweet potato ~120 kcal/100g.
-- Standard protein portion: 120-150g cooked. Standard carb portion: 100-150g cooked.
-
-Each ingredient string must include quantity (e.g., "patinho moído 150g", "arroz integral 1 xícara"). Prep_minutes integer. Macros realistic. Notes optional but if present <120 chars.
-
-Respond ONLY with the JSON object {"days": [...]}.`;
-  }
-
-  return `Você projeta planos alimentares de 7 dias para a Pessoa A. Retorne objeto JSON {"days": DailyPlan[]} seguindo o schema.
-
-Pessoa A:
-- ${profile.age_years} anos, ${profile.height_cm}cm, ${profile.weight_kg}kg, ~${profile.body_fat_pct}% BF, BMR ~${profile.estimated_bmr_kcal} kcal.
-- Objetivo: ${profile.goals.primary}. Performance: ${profile.goals.performance_focus.join(", ")}.
-- Flags clínicas: ${flags}.
-- BLOQUEIO ABSOLUTO (nunca incluir nem em molhos / forma escondida): ${hardNo}.
-- Aversões de textura: ${textures}.
-- Não curte: ${dislikes}.
-
-Regras por dia (semana ancorada em domingo):
-- Dom + Seg = skate days (kcal_target ${profile.nutrition_targets.total_kcal_target_skate_day}, ~390g carbo). Café da manhã pré-skate (cuscuz/banana/mel/pasta de amendoim), eletrólito mid-manhã, almoço pós-skate recovery (carbo rápido + whey).
-- Ter–Sáb = dias de trabalho (kcal_target ${profile.nutrition_targets.total_kcal_target_off_day}, proteína ${profile.nutrition_targets.protein_g_per_day}g, ~225g carbo).
-- Qui + Sáb manhã: default "liquid" recovery (pós-estimulante).
-- Sexta jantar: slot reservado pra delivery — lista aceitável: poke, sushi, peruano, japonês, NUNCA burger/fast-food.
-- 6 slots/dia: cafe_da_manha (07:30), lanche_manha (10:30), almoco (12:30 dia útil / 13:00 skate), lanche_tarde (16:00), jantar (20:00), snack_noturno (22:30).
-
-Pra cada slot, 4 alternativas:
-- original = versão planejada completa
-- easy = <8min prep, pegar e comer, marmita anti-burger
-- liquid = smoothie, shake ou sopa
-- no_hunger = mínimo viável (kombucha + banana)
-
-Referência sulista/brasileira:
-- Cortes magros (patinho, peito de frango sem pele, filé mignon, lombo suíno) ~150-200 kcal/100g cozido.
-- Cortes mais gordos (entrecot, costela, picanha) ~250-350 kcal/100g cozido.
-- Arroz branco ~130 kcal/100g, feijão ~75 kcal/100g, aipim/batata-doce ~120 kcal/100g.
-- Porção padrão proteína: 120-150g cozido. Porção padrão carbo: 100-150g cozido.
-
-Cada ingrediente inclui quantidade (ex: "patinho moído 150g", "arroz integral 1 xícara"). Prep_minutes inteiro. Macros realistas. Notes opcional, se houver <120 chars.
-
-Responda APENAS com o objeto JSON {"days": [...]}.`;
-}
-
-function buildGenericSystemPrompt(profile: PersonProfile, lang: "pt" | "en"): string {
+function buildSystemPrompt(profile: PersonProfile, lang: "pt" | "en"): string {
   const hardNo = profile.food_preferences.hard_no.join(", ");
   const textures = profile.food_preferences.texture_aversions.join(", ");
   const dislikes = profile.food_preferences.soft_dislikes.join(", ");
@@ -226,12 +151,6 @@ Cada ingrediente inclui quantidade. Prep_minutes inteiro. Macros realistas. Note
 Responda APENAS com o objeto JSON {"days": [...]}.`;
 }
 
-function buildSystemPrompt(profile: PersonProfile, lang: "pt" | "en", personId: PersonId): string {
-  return personId === "person_a"
-    ? buildPersonASystemPrompt(profile, lang)
-    : buildGenericSystemPrompt(profile, lang);
-}
-
 function buildUserMessage(
   weekStartIso: string,
   recentLogs: RecentLogSummary[],
@@ -263,8 +182,7 @@ export async function generateWeeklyPlan(
   profile: PersonProfile,
   recentLogs: RecentLogSummary[],
   weekStartIso: string,
-  lang: "pt" | "en",
-  personId: PersonId
+  lang: "pt" | "en"
 ): Promise<DailyPlan[]> {
   const client = getClient();
   const response = await client.messages.create({
@@ -277,7 +195,7 @@ export async function generateWeeklyPlan(
       },
       effort: "medium",
     },
-    system: buildSystemPrompt(profile, lang, personId),
+    system: buildSystemPrompt(profile, lang),
     messages: [{ role: "user", content: buildUserMessage(weekStartIso, recentLogs, lang) }],
   });
 

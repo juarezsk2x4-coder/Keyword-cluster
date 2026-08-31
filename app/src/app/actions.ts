@@ -186,7 +186,7 @@ export async function generateWeekPlanAction(
       7
     );
     const summary = summarizeMealLogs(priorLogs);
-    const days = await generateWeeklyPlan(profile, summary, weekStart, lang, personId);
+    const days = await generateWeeklyPlan(profile, summary, weekStart, lang);
     await saveWeeklyPlan(personId, weekStart, JSON.stringify(days), "ai");
     revalidatePath("/");
     revalidatePath("/plan");
