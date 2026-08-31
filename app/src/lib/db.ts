@@ -31,7 +31,11 @@ export async function ensureMigrated() {
   // several parallel calls) share one in-flight migration instead of each
   // racing through migrateLegacyTables independently.
   if (migrationPromise) return migrationPromise;
-  migrationPromise = runMigration();
+  migrationPromise = runMigration().catch((err) => {
+    migrationPromise = null; // allow a retry on the next request instead of wedging forever
+    console.error(`[db] migration failed: ${err instanceof Error ? err.message : String(err)}`);
+    throw err;
+  });
   await migrationPromise;
 }
 

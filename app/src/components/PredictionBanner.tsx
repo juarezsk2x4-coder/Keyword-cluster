@@ -94,6 +94,9 @@ export default function PredictionBanner({ prediction, lang }: Props) {
             case "post_alcohol":
               text = tr.insight.post_alcohol;
               break;
+            case "skate_syncope_risk":
+              text = tr.insight.skate_syncope_risk;
+              break;
             case "sleep_short":
               text = tr.insight.sleep_short(Number(ins.payload?.hours ?? 0));
               break;

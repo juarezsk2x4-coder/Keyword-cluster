@@ -43,6 +43,7 @@ export interface HabitInsight {
     | "substance_correlation"
     | "fatigue_frequent"
     | "sleep_kcal_link"
+    | "consider_professional_support"
     | "on_track";
   payload?: Record<string, string | number>;
 }
@@ -289,6 +290,21 @@ export async function getHabitRollup(
 
   if (sleepKcalCorrelation === "positive") {
     insights.push({ severity: "info", key: "sleep_kcal_link" });
+  }
+
+  // Everything above resolves to "log more" / "adjust the plan" — none of
+  // it ever points toward a human. Only on the longer windows (a single
+  // rough week shouldn't trigger this) and only when multiple severe
+  // signals compound at once — a sustained, combined pattern is a
+  // different thing than any one flag alone, and worth surfacing as such
+  // rather than just another self-serve tip.
+  if (windowDays >= 14) {
+    const compoundingDeficit = kcalUnderPct >= 15 && proteinUnderPct >= 15 && daysWithData >= 5;
+    const compoundingOverwhelm = easyShare >= 70 && fatigueDays >= 3 && totalStates >= 10;
+    const escalatingSubstanceUse = substanceDays >= windowDays * 0.4;
+    if (compoundingDeficit || compoundingOverwhelm || escalatingSubstanceUse) {
+      insights.push({ severity: "alert", key: "consider_professional_support" });
+    }
   }
 
   if (insights.length === 0 && daysWithData >= 5) {

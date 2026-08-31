@@ -152,6 +152,9 @@ export default async function AnalystPage({ searchParams }: PageProps) {
                     case "sleep_kcal_link":
                       text = tr.habit_insight.sleep_kcal_link;
                       break;
+                    case "consider_professional_support":
+                      text = tr.habit_insight.consider_professional_support;
+                      break;
                     case "on_track":
                       text = tr.habit_insight.on_track;
                       break;

@@ -192,16 +192,56 @@ re-discover any of it yourself.
   way the original hand-authored plan did) and the kcal-target logic already
   knows what to do with it. Left a comment on the type explaining this so
   it doesn't read as leftover cruft.
-- **Did not upgrade the pinned Claude model** (`claude-opus-4-7`, used for
-  both AI features) to a newer generation. That's a deliberate product
-  decision with cost/behavior tradeoffs, not something to change silently in
-  a cleanup pass — worth a conscious look before you rely on it heavily.
-
 **Verified after every fix:** `pnpm build` and `npx tsc --noEmit` clean, a
 full route smoke test (all 6 pages, both profiles, completely blank
 templates) with nothing crashing, and the migration re-tested end-to-end
 against a simulated pre-existing database to confirm the transactional
 rewrite still upgrades an old schema correctly.
+
+## Second pass: architecture + design review, and the fixes from it
+
+After the QA pass above, this codebase got two independent expert reviews —
+one from a senior-tech-lead angle (architecture, maintainability), one from
+a dietitian + DBT-informed therapist angle (nutrition science, behavioral
+design) — each scoring 6/10 and producing a ranked fix list. Everything
+generic from that list (not tied to anyone's personal recipe/clinical
+content, which this starter kit never had to begin with) is implemented
+here too:
+
+- **AI model choice, per use case, not just "the newest one"**: quick
+  free-text nutrition estimation (blocking UI, bounded task) now runs
+  `claude-sonnet-5`; weekly plan generation (async, many simultaneous hard
+  constraints) runs `claude-opus-5`. Both are newer than the
+  `claude-opus-4-7` this was originally pinned to either way.
+- **Profile YAML validated with zod** at load time — catches a genuinely
+  malformed hand-edit (wrong shape, missing section) with a clear error
+  instead of a crash three files away, while still accepting the `FILL_IN`
+  placeholder on numeric fields so an unfilled template renders fine.
+- **A new "consider_professional_support" habit insight** — every existing
+  pattern-detection insight resolved to "log more" with no path to "talk to
+  a human." This one fires (only on 14/30-day windows, only when multiple
+  severe signals compound at once — chronic deficit, or easy-dominance +
+  frequent fatigue, or escalating substance-use frequency) with language
+  that points toward your actual doctor/therapist instead.
+- **Missed-meal alerting is now sleep-aware**: a 9h+ sleep night no longer
+  counts the morning slots you slept through as "missed" for alerting
+  purposes — avoids flagging a legitimate long-sleep morning as neglect.
+- **A "syncope risk" insight exists as generic infrastructure**: if your
+  own plan ever sets a day as high-intensity/hard-training AND you've
+  logged a stimulant in the last 3 days, it surfaces automatically with
+  extra hydration guidance. Inert until you use it — the generic starter
+  plan never sets a high-intensity day — but it's there and tested.
+- **Migration failures now self-heal**: if the one-time legacy-schema
+  migration throws (dropped connection, etc.), the failure is logged and
+  the next request gets a fresh retry instead of being permanently stuck.
+
+Not ported here (real personal content this copy never had): rebalancing
+specific hand-authored recipes, making a specific person's AI prompt
+log-driven instead of day-of-week-hardcoded, removing supplement dosing
+language from a clinical file, building a specific chicken-allergy
+fallback recipe. Those fixes exist on the original build this was forked
+from, not here, because the content they touch was deliberately stripped
+out of this starter kit in the first place.
 
 ## Taking ownership
 
