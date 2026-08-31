@@ -1,26 +1,29 @@
 # Person A — Clinical synthesis for nutrition planning
 
-> Interpretive integration of bloodwork (Lab. Santa Luzia, 24/10/2025), medical report (Dra. Juliana Schlindwein, 20/11/2025), InBody (11/11/2025), RelaxFit body comp (15/12/2025), prescription (11/11/2025), and self-reported lifestyle. Written to calibrate the meal-plan agent. **Not a medical opinion. Final clinical decisions belong to his physician.**
+> Interpretive integration of bloodwork (Lab. Santa Luzia, 24/10/2025 and 06/08/2026), medical reports (Dra. Juliana Schlindwein, 20/11/2025 and 14/08/2026, with CID-10 diagnosis codes), InBody (11/11/2025 and 10/08/2026), RelaxFit body comp (15/12/2025), prescriptions (11/11/2025 and 10/08/2026), "Organização de Hábitos" doc (14/08/2026), and self-reported lifestyle. Written to calibrate the meal-plan agent. **Not a medical opinion. Final clinical decisions belong to his physician.**
+>
+> **Update 31/08/2026:** new labs, prescription, and body composition landed — see the "August 2026 update" callouts inline. Direction across the board is positive: B12, vitamin D, iron markers, eosinophils all improved; weight is up 3.1kg with muscle mass leading the gain (recomp working, now in an active-gain phase rather than the earlier deficit-correction phase); zinc came back normal (resolves the open supplementation question below); platelets improved but are still just under range. The doctor's official report (CID-10 E53.8/E61.1/E55.9) still lists B12, folate, iron, and vitamin D deficiencies as active/in-treatment — consistent with "responding to treatment, not yet at functional/optimal target," not a contradiction of the improved lab numbers.
 
 ## Headline
 
-Lean 31-year-old male, neurodivergent (TEA + TDAH on lisdexamfetamina 70mg/d max dose), athletically active (skate hard 180min 2×/wk + other), with a documented ~6-month period of severe undernutrition during chronic stimulant + crypto-trading hyperfocus that left him with **established deficiencies in B12, vitamin D, and circulating iron**, plus a recent vasovagal syncope, mild thrombocytopenia, and an underlying **low-grade inflammatory + functional-iron-sequestration pattern**. Metabolism (insulin sensitivity, lipids, liver, kidney, thyroid) is excellent. Testosterone is suboptimal-not-pathological for his age and lean mass.
+32-year-old male (turned 32 on 27/06/2026), neurodivergent (TEA + TDAH on lisdexamfetamina 70mg/d max dose), athletically active (skate hard 180min 2×/wk + other, plus pilates 2-3×/wk and musculação 2×/wk added 14/08/2026), with a documented ~6-month period of severe undernutrition during chronic stimulant + crypto-trading hyperfocus that left him with **established deficiencies in B12, vitamin D, and circulating iron**, plus a recent vasovagal syncope, mild thrombocytopenia, and an underlying **low-grade inflammatory + functional-iron-sequestration pattern**. Metabolism (insulin sensitivity, lipids, liver, kidney, thyroid) is excellent. Testosterone is suboptimal-not-pathological for his age and lean mass (not retested in the August 2026 panel).
 
-He is being correctly treated by Dra. Schlindwein (B12 IM, D3 7000 UI/d, ferro 30mg + vit C/d). Nutrition's job is to (a) accelerate repletion through food, (b) support the autonomic system stressed by the stimulant + cannabis stack, (c) fuel hard skate days without crashing recovery, and (d) structurally prevent the "hyperfocus → don't eat" pattern that caused the deficits.
+He is being correctly treated by Dra. Schlindwein — regimen updated 10/08/2026: **Fisiogen Ferro Forte (ferro 30mg + vit C) daily, B Complex + magnésio 63mg daily (new — magnesium is now actually prescribed, not just discussed), Sany D 2.000 UI daily (down from 7000 UI, reflecting the D improvement), multivitamínico daily**; the monthly B12 IM injections (Bedoze) were discontinued, replaced by the oral B-complex + multivitamin. Nutrition's job is to (a) accelerate repletion through food, (b) support the autonomic system stressed by the stimulant + cannabis stack, (c) fuel hard skate days without crashing recovery, and (d) structurally prevent the "hyperfocus → don't eat" pattern that caused the deficits.
 
-## Body composition trajectory — slow recomp working
+## Body composition trajectory — recomp worked, now in an active-gain phase
 
 | Date | Source | Peso | PGC | Massa magra / proteína | Notes |
 |---|---|---|---|---|---|
 | 12/11/2023 | InBody | 65.0 kg | 18.4% | massa muscular esq. 29.7 kg | baseline pré-período crítico |
 | 11/11/2025 | InBody | 63.3 kg | 17.5% | musc. esq. 29.3 kg / proteína 10.4 kg | pós-período subnutrição crônica |
 | 15/12/2025 | RelaxFit | 64.5 kg | **16.3%** | massa magra 54.0 kg / proteína 12.3 kg ⚠️ | recomp ativa em curso |
+| 10/08/2026 | InBody | **66.4 kg** | 17.2% | musc. esq. **31.0 kg** / proteína 10.9 kg | ganho ativo — massa muscular na frente da gordura |
 
-**Reading:** PGC caiu 1.2 ponto em ~5 semanas (Nov → Dez 2025), peso +1.2 kg, massa magra subiu. **Recomp está funcionando** — bom sinal de que o estímulo (treino + comida adequada) está rendendo apesar da carga substancial. Body age 27 (RelaxFit) vs 31 cronológica é consistente: composição corporal favorável.
+**Reading (atualizado 08/2026):** vs. o InBody de 11/11/2025 (última medição InBody comparável): peso +3.1 kg, massa muscular esquelética +1.7 kg, PGC estável/levemente melhor (17.5%→17.2%) apesar do ganho de peso. Isso é um sinal de recomp muito bom — o ganho é majoritariamente massa magra, não gordura. IMC 23.5 (normal), gordura visceral nível 5 (baixo), pontuação InBody 80/100. **A fase mudou**: não é mais "corrigir déficit", é "ganho ativo com composição favorável" — a estratégia nutricional pode seguir com o mesmo foco em proteína alta, mas o kcal target pode subir junto se o objetivo for continuar ganhando massa muscular (a decidir com o usuário/treinador).
 
-**Mas:** RelaxFit sinaliza **massa de proteína 12.3 kg em vermelho** (proteína 19.1%). Para um homem de 168 cm fisicamente ativo com objetivo de força + skate de alto rendimento, **o alvo realista é 13.5–15 kg de massa proteica**. Está ~1–2 kg subdimensionado. Isso é coerente com o histórico de subnutrição prolongada — o tecido muscular se reconstrói lentamente mesmo com treino.
+**Nota histórica (RelaxFit 15/12/2025):** RelaxFit havia sinalizado massa de proteína 12.3 kg em vermelho. O InBody de 08/2026 mostra proteína 10.9 kg — os dois aparelhos usam algoritmos/alturas de referência diferentes (ver nota técnica abaixo), então os valores absolutos de proteína não são diretamente comparáveis entre fontes; a tendência dentro de cada fonte (InBody: 10.4→10.9 kg) é o que importa, e essa tendência é positiva.
 
-→ Implicação direta: **proteína dietética é prioridade absoluta**. 1.8–2.0 g/kg/dia (115–130 g/d) sustentada, sem dias "baixos" — porque a janela de re-síntese miofibrilar pós-subnutrição se beneficia de estímulo constante. Não vamos fazer ciclos de proteína; vamos manter alto e estável.
+→ Implicação direta: **proteína dietética continua prioridade absoluta**. 1.8–2.0 g/kg/dia (120–133 g/d no peso atual) sustentada, sem dias "baixos" — o ganho de massa muscular documentado confirma que o estímulo (treino + proteína) está funcionando; manter o curso.
 
 > Nota técnica: RelaxFit (bioimpedância de balança consumer) e InBody (multifrequência segmentar) usam algoritmos diferentes — as alturas inputadas também parecem ter divergido (InBody 168, RelaxFit aparentemente assumiu ~165 baseado no IMC reportado). Os valores absolutos diferem mas **a tendência é o que importa**: gordura caindo, massa magra subindo, body age abaixo do cronológico.
 
@@ -28,48 +31,56 @@ He is being correctly treated by Dra. Schlindwein (B12 IM, D3 7000 UI/d, ferro 3
 
 ### Iron status — **not what it looks like at first glance**
 
-| Marker | Result | Lab flag | Real interpretation |
-|---|---|---|---|
-| Ferritina | 167 ng/ml | "Normal" | Possibly inflammation-elevated; **not reassuring on its own** |
-| Ferro sérico | 65 µg/dl | "Normal (floor)" | At the lower bound for males |
-| Sat. transferrina | 21% | "Normal (floor)" | Functional iron availability is **floor-level** |
-| CLCF (UIBC) | 242 µg/dl | **High** | Transferrin is hungry — body wants iron it can't access |
-| Hemoglobina | 15.2 g/dl | Normal | Not anemic *yet* |
+| Marker | 24/10/2025 | 06/08/2026 | Lab flag (08/2026) | Real interpretation |
+|---|---|---|---|---|
+| Ferritina | 167 ng/ml | 172 ng/ml | "Normal" | Stable, possibly inflammation-elevated; **not reassuring on its own** |
+| Ferro sérico | 65 µg/dl | 63 µg/dl | "Normal" | Stable, mid-range now |
+| Sat. transferrina | 21% | **17%** | "Baixo" (ref 24-37%) | **Worse, not better** — functional iron availability dropped further |
+| CTCF/CLCF | 242 µg/dl | 304/367 µg/dl | — | Transferrin still hungry — body wants iron it can't fully access |
+| Hemoglobina | 15.2 g/dl | 15.5 g/dl | Normal | Not anemic |
+| Eosinófilos | 8.0% HIGH | **5.3% NORMAL** | ref 1.0-6.0% | Resolved — supports the inflammation/atopia driver easing off |
 
-**Reading:** Stored iron OK; **iron in transit / functionally available is bottom-of-range with elevated capacity to bind more**. Pattern is consistent with **functional iron deficiency in the context of low-grade chronic inflammation** (smoking, daily cannabis combustion, hard exercise, possible atopia given allergies + eosinophilia). Standard "look at ferritin" approach misses this.
+**Reading (atualizado):** Ferro/ferritina estáveis e normais; **saturação de transferrina piorou (21%→17%)** apesar da suplementação de ferro em curso desde 11/2025 — isso é o achado mais importante desta atualização. Combinado com a eosinofilia agora resolvida, o quadro sugere que **a suplementação oral de ferro isolada não está corrigindo totalmente a disponibilidade funcional** — pode valer a pena revisar absorção (tomar com vit C longe de café/chá/laticínios), aderência, ou investigar outras causas de sequestro de ferro na próxima consulta. O CID-10 oficial (E61.1) confirma que a deficiência de ferro segue como diagnóstico ativo em tratamento.
 
-→ Iron strategy needs to address both intake AND inflammation. Just adding more iron without fixing absorption + inflammation gives diminishing returns.
+→ Iron strategy continua precisando de intake + timing de absorção; a inflamação de base parece estar melhorando (eosinófilos normalizaram) mas a saturação de transferrina merece atenção direta na próxima consulta.
 
-### Vitamin B12 — **functionally deficient, even with a "normal" number**
+### Vitamin B12 — **improving, still below the functional target**
 
-- Result: 241 pg/ml; lab cutoff 214; "within range."
-- Reality: **modern functional cutoff is ~400 pg/ml.** Below 400, methylmalonic acid and homocysteine start rising.
-- **Homocisteína is documented elevated** in the medical report — direct biochemical confirmation that active B12 is insufficient regardless of the lab cutoff.
-- His stack is high-demand for B12: chronic cannabis (oxidative stress + B12 turnover), stimulants (methylation load), tobacco (B12 depletion), past period of essentially zero intake.
-- Hidroxocobalamina IM monthly × 4mo is **the right call** — better than oral for fast repletion in a malabsorber/high-demand profile.
+- 24/10/2025: 241 pg/ml. 06/08/2026: **329 pg/ml** — up 88 points, real improvement.
+- Lab range (this panel) calls 180-914 "Normal" — 329 clears that. Reality: **modern functional cutoff is ~400 pg/ml.** Still below it, but the trajectory is right.
+- Regimen changed 10/08/2026: monthly Bedoze IM injections **discontinued**, replaced by daily oral B Complex (which also carries 63mg magnésio — see below) + daily multivitamínico. The improvement to 329 happened mostly under the IM protocol; worth watching whether the switch to oral maintains the upward trend at the next labs.
+- CID-10 E53.8 (B12 deficiency) still listed as active/in-treatment in the official 14/08/2026 medical report — consistent with "improving, not yet at target," not a contradiction.
+- His stack is still high-demand for B12: chronic cannabis (oxidative stress + B12 turnover), stimulants (methylation load), tobacco (B12 depletion).
 
-→ Food should accelerate this: red meat 3–4×/wk, peixe (whichever he tolerates), eggs in functional contexts (despite him not loving them), and **avoid undermining absorption** (alcohol, antacids).
+→ Food should keep accelerating this: red meat 3–4×/wk, peixe (whichever he tolerates), eggs in functional contexts, and **avoid undermining absorption** (alcohol, antacids).
 
-### Vitamin D — **clearly deficient, well-treated**
+### Vitamin D — **improving, dose adjusted down accordingly**
 
-- 16.2 ng/ml; optimal range for active adult is 40–60.
-- 7000 UI/d will likely hit 40+ in 8–12 weeks. Get rechecked at that window.
-- Skin synthesis is his biggest underused lever — he's indoors a lot (trabalho terça-sábado). 15–20min direct sun mid-morning, especially on Sun/Mon (off days), boosts D synthesis AND helps Venvanse-related sleep displacement by reinforcing circadian morning anchor.
-- Food contribution: peixes gordos (precisamos saber quais ele aceita — não tainha/anchova), gema diária funcional, cogumelos UV-expostos (Imperatriz às vezes tem).
+- 24/10/2025: 16.2 ng/ml (deficient). 06/08/2026: **26 ng/ml** — real improvement, now within this lab's "normal" cutoff (>20 for <60yo) but still below the 40–60 optimal-for-active-adult range used in this brief.
+- Dose reduced 10/08/2026: **Sany D 2.000 UI/d** (down from 7000 UI/d) — makes sense given the improvement; the higher loading dose did its job and now it's maintenance.
+- CID-10 E55.9 still listed as active/in-treatment in the official report — same "improving, not yet optimal" framing as B12.
+- Skin synthesis is still his biggest underused lever — he's indoors a lot (trabalho terça-sábado). 15–20min direct sun mid-morning, especially on Sun/Mon (off days), boosts D synthesis AND helps Venvanse-related sleep displacement by reinforcing circadian morning anchor.
+- Food contribution: peixes gordos (precisamos saber quais ele aceita — não tainha/anchova), gema diária funcional, cogumelos UV-expostos.
 
-### Magnesium — **the silent gap**
+### Zinc — **resolved: normal, no supplementation needed**
 
-- Total serum Mg 1.9 mg/dl, "normal." **But total serum Mg is a poor marker** — only ~1% of body Mg is in serum; tissue/RBC Mg can be 30%+ depleted while serum stays normal.
-- Why I suspect functional Mg insufficiency:
+- 06/08/2026: **102.7 µg/dl** (ref 70.0-120.0) — squarely normal.
+- This closes the open question from the previous version of this brief ("considerar suplementação de zinco?"). Answer, based on this result: **no supplementation indicated**. The general multivitamínico added 10/08/2026 likely covers baseline zinc adequately going forward; no dedicated zinc supplement was prescribed, and this brief no longer recommends discussing it as an open item.
+- Dietary zinc emphasis (carne vermelha, oleaginosas, grão-de-bico) remains reasonable as general good practice, just not a deficiency-driven priority anymore.
+
+### Magnesium — **no longer just a discussion point — now actually prescribed**
+
+- Total serum Mg: 1.9 mg/dl (24/10/2025) → **2.1 mg/dl (06/08/2026)**, improved, mid-normal range (ref 1.8-2.9). **Still total serum Mg is a poor marker** — only ~1% of body Mg is in serum; tissue/RBC Mg can be depleted while serum looks fine.
+- **Update 10/08/2026**: the B Complex now prescribed carries **magnésio 63mg/dia** — this brief had previously flagged magnesium supplementation as "worth raising, her call" (prior version); it's now actually part of the regimen. Good — the reasoning below for why functional Mg insufficiency was suspected still holds and supports keeping this in the regimen:
   - **Lisdexamfetamina (Venvanse) 70 mg/d max dose** — stimulants accelerate Mg excretion (renal).
   - **Past stimulant binge** — same renal Mg loss mechanism, sustained for months.
   - **Daily cannabis** — variable but some Mg-binding evidence.
   - **Mate 1.5 L/d uruguayo** — diuretic load.
-  - **Hard skate sessions** — Mg lost in sweat.
-  - **Recent vasovagal syncope** — Mg is central to autonomic tone, vascular smooth muscle, and ATP. Chronic low-tissue Mg is a recognized contributor to vasovagal events.
+  - **Hard skate sessions + new musculação 2×/wk** — more Mg lost in sweat now than before.
+  - **Recent vasovagal syncope** — Mg is central to autonomic tone, vascular smooth muscle, and ATP.
   - **Short sleep (6.5h)** — both consequence and cause of low Mg.
 
-→ **Worth raising with Dra. Schlindwein**: tissue/RBC Mg test, and whether magnesium supplementation (form and dose are her call, not this document's) makes sense for him. Dietary push regardless: cacau 70%+, castanha-do-pará (1–2/d, also selênio), amêndoa, sementes de abóbora, folhas verde-escuras, banana, abacate.
+→ Dietary push continues alongside the new supplement (not instead of it): cacau 70%+, castanha-do-pará (1–2/d, also selênio), amêndoa, sementes de abóbora, folhas verde-escuras, banana, abacate. Still worth a tissue/RBC Mg test at the next labs to see if 63mg/d is enough given the load above.
 
 ### Testosterone — **suboptimal-not-pathological**
 
@@ -83,21 +94,15 @@ He is being correctly treated by Dra. Schlindwein (B12 IM, D3 7000 UI/d, ferro 3
   6. **Zinc + cholesterol/saturated fat adequacy** — both substrates for steroidogenesis. He's lean and was undereating — likely under-consuming the lipid backbone of steroid hormones.
 - SHBG + free T not on this panel. **Worth requesting on next labs** to know if total T is being masked by SHBG.
 
-### Plaquetopenia (112k) + eosinofilia (8%) — **mild but worth context**
+### Plaquetopenia (112k→128k) — **improving, still worth tracking**; eosinofilia — **resolved**
 
-- Isolated, mild, in an otherwise lean active young male.
-- Differential includes: cannabis-related mild marrow suppression (real, documented), post-viral, alcohol (probably not at his volume), idiopathic, allergic/inflammatory (suggested by eosinofilia + tomato allergy phenotype), parasitose.
-- No acute concern. **Track at follow-up labs** (3 months).
-- If eosinofilia persists, consider parasitological screen and food-sensitivity workup.
+- Plaquetas: 112k (24/10/2025) → **128k (06/08/2026)** — moving in the right direction but still below range (ref 150k-450k). **Track at next follow-up labs** (~3 months) to confirm the trend continues.
+- Eosinófilos: 8.0% HIGH (24/10/2025) → **5.3% NORMAL (06/08/2026)**. This resolves — no further parasitological/allergy workup needed on this basis alone; if it recurs, revisit.
+- Both patterns were consistent with a mild inflammatory/reactive process (cannabis, atopia phenotype) that appears to be settling.
 
-### Metabolic + lipid + liver + renal + thyroid — **all clean**
+### Metabolic + lipid + liver + renal + thyroid — **all clean, unchanged**
 
-- HOMA-IR ~1.08 (excellent insulin sensitivity).
-- HbA1c 5.3 (excellent).
-- Lipid profile excellent (CT 144, HDL 57, LDL 69, TG 95) — cardioprotective despite tobacco.
-- Liver enzymes low (AST 19, ALT 16, GGT 17) — no fatty liver indication, alcohol clearly under hepatic stress threshold.
-- Creatinina 0.96, ureia 31 — kidney intact.
-- TSH 1.11, T4L 1.27 — thyroid mid-range, optimal.
+- 06/08/2026 recheck confirms the same excellent baseline: glicose basal 97 mg/dl, HbA1c 5.4% (essentially unchanged from 5.3%, both well under 5.7%), TSH 1.81 (normal), creatinina 0.91 / eGFR >90 (kidney intact). Lipids and liver enzymes weren't re-run in the August panel but there's no reason to expect they've changed given everything else tracking well.
 
 This is excellent baseline metabolic flexibility. **Whatever we feed him, he can use efficiently.**
 
@@ -275,24 +280,30 @@ Aceita: salmão, sardinha, atum fresco, pescada, robalo, linguado, merluza, polv
 
 **Dias úteis (ter, qua, qui, sex, sáb)** = manter base eucalórica recomp, sem o refeed alto. Carbs moderados (~3–4 g/kg). Caminhada 30min tarde não exige fueling especial.
 
-## Risk flags to monitor & re-check (next labs ~3 meses)
+## Risk flags to monitor & re-check (next labs ~3 meses, contando de 08/2026)
 
-- Plaquetas (currently 112k — monitorar tendência)
-- Vit D 25-OH (target 40–60)
-- B12 (target >400 pg/ml ativamente, MMA se possível)
-- Saturação transferrina (target >25%) + ferro sérico — não só ferritina
-- Homocisteína de controle (espera-se queda com B12 corrigida)
-- **Pedir na próxima coleta se possível:** zinco sérico, RBC magnesium, SHBG + testosterona livre, PCR ultrassensível, vitamina B6, ácido metilmalônico (MMA)
+- Plaquetas (112k→128k, melhorando — monitorar tendência até dentro da faixa)
+- Vit D 25-OH (16.2→26, target ainda 40–60)
+- B12 (241→329, target ainda >400 pg/ml ativamente; watch se a troca IM→oral mantém a tendência de alta; MMA se possível)
+- **Saturação transferrina — piorou (21%→17%, target >25%)** — prioridade da próxima rodada, junto com ferro sérico (não só ferritina)
+- Homocisteína de controle (não re-testada em 08/2026; espera-se queda com B12 melhorando)
+- ~~Zinco sérico~~ — **resolvido em 08/2026: 102.7 µg/dl, normal.** Não precisa repetir por rotina.
+- **Pedir na próxima coleta se possível:** RBC magnesium (avaliar se os 63mg/d do B Complex são suficientes dado o load), SHBG + testosterona livre (não re-testada desde 24/10/2025), PCR ultrassensível, vitamina B6, ácido metilmalônico (MMA)
 - Pressão arterial sentado/em pé regularmente (histórico vasovagal)
 
 ## What to discuss with Dra. Schlindwein at next consult
 
-1. Magnésio glicinato/citrato — adicionar à rotina? Pedir RBC Mg?
-2. Testosterona livre + SHBG na próxima coleta — dado total 473 + sintomas indiretos.
-3. Eosinofilia 8% persistente — vale screen parasitológico ou alergológico?
-4. Plaquetopenia 112k — repetir em 3 meses para confirmar estabilidade.
-5. Considerar suplementação de zinco (forma e dose ficam a critério dela)? (substrato T, imunidade, paladar autista — alguns autistas têm baixo zinco crônico).
-6. Estratégias para reduzir cannabis se ele estiver aberto — leverage múltiplo (T, sono, B12 demand, eosinófilos).
+1. ~~Magnésio~~ — **resolvido**: B Complex com 63mg/d de magnésio entrou na prescrição em 10/08/2026. Vale reavaliar se a dose é suficiente dado o load (Venvanse + skate + musculação nova) via RBC Mg na próxima coleta.
+2. Testosterona livre + SHBG na próxima coleta — dado total 473 (24/10/2025, não re-testado) + sintomas indiretos.
+3. ~~Eosinofilia~~ — **resolvida**: normalizou pra 5.3% em 08/2026 (era 8.0%). Sem ação necessária a menos que recorra.
+4. Plaquetopenia — melhorou (112k→128k) mas ainda abaixo da faixa; repetir de novo em ~3 meses pra confirmar a tendência continua.
+5. ~~Zinco~~ — **resolvido**: 102.7 µg/dl, normal em 08/2026. Sem indicação de suplementação dedicada.
+6. **Saturação de transferrina piorou (21%→17%) apesar da suplementação de ferro em curso** — novo item prioritário: revisar timing/absorção do Fisiogen Ferro Forte, ou investigar outra causa.
+7. Estratégias para reduzir cannabis se ele estiver aberto — leverage múltiplo (T, sono, B12 demand).
+
+## Doctor-requested habit tracking (Organização de Hábitos, 14/08/2026)
+
+Dra. Schlindwein's habit doc asks him to track: (1) 3 refeições/dia, (2) consumo de água, (3) uso de vitaminas/medicamentos/suplementos, (4) quantidade de cigarros. The app already covers (1)–(3) via meal logging, beverage logging, and (loosely) the supplement regimen documented above; (4) fits the existing tobacco substance-log entry (`substance: "tobacco"`, with the free-text `amount` field able to hold a cigarette count) — no code change needed, just a habit of logging it consistently. Her doc's general dietary guidance (3 meals/day, daily protein source, batch-roast vegetables weekly, ~2L water/day, chimarrão not counted as hydration) is already consistent with the structure in this brief; her practical meal ideas (lentil/bean soups, quinoa bowls, hambúrguer caseiro, "Rap 10" wraps, homus, Rakkau vegan protein shake as backup) are compatible additions to the existing rotation, not a replacement for it.
 
 ## What we are NOT going to do
 
