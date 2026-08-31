@@ -5,7 +5,7 @@ import {
   getSubstanceLogsForPast,
   getFatigueDatesForPast,
 } from "./query";
-import type { MealSlot, CardState } from "./types";
+import type { MealSlot, CardState, PersonId } from "./types";
 
 const ALL_SLOTS: MealSlot[] = [
   "cafe_da_manha",
@@ -16,8 +16,10 @@ const ALL_SLOTS: MealSlot[] = [
   "snack_noturno",
 ];
 
-const KCAL_TARGET_NORMAL = 2500;
-const PROTEIN_TARGET = 130;
+export interface HabitTargets {
+  kcal: number;
+  protein: number;
+}
 
 export interface HabitRollup {
   window_days: 7 | 14 | 30;
@@ -67,16 +69,18 @@ function dowFor(iso: string): number {
 }
 
 export async function getHabitRollup(
+  personId: PersonId,
   endIso: string,
-  windowDays: 7 | 14 | 30
+  windowDays: 7 | 14 | 30,
+  targets: HabitTargets
 ): Promise<HabitRollup> {
   await ensureMigrated();
 
   const [meals, sleeps, subs, fatigueDates] = await Promise.all([
-    getMealLogsForPast(endIso, windowDays),
-    getSleepLogsForPast(endIso, windowDays),
-    getSubstanceLogsForPast(endIso, windowDays),
-    getFatigueDatesForPast(endIso, windowDays),
+    getMealLogsForPast(personId, endIso, windowDays),
+    getSleepLogsForPast(personId, endIso, windowDays),
+    getSubstanceLogsForPast(personId, endIso, windowDays),
+    getFatigueDatesForPast(personId, endIso, windowDays),
   ]);
 
   const dates = lastNDates(endIso, windowDays);
@@ -212,8 +216,8 @@ export async function getHabitRollup(
 
   // Build insights
   const insights: HabitInsight[] = [];
-  const kcalUnderPct = Math.round(((KCAL_TARGET_NORMAL - avgKcal) / KCAL_TARGET_NORMAL) * 100);
-  const proteinUnderPct = Math.round(((PROTEIN_TARGET - avgProtein) / PROTEIN_TARGET) * 100);
+  const kcalUnderPct = Math.round(((targets.kcal - avgKcal) / targets.kcal) * 100);
+  const proteinUnderPct = Math.round(((targets.protein - avgProtein) / targets.protein) * 100);
 
   if (kcalUnderPct >= 15 && daysWithData >= 3) {
     insights.push({

@@ -1,5 +1,5 @@
 import Anthropic from "@anthropic-ai/sdk";
-import type { DailyPlan, MealLog, PersonProfile } from "./types";
+import type { DailyPlan, MealLog, PersonId, PersonProfile } from "./types";
 
 let clientInstance: Anthropic | null = null;
 
@@ -98,7 +98,7 @@ const WEEKLY_PLAN_SCHEMA = {
   additionalProperties: false,
 } as const;
 
-function buildSystemPrompt(profile: PersonProfile, lang: "pt" | "en"): string {
+function buildPersonASystemPrompt(profile: PersonProfile, lang: "pt" | "en"): string {
   const hardNo = profile.food_preferences.hard_no.join(", ");
   const textures = profile.food_preferences.texture_aversions.join(", ");
   const dislikes = profile.food_preferences.soft_dislikes.join(", ");
@@ -173,6 +173,65 @@ Cada ingrediente inclui quantidade (ex: "patinho moído 150g", "arroz integral 1
 Responda APENAS com o objeto JSON {"days": [...]}.`;
 }
 
+function buildGenericSystemPrompt(profile: PersonProfile, lang: "pt" | "en"): string {
+  const hardNo = profile.food_preferences.hard_no.join(", ");
+  const textures = profile.food_preferences.texture_aversions.join(", ");
+  const dislikes = profile.food_preferences.soft_dislikes.join(", ");
+  const flags = profile.medical_flags.join(", ");
+
+  if (lang === "en") {
+    return `You design 7-day meal plans for ${profile.name}. Output a JSON object {"days": DailyPlan[]} matching the schema.
+
+Snapshot: Age ${profile.age_years}, ${profile.height_cm}cm, ${profile.weight_kg}kg, BMR ~${profile.estimated_bmr_kcal} kcal.
+Goal: ${profile.goals.primary}. Performance focus: ${profile.goals.performance_focus.join(", ") || "none specified"}.
+Clinical flags: ${flags || "none"}.
+HARD NO (absolute block, never include in any form including sauces or hidden): ${hardNo || "none"}.
+Texture aversions: ${textures || "none"}.
+Soft dislikes: ${dislikes || "none"}.
+
+Day-type rules: no fixed special-activity days for this person. Set is_skate_day to false on every day. Use kcal_target = ${profile.nutrition_targets.total_kcal_target_off_day} and protein_g_target = ${profile.nutrition_targets.protein_g_per_day} every day. is_work_day should reflect a normal weekday/weekend split (true Mon-Fri, false Sat-Sun) unless logs suggest otherwise.
+6 slots every day: cafe_da_manha, lanche_manha, almoco, lanche_tarde, jantar, snack_noturno, at reasonable times across the day.
+
+For every slot, provide 4 alternatives:
+- original = the planned full version
+- easy = <8min prep, grab-and-eat
+- liquid = smoothie, shake, or soup
+- no_hunger = minimum viable intake
+
+Each ingredient string must include quantity. Prep_minutes integer. Macros realistic. Notes optional but if present <120 chars.
+
+Respond ONLY with the JSON object {"days": [...]}.`;
+  }
+
+  return `Você projeta planos alimentares de 7 dias para ${profile.name}. Retorne objeto JSON {"days": DailyPlan[]} seguindo o schema.
+
+Perfil: ${profile.age_years} anos, ${profile.height_cm}cm, ${profile.weight_kg}kg, BMR ~${profile.estimated_bmr_kcal} kcal.
+Objetivo: ${profile.goals.primary}. Foco de performance: ${profile.goals.performance_focus.join(", ") || "nenhum especificado"}.
+Flags clínicas: ${flags || "nenhuma"}.
+BLOQUEIO ABSOLUTO (nunca incluir nem em molhos / forma escondida): ${hardNo || "nenhum"}.
+Aversões de textura: ${textures || "nenhuma"}.
+Não curte: ${dislikes || "nenhum"}.
+
+Regras por dia: sem dias de atividade especial fixos pra essa pessoa. is_skate_day sempre false. Use kcal_target = ${profile.nutrition_targets.total_kcal_target_off_day} e protein_g_target = ${profile.nutrition_targets.protein_g_per_day} todos os dias. is_work_day deve refletir uma divisão normal de semana (true seg-sex, false sáb-dom) a menos que os logs sugiram outra coisa.
+6 slots por dia: cafe_da_manha, lanche_manha, almoco, lanche_tarde, jantar, snack_noturno, em horários razoáveis ao longo do dia.
+
+Pra cada slot, 4 alternativas:
+- original = versão planejada completa
+- easy = <8min prep, pegar e comer
+- liquid = smoothie, shake ou sopa
+- no_hunger = mínimo viável
+
+Cada ingrediente inclui quantidade. Prep_minutes inteiro. Macros realistas. Notes opcional, se houver <120 chars.
+
+Responda APENAS com o objeto JSON {"days": [...]}.`;
+}
+
+function buildSystemPrompt(profile: PersonProfile, lang: "pt" | "en", personId: PersonId): string {
+  return personId === "person_a"
+    ? buildPersonASystemPrompt(profile, lang)
+    : buildGenericSystemPrompt(profile, lang);
+}
+
 function buildUserMessage(
   weekStartIso: string,
   recentLogs: RecentLogSummary[],
@@ -204,7 +263,8 @@ export async function generateWeeklyPlan(
   profile: PersonProfile,
   recentLogs: RecentLogSummary[],
   weekStartIso: string,
-  lang: "pt" | "en"
+  lang: "pt" | "en",
+  personId: PersonId
 ): Promise<DailyPlan[]> {
   const client = getClient();
   const response = await client.messages.create({
@@ -217,7 +277,7 @@ export async function generateWeeklyPlan(
       },
       effort: "medium",
     },
-    system: buildSystemPrompt(profile, lang),
+    system: buildSystemPrompt(profile, lang, personId),
     messages: [{ role: "user", content: buildUserMessage(weekStartIso, recentLogs, lang) }],
   });
 

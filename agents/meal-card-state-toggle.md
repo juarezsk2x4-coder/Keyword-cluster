@@ -149,7 +149,7 @@ For the **Sunday batch session**, a separate weekly input is asked Saturday nigh
 | `120–180 min` | 7 marmitas variadas + bechamel para a semana + molhos + granola caseira opcional |
 | `<30 min` | Sistema sugere delivery-heavy semana ou marmita pré-pronta de fornecedor (Marmitex saudável Canasvieiras) |
 
-The Sunday-prep input is per-person, but currently only Person A is configured.
+The Sunday-prep input is per-person — each of Person A and Person B answers it independently for their own week.
 
 ## Special case: 3rd floor walk-up shopping logic
 

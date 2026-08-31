@@ -1,5 +1,7 @@
 import { getHabitRollup } from "@/lib/habits";
 import { getLang } from "@/lib/lang";
+import { getActivePerson } from "@/lib/person";
+import { loadProfile } from "@/lib/profile";
 import { t } from "@/lib/i18n";
 import type { MealSlot, CardState } from "@/lib/types";
 
@@ -22,12 +24,17 @@ interface PageProps {
 export default async function AnalystPage({ searchParams }: PageProps) {
   const sp = await searchParams;
   const lang = await getLang();
+  const personId = await getActivePerson();
+  const profile = loadProfile(personId);
   const tr = t(lang);
   const windowDaysRaw = parseInt(sp.window ?? "7", 10);
   const windowDays: 7 | 14 | 30 =
     windowDaysRaw === 14 ? 14 : windowDaysRaw === 30 ? 30 : 7;
 
-  const rollup = await getHabitRollup(todayIso(), windowDays);
+  const rollup = await getHabitRollup(personId, todayIso(), windowDays, {
+    kcal: profile.nutrition_targets.total_kcal_target_off_day,
+    protein: profile.nutrition_targets.protein_g_per_day,
+  });
 
   return (
     <div className="space-y-4">

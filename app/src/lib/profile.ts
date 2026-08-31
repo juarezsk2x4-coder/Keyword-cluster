@@ -1,12 +1,13 @@
 import fs from "node:fs";
 import path from "node:path";
 import yaml from "js-yaml";
-import type { PersonProfile } from "./types";
+import type { PersonId, PersonProfile } from "./types";
 
-const PROFILE_PATH = path.join(process.cwd(), "..", "data", "profiles", "person_a.yml");
+const PERSON_A_PATH = path.join(process.cwd(), "..", "data", "profiles", "person_a.yml");
+const PERSON_B_PATH = path.join(process.cwd(), "..", "data", "profiles", "person_b.yml");
 
-export function loadPersonA(): PersonProfile {
-  const raw = fs.readFileSync(PROFILE_PATH, "utf-8");
+function loadFromYaml(profilePath: string): PersonProfile {
+  const raw = fs.readFileSync(profilePath, "utf-8");
   const parsed = yaml.load(raw) as Record<string, unknown>;
 
   return {
@@ -21,4 +22,16 @@ export function loadPersonA(): PersonProfile {
     medical_flags: parsed.medical_flags as string[],
     food_preferences: parsed.food_preferences as PersonProfile["food_preferences"],
   };
+}
+
+export function loadPersonA(): PersonProfile {
+  return loadFromYaml(PERSON_A_PATH);
+}
+
+export function loadPersonB(): PersonProfile {
+  return loadFromYaml(PERSON_B_PATH);
+}
+
+export function loadProfile(personId: PersonId): PersonProfile {
+  return personId === "person_b" ? loadPersonB() : loadPersonA();
 }

@@ -17,6 +17,8 @@ import PredictionBanner from "@/components/PredictionBanner";
 import { getPredictions } from "@/lib/predictions";
 import type { CardState } from "@/lib/types";
 import { getLang } from "@/lib/lang";
+import { getActivePerson } from "@/lib/person";
+import { loadProfile } from "@/lib/profile";
 
 export const dynamic = "force-dynamic";
 
@@ -61,21 +63,27 @@ interface PageProps {
 export default async function TodayPage({ searchParams }: PageProps) {
   const sp = await searchParams;
   const lang = await getLang();
+  const personId = await getActivePerson();
+  const profile = loadProfile(personId);
   const selectedDate = sp.date ?? todayIso();
   const weekStart = getSundayOfWeek(selectedDate);
-  const resolved = await resolveWeeklyPlan(weekStart);
+  const resolved = await resolveWeeklyPlan(personId, weekStart);
   const dayPlan = resolved.days.find((d) => d.date === selectedDate) ?? resolved.days[0];
 
   const [logs, sleep, fatigued, prepMin, totals, daySubs, prevDaySubs, beverages, predictions] = await Promise.all([
-    getDayMealLogs(selectedDate),
-    getDaySleep(selectedDate),
-    getDayFatigue(selectedDate),
-    getDayPrepMinutes(selectedDate),
-    getDayTotals(selectedDate),
-    getDaySubstances(selectedDate),
-    getPreviousDaySubstances(selectedDate),
-    getDayBeverages(selectedDate),
-    getPredictions(selectedDate, dayPlan.is_skate_day),
+    getDayMealLogs(personId, selectedDate),
+    getDaySleep(personId, selectedDate),
+    getDayFatigue(personId, selectedDate),
+    getDayPrepMinutes(personId, selectedDate),
+    getDayTotals(personId, selectedDate),
+    getDaySubstances(personId, selectedDate),
+    getPreviousDaySubstances(personId, selectedDate),
+    getDayBeverages(personId, selectedDate),
+    getPredictions(personId, selectedDate, dayPlan.is_skate_day, {
+      kcalNormal: profile.nutrition_targets.total_kcal_target_off_day,
+      kcalSkate: profile.nutrition_targets.total_kcal_target_skate_day,
+      protein: profile.nutrition_targets.protein_g_per_day,
+    }),
   ]);
   const logsByslot = Object.fromEntries(logs.map((l) => [l.slot, l]));
   const hadCocaineYesterday = prevDaySubs.some((s) => s.substance === "cocaine");

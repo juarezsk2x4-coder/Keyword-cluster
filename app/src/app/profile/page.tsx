@@ -1,11 +1,14 @@
-import { loadPersonA } from "@/lib/profile";
+import { loadProfile } from "@/lib/profile";
 import { getLang } from "@/lib/lang";
+import { getActivePerson } from "@/lib/person";
 import { t } from "@/lib/i18n";
 
 export default async function ProfilePage() {
-  const p = loadPersonA();
+  const personId = await getActivePerson();
+  const p = loadProfile(personId);
   const lang = await getLang();
   const tr = t(lang);
+  const profileFile = personId === "person_b" ? "person_b.yml" : "person_a.yml";
 
   return (
     <div className="space-y-4">
@@ -64,8 +67,8 @@ export default async function ProfilePage() {
 
       <div className="card text-xs text-muted">
         {lang === "en"
-          ? <>Profile loaded from <code className="text-text">data/profiles/person_a.yml</code>. Full clinical synthesis in <code className="text-text">data/profiles/person_a_clinical.md</code>.</>
-          : <>Perfil carregado de <code className="text-text">data/profiles/person_a.yml</code>. Síntese clínica completa em <code className="text-text">data/profiles/person_a_clinical.md</code>.</>}
+          ? <>Profile loaded from <code className="text-text">data/profiles/{profileFile}</code>.{personId === "person_a" && <> Full clinical synthesis in <code className="text-text">data/profiles/person_a_clinical.md</code>.</>}</>
+          : <>Perfil carregado de <code className="text-text">data/profiles/{profileFile}</code>.{personId === "person_a" && <> Síntese clínica completa em <code className="text-text">data/profiles/person_a_clinical.md</code>.</>}</>}
       </div>
     </div>
   );

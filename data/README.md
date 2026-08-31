@@ -4,8 +4,8 @@ Source of truth for the meal-planning agents. Edit these YAML files by hand; the
 
 ## Filling order
 
-1. `profiles/person_a.yml` — anthropometrics, activity, substances
-2. `preferences.yml` — likes, dislikes, hard restrictions
+1. `profiles/person_a.yml` and `profiles/person_b.yml` — anthropometrics, activity, substances
+2. `preferences.yml` — shared household restrictions (per-person likes/dislikes live inside each profile file)
 3. `logistics.yml` — kitchen, storage, stores, budget
 4. `pantry.yml` — what's already in the kitchen *right now*
 5. `recipes/seed.md` — 5–15 recipes you already rotate through (optional but recommended)

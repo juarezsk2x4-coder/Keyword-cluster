@@ -1,5 +1,5 @@
 import { getDb, ensureMigrated } from "./db";
-import type { MealLog, SleepLog, SubstanceLog } from "./types";
+import type { MealLog, SleepLog, SubstanceLog, PersonId } from "./types";
 
 export interface DayRollup {
   date: string;
@@ -58,36 +58,43 @@ export interface PredictionInsight {
   payload?: Record<string, string | number>;
 }
 
-const PROTEIN_TARGET = 130;
-const KCAL_TARGET_NORMAL = 2500;
-const KCAL_TARGET_SKATE = 3300;
+export interface PredictionTargets {
+  kcalNormal: number;
+  kcalSkate: number;
+  protein: number;
+}
 
 export async function getPredictions(
+  personId: PersonId,
   todayIso: string,
-  isSkateDayToday: boolean
+  isSkateDayToday: boolean,
+  targets: PredictionTargets
 ): Promise<Prediction> {
   await ensureMigrated();
 
   const dates = lastNDates(todayIso, 3);
   const yesterdayIso = dates[1];
+  const PROTEIN_TARGET = targets.protein;
+  const KCAL_TARGET_NORMAL = targets.kcalNormal;
+  const KCAL_TARGET_SKATE = targets.kcalSkate;
 
   const db = getDb();
   const [mealsResp, sleepResp, subsResp, fatigueResp] = await Promise.all([
     db.execute({
-      sql: `SELECT * FROM meal_logs WHERE date IN (?, ?, ?) ORDER BY date DESC, slot ASC`,
-      args: dates as [string, string, string],
+      sql: `SELECT * FROM meal_logs WHERE person_id = ? AND date IN (?, ?, ?) ORDER BY date DESC, slot ASC`,
+      args: [personId, ...dates] as [string, string, string, string],
     }),
     db.execute({
-      sql: `SELECT * FROM sleep_logs WHERE date IN (?, ?, ?)`,
-      args: dates as [string, string, string],
+      sql: `SELECT * FROM sleep_logs WHERE person_id = ? AND date IN (?, ?, ?)`,
+      args: [personId, ...dates] as [string, string, string, string],
     }),
     db.execute({
-      sql: `SELECT * FROM substance_logs WHERE date IN (?, ?, ?)`,
-      args: dates as [string, string, string],
+      sql: `SELECT * FROM substance_logs WHERE person_id = ? AND date IN (?, ?, ?)`,
+      args: [personId, ...dates] as [string, string, string, string],
     }),
     db.execute({
-      sql: `SELECT * FROM fatigue_logs WHERE date IN (?, ?, ?)`,
-      args: dates as [string, string, string],
+      sql: `SELECT * FROM fatigue_logs WHERE person_id = ? AND date IN (?, ?, ?)`,
+      args: [personId, ...dates] as [string, string, string, string],
     }),
   ]);
 

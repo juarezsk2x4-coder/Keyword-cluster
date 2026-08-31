@@ -1,5 +1,6 @@
-import type { DailyPlan, MealCard, MealVersion, MealSlot } from "./types";
+import type { DailyPlan, MealCard, MealVersion, MealSlot, PersonId, PersonProfile } from "./types";
 import { getStoredWeeklyPlan } from "./query";
+import { loadProfile } from "./profile";
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
@@ -580,6 +581,58 @@ export function buildWeeklyPlan(weekStartIso: string): DailyPlan[] {
   ];
 }
 
+// ─── Generic starter seed (any profile without a hand-authored week) ──────────
+
+const GENERIC_DOW_NAMES = ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"];
+
+function genericPlaceholder(label: string, kcal: number, protein_g: number, carbs_g: number, fat_g: number): MealVersion {
+  return { label, ingredients: [], prep_minutes: 10, kcal, protein_g, carbs_g, fat_g, notes: "Modelo inicial — gere um plano com IA pra personalizar." };
+}
+
+const GENERIC_MEALS: Record<MealSlot, { time: string; kcalShare: number; label: string }> = {
+  cafe_da_manha: { time: "08:00", kcalShare: 0.2, label: "Iogurte natural + granola + fruta" },
+  lanche_manha: { time: "10:30", kcalShare: 0.1, label: "Fruta + castanhas" },
+  almoco: { time: "12:30", kcalShare: 0.3, label: "Proteína + carbo + salada" },
+  lanche_tarde: { time: "16:00", kcalShare: 0.1, label: "Sanduíche integral simples" },
+  jantar: { time: "20:00", kcalShare: 0.25, label: "Sopa ou proteína leve + vegetais" },
+  snack_noturno: { time: "22:00", kcalShare: 0.05, label: "Iogurte + mel" },
+};
+
+export function buildGenericSeedPlan(weekStartIso: string, profile: PersonProfile): DailyPlan[] {
+  const base = new Date(weekStartIso + "T00:00:00");
+  const kcalTarget = profile.nutrition_targets.total_kcal_target_off_day;
+  const proteinTarget = profile.nutrition_targets.protein_g_per_day;
+
+  return Array.from({ length: 7 }, (_, i) => {
+    const d = new Date(base);
+    d.setDate(base.getDate() + i);
+    const date = d.toISOString().slice(0, 10);
+
+    const meals: MealCard[] = (Object.keys(GENERIC_MEALS) as MealSlot[]).map((slot) => {
+      const spec = GENERIC_MEALS[slot];
+      const kcal = Math.round(kcalTarget * spec.kcalShare);
+      const protein_g = Math.round(proteinTarget * spec.kcalShare);
+      const original = genericPlaceholder(spec.label, kcal, protein_g, Math.round(kcal * 0.5) / 4, Math.round(kcal * 0.25) / 9);
+      const easy = genericPlaceholder(`${spec.label} (fácil)`, kcal, protein_g, Math.round(kcal * 0.5) / 4, Math.round(kcal * 0.25) / 9);
+      const liquid = genericPlaceholder("Shake ou smoothie proteico", kcal, protein_g, Math.round(kcal * 0.5) / 4, Math.round(kcal * 0.2) / 9);
+      const no_hunger = genericPlaceholder("Kombucha + fruta", Math.round(kcal * 0.4), Math.round(protein_g * 0.3), 20, 0);
+      return { slot, scheduled_time: spec.time, alternatives: { original, easy, liquid, no_hunger } };
+    });
+
+    return {
+      date,
+      day_of_week: GENERIC_DOW_NAMES[d.getDay()],
+      is_skate_day: false,
+      is_work_day: true,
+      kcal_target: kcalTarget,
+      protein_g_target: proteinTarget,
+      carb_g_target: Math.round((kcalTarget * 0.45) / 4),
+      fat_g_target: Math.round((kcalTarget * 0.25) / 9),
+      meals,
+    };
+  });
+}
+
 // ─── Plan resolution (DB-backed > hand-crafted seed) ──────────────────────────
 
 export interface ResolvedWeeklyPlan {
@@ -588,8 +641,8 @@ export interface ResolvedWeeklyPlan {
   generated_at?: string;
 }
 
-export async function resolveWeeklyPlan(weekStartIso: string): Promise<ResolvedWeeklyPlan> {
-  const stored = await getStoredWeeklyPlan(weekStartIso);
+export async function resolveWeeklyPlan(personId: PersonId, weekStartIso: string): Promise<ResolvedWeeklyPlan> {
+  const stored = await getStoredWeeklyPlan(personId, weekStartIso);
   if (stored) {
     try {
       const days = JSON.parse(stored.plan_json) as DailyPlan[];
@@ -600,7 +653,10 @@ export async function resolveWeeklyPlan(weekStartIso: string): Promise<ResolvedW
       // Fall through to seed
     }
   }
-  return { days: buildWeeklyPlan(weekStartIso), source: "seed" };
+  if (personId === "person_a") {
+    return { days: buildWeeklyPlan(weekStartIso), source: "seed" };
+  }
+  return { days: buildGenericSeedPlan(weekStartIso, loadProfile(personId)), source: "seed" };
 }
 
 // ─── Shopping list (derived from week plan) ───────────────────────────────────

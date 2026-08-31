@@ -1,12 +1,14 @@
 import { getRecentMealLogs } from "@/lib/query";
 import { getLang } from "@/lib/lang";
+import { getActivePerson } from "@/lib/person";
 import { t } from "@/lib/i18n";
 import type { MealSlot, CardState } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 
 export default async function HistoryPage() {
-  const logs = await getRecentMealLogs(60);
+  const personId = await getActivePerson();
+  const logs = await getRecentMealLogs(personId, 60);
   const lang = await getLang();
   const tr = t(lang);
 

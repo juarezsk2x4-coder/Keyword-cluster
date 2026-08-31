@@ -48,6 +48,13 @@ Veja [`DEPLOY.md`](../DEPLOY.md) na raiz do repo. Tudo via navegador, ~15 min.
 - **DB**: SQLite at `app/data/app.db` (auto-created). Tables: `meal_logs`, `sleep_logs`, `substance_logs`, `fatigue_logs`, `prep_time_logs`.
 - **UI**: Mobile-first Tailwind. Dark theme. Server components + server actions (no client-side fetching).
 
+## Multi-person
+
+Both Person A and Person B share this deployment. A profile switcher (A / B chips)
+in the nav sets which person is active; every meal log, sleep/substance log, AI
+meal plan, and Habit Analyst view is scoped to the active person. The shopping
+list stays combined — one household, one shop.
+
 ## What's NOT in v1 (intentionally)
 
 - Price Scout (iFood/Forte/Imperatriz scraping) — manual pricing for now.
@@ -96,6 +103,7 @@ The dev server binds to `0.0.0.0` by default (see `package.json` `dev` script), 
 1. **Week 1** (this app): use it daily, log meals, see what works and what doesn't.
 2. **Week 2+**: the AI Meal Plan Designer generates the plan from the previous week's logs and your profile.
 3. **Ongoing**: Reconciler (predictions banner) adjusts each day; Habit Analyst surfaces 7/14/30-day patterns.
+4. **Person B**: fill in `data/profiles/person_b.yml`, switch to her profile with the A/B toggle in the nav, and repeat the same loop independently.
 
 ## Troubleshooting
 

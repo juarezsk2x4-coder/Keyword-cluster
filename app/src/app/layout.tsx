@@ -3,8 +3,10 @@ import type { Metadata, Viewport } from "next";
 import Link from "next/link";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { getLang } from "@/lib/lang";
+import { getActivePerson } from "@/lib/person";
 import { t } from "@/lib/i18n";
 import LangToggle from "@/components/LangToggle";
+import PersonToggle from "@/components/PersonToggle";
 
 export const metadata: Metadata = {
   title: "Plano A",
@@ -19,6 +21,7 @@ export const viewport: Viewport = {
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const lang = await getLang();
+  const person = await getActivePerson();
   const tr = t(lang);
 
   return (
@@ -34,6 +37,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
               <Link href="/shopping" className="hover:text-text">{tr.nav.shopping}</Link>
               <Link href="/profile" className="hover:text-text">{tr.nav.profile}</Link>
               <Link href="/history" className="hover:text-text">{tr.nav.history}</Link>
+              <PersonToggle current={person} />
               <LangToggle current={lang} />
             </div>
           </div>

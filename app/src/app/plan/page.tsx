@@ -1,6 +1,7 @@
 import { resolveWeeklyPlan } from "@/lib/seed-plan";
 import { getStoredWeeklyPlan } from "@/lib/query";
 import { getLang } from "@/lib/lang";
+import { getActivePerson } from "@/lib/person";
 import { t } from "@/lib/i18n";
 import { isAiEnabled } from "@/lib/nutrition-ai";
 import PlanGenerator from "@/components/PlanGenerator";
@@ -32,6 +33,7 @@ interface PageProps {
 export default async function PlanPage({ searchParams }: PageProps) {
   const sp = await searchParams;
   const lang = await getLang();
+  const personId = await getActivePerson();
   const tr = t(lang);
 
   const thisWeekStart = getSundayOfWeek(todayIso());
@@ -39,8 +41,8 @@ export default async function PlanPage({ searchParams }: PageProps) {
   const selectedWeek = sp.week ?? nextWeekStart;
 
   const [resolved, stored] = await Promise.all([
-    resolveWeeklyPlan(selectedWeek),
-    getStoredWeeklyPlan(selectedWeek),
+    resolveWeeklyPlan(personId, selectedWeek),
+    getStoredWeeklyPlan(personId, selectedWeek),
   ]);
 
   const aiEnabled = isAiEnabled();

@@ -1,3 +1,5 @@
+export type PersonId = "person_a" | "person_b";
+
 export type MealSlot =
   | "cafe_da_manha"
   | "lanche_manha"
@@ -94,6 +96,7 @@ export interface PersonProfile {
 
 export interface MealLog {
   id?: number;
+  person_id?: PersonId;
   date: string;
   slot: MealSlot;
   selected_state: CardState;
@@ -106,6 +109,7 @@ export interface MealLog {
 
 export interface SleepLog {
   id?: number;
+  person_id?: PersonId;
   date: string;
   hours: number;
   quality?: number;
@@ -114,6 +118,7 @@ export interface SleepLog {
 
 export interface SubstanceLog {
   id?: number;
+  person_id?: PersonId;
   date: string;
   substance: "cocaine" | "alcohol" | "cannabis" | "tobacco" | "benzo" | "psychedelic" | "ketamine";
   amount?: string;
@@ -123,12 +128,14 @@ export interface SubstanceLog {
 
 export interface FatigueLog {
   id?: number;
+  person_id?: PersonId;
   date: string;
   logged_at: string;
 }
 
 export interface PrepTimeLog {
   id?: number;
+  person_id?: PersonId;
   date: string;
   available_minutes: number;
   logged_at: string;
@@ -138,6 +145,7 @@ export type BeverageType = "mate" | "coffee" | "tea" | "treat";
 
 export interface BeverageLog {
   id?: number;
+  person_id?: PersonId;
   date: string;
   type: BeverageType;
   amount?: string;
