@@ -47,7 +47,6 @@ interface Dict {
   sub: { cocaine: string; alcohol: string; cannabis: string; tobacco: string; benzo: string };
   carbs: string;
   fat: string;
-  toggle_lang: string;
   beverages: string;
   beverage: { mate: string; coffee: string; tea: string; treat: string };
   amount_placeholder: (type: string) => string;
@@ -80,6 +79,12 @@ interface Dict {
   profile_target_hydration: string;
   profile_target_kcal_off: string;
   profile_target_kcal_skate: string;
+  unit_g_per_day: string;
+  unit_l_per_day: string;
+  notif_on: string;
+  notif_off: string;
+  lang_toggle_aria: string;
+  person_toggle_aria: string;
   profile_restrictions: string;
   profile_hard_no: string;
   profile_textures: string;
@@ -178,8 +183,8 @@ const pt: Dict = {
   substance_log: "Log de substância",
   logged_today: "Logado neste dia",
   tap_to_remove: "Toque pra remover",
-  skate_day: "Skate day",
-  recovery: "Recovery",
+  skate_day: "Dia de skate",
+  recovery: "Recuperação",
   kcal: "Kcal",
   protein: "Proteína",
   state: {
@@ -209,7 +214,7 @@ const pt: Dict = {
   updating: "Atualizando…",
   saving: "Salvando…",
   logged: "Logado",
-  min_prep: "min prep",
+  min_prep: "min preparo",
   show_ingredients: (n) => `Ver ${n} ingrediente${n === 1 ? "" : "s"}`,
   hide_ingredients: "Esconder ingredientes",
   edit_or_other: "Editar / comi outra coisa",
@@ -222,9 +227,8 @@ const pt: Dict = {
   sub: { cocaine: "coca", alcohol: "álcool", cannabis: "cannabis", tobacco: "tabaco", benzo: "benzo" },
   carbs: "C",
   fat: "G",
-  toggle_lang: "EN",
-  beverages: "Bebidas (mate / café / chá / treats)",
-  beverage: { mate: "mate", coffee: "café", tea: "chá", treat: "treat" },
+  beverages: "Bebidas (mate / café / chá / guloseimas)",
+  beverage: { mate: "mate", coffee: "café", tea: "chá", treat: "guloseima" },
   amount_placeholder: (type) => {
     if (type === "mate") return "ex: 1 cuia / 500ml";
     if (type === "coffee") return "ex: 1 espresso / 200ml";
@@ -257,20 +261,26 @@ const pt: Dict = {
   store_label: {
     forte_mensal: "Forte (mensal)",
     imperatriz_semanal: "Imperatriz (semanal)",
-    imperatriz_topup: "Imperatriz (top-up)",
+    imperatriz_topup: "Imperatriz (reforço)",
     ifood: "iFood",
   },
   profile_age: "Idade",
   profile_height: "Altura",
   profile_weight: "Peso",
   profile_bodyfat: "% Gordura",
-  profile_bmr: "BMR",
+  profile_bmr: "TMB",
   profile_goal: "Objetivo",
   profile_targets: "Targets nutricionais",
   profile_target_protein: "Proteína",
   profile_target_hydration: "Hidratação",
   profile_target_kcal_off: "Kcal off day",
   profile_target_kcal_skate: "Kcal skate day",
+  unit_g_per_day: "g/dia",
+  unit_l_per_day: "L/dia",
+  notif_on: "✓ LIGADO",
+  notif_off: "DESLIGADO",
+  lang_toggle_aria: "Alternar idioma",
+  person_toggle_aria: "Trocar perfil ativo",
   profile_restrictions: "Restrições e aversões",
   profile_hard_no: "Bloqueio absoluto",
   profile_textures: "Texturas aversivas",
@@ -413,7 +423,6 @@ const en: Dict = {
   sub: { cocaine: "coke", alcohol: "alcohol", cannabis: "cannabis", tobacco: "tobacco", benzo: "benzo" },
   carbs: "C",
   fat: "F",
-  toggle_lang: "PT",
   beverages: "Beverages (mate / coffee / tea / treats)",
   beverage: { mate: "mate", coffee: "coffee", tea: "tea", treat: "treat" },
   amount_placeholder: (type) => {
@@ -462,6 +471,12 @@ const en: Dict = {
   profile_target_hydration: "Hydration",
   profile_target_kcal_off: "Kcal off day",
   profile_target_kcal_skate: "Kcal skate day",
+  unit_g_per_day: "g/day",
+  unit_l_per_day: "L/day",
+  notif_on: "✓ ON",
+  notif_off: "OFF",
+  lang_toggle_aria: "Toggle language",
+  person_toggle_aria: "Switch active profile",
   profile_restrictions: "Restrictions & aversions",
   profile_hard_no: "Hard block",
   profile_textures: "Texture aversions",

@@ -109,7 +109,7 @@ export default function MealNotifications({ meals, lang, date }: Props) {
           disabled={permState === "denied"}
           className={`btn text-xs disabled:opacity-50 ${enabled ? "btn-ghost" : "btn-primary"}`}
         >
-          {enabled ? "✓ ON" : "OFF"}
+          {enabled ? tr.notif_on : tr.notif_off}
         </button>
       </div>
       <p className="text-xs text-muted mt-1.5">{buttonLabel}</p>

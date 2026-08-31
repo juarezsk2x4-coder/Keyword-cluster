@@ -35,8 +35,8 @@ export default async function ProfilePage() {
       <div className="card">
         <h2 className="label mb-2">{tr.profile_targets}</h2>
         <div className="grid grid-cols-2 gap-2 text-sm">
-          <div><span className="label block">{tr.profile_target_protein}</span>{p.nutrition_targets.protein_g_per_day} g/dia</div>
-          <div><span className="label block">{tr.profile_target_hydration}</span>{p.nutrition_targets.hydration_l_per_day} L/dia</div>
+          <div><span className="label block">{tr.profile_target_protein}</span>{p.nutrition_targets.protein_g_per_day} {tr.unit_g_per_day}</div>
+          <div><span className="label block">{tr.profile_target_hydration}</span>{p.nutrition_targets.hydration_l_per_day} {tr.unit_l_per_day}</div>
           <div><span className="label block">{tr.profile_target_kcal_off}</span>{p.nutrition_targets.total_kcal_target_off_day}</div>
           <div><span className="label block">{tr.profile_target_kcal_skate}</span>{p.nutrition_targets.total_kcal_target_skate_day}</div>
         </div>
