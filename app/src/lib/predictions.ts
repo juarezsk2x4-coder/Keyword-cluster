@@ -1,4 +1,5 @@
 import { getDb, ensureMigrated } from "./db";
+import { MEAL_SLOTS } from "./types";
 import type { MealLog, SleepLog, SubstanceLog, PersonId } from "./types";
 
 export interface DayRollup {
@@ -52,6 +53,7 @@ export interface PredictionInsight {
     | "fatigue_streak"
     | "post_substance"
     | "post_alcohol"
+    | "skate_syncope_risk"
     | "sleep_short"
     | "sleep_long"
     | "on_track";
@@ -103,7 +105,7 @@ export async function getPredictions(
   const subs = subsResp.rows as unknown as SubstanceLog[];
   const fatigues = fatigueResp.rows as unknown as { date: string }[];
 
-  const ALL_SLOTS = ["cafe_da_manha", "lanche_manha", "almoco", "lanche_tarde", "jantar", "snack_noturno"];
+  const ALL_SLOTS = MEAL_SLOTS;
 
   const rollups: DayRollup[] = dates.map((d) => {
     const dayMeals = meals.filter((m) => m.date === d);
@@ -133,11 +135,13 @@ export async function getPredictions(
 
   const kcalTargetToday = isSkateDayToday ? KCAL_TARGET_SKATE : KCAL_TARGET_NORMAL;
   const proteinTarget = PROTEIN_TARGET;
+  // Guard against an unfilled profile (targets not yet set to real numbers).
+  const hasValidTargets = KCAL_TARGET_NORMAL > 0 && proteinTarget > 0;
 
-  const kcal_deficit_pct = daysWithData > 0
+  const kcal_deficit_pct = daysWithData > 0 && hasValidTargets
     ? Math.round(((avg_kcal - KCAL_TARGET_NORMAL) / KCAL_TARGET_NORMAL) * 100)
     : 0;
-  const protein_deficit_pct = daysWithData > 0
+  const protein_deficit_pct = daysWithData > 0 && hasValidTargets
     ? Math.round(((avg_protein - proteinTarget) / proteinTarget) * 100)
     : 0;
 
@@ -159,7 +163,18 @@ export async function getPredictions(
   const sleep_short_today = today.sleep_hours !== null && today.sleep_hours < 5;
   const sleep_long_today = today.sleep_hours !== null && today.sleep_hours >= 9;
 
-  const missed_meals_yesterday = yesterday.missed_slots;
+  // Don't count AM slots as "missed" for alerting when yesterday was a
+  // documented long-sleep (hypersonia) morning — sleeping through
+  // cafe_da_manha/lanche_manha on a 9h+ night is an explained, expected
+  // pattern (see the sleep overlay elsewhere in this file), not neglect
+  // that should surface as a warning. The slots still count as "not eaten"
+  // for kcal/macro purposes; this only changes whether they trigger the
+  // missed_meals insight.
+  const yesterdaySleptLong = yesterday.sleep_hours !== null && yesterday.sleep_hours >= 9;
+  const AM_SLOTS = ["cafe_da_manha", "lanche_manha"];
+  const missed_meals_yesterday = yesterdaySleptLong
+    ? yesterday.missed_slots.filter((s) => !AM_SLOTS.includes(s))
+    : yesterday.missed_slots;
 
   // Compute today's adjustments
   let protein_boost_g = 0;
@@ -177,6 +192,14 @@ export async function getPredictions(
   }
   if (sleep_short_today) {
     hydration_extra_l += 0.5;
+  }
+  // Recent stimulant use going into a hard skate day is exactly the
+  // collision the profile's own notes flag as highest syncope risk
+  // (depleted Mg/electrolytes + prior dehydration + accumulated cardiac
+  // load). Extra hydration on top of the general post-substance bump.
+  const skate_syncope_risk = isSkateDayToday && stimulant_in_last_3d;
+  if (skate_syncope_risk) {
+    hydration_extra_l += 1;
   }
 
   // Build insights
@@ -229,6 +252,9 @@ export async function getPredictions(
   }
   if (yesterday.substances.includes("alcohol")) {
     insights.push({ severity: "info", key: "post_alcohol" });
+  }
+  if (skate_syncope_risk) {
+    insights.push({ severity: "alert", key: "skate_syncope_risk" });
   }
   if (sleep_short_today) {
     insights.push({

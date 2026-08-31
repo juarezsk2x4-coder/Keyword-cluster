@@ -1,16 +1,6 @@
-import Anthropic from "@anthropic-ai/sdk";
-import type { DailyPlan, MealLog, PersonId, PersonProfile } from "./types";
-
-let clientInstance: Anthropic | null = null;
-
-function getClient(): Anthropic {
-  if (clientInstance) return clientInstance;
-  if (!process.env.ANTHROPIC_API_KEY) {
-    throw new Error("ANTHROPIC_API_KEY not configured");
-  }
-  clientInstance = new Anthropic();
-  return clientInstance;
-}
+import { getAnthropicClient } from "./anthropic-client";
+import { MEAL_SLOTS } from "./types";
+import type { DailyPlan, MealLog, PersonId, PersonProfile, SubstanceLog } from "./types";
 
 export interface RecentLogSummary {
   date: string;
@@ -19,6 +9,7 @@ export interface RecentLogSummary {
   meals_logged: number;
   missed_slots: string[];
   states_picked: string[];
+  substances_logged: string[];
 }
 
 const MEAL_VERSION_SCHEMA = {
@@ -118,7 +109,7 @@ Person A snapshot:
 Day-type rules (Sunday-anchored):
 - Sun + Mon = skate days (kcal_target ${profile.nutrition_targets.total_kcal_target_skate_day}, ~390g carbs). Pre-skate fuel breakfast (cuscuz/banana/mel/peanut butter type), electrolytes mid-morning, post-skate recovery lunch (fast carbs + whey).
 - Tue–Sat = work days (kcal_target ${profile.nutrition_targets.total_kcal_target_off_day}, protein ${profile.nutrition_targets.protein_g_per_day}g, ~225g carbs).
-- Thu + Sat AM defaults to "liquid" recovery shake (post-stim recovery).
+- AM recovery shake: use the substance-use dates from the log summary below (not a fixed weekday) to decide which upcoming mornings are likely to need a "liquid" recovery default — the morning after any logged use. If a use day in the log summary falls within 36h of a Sun/Mon skate day, add extra electrolyte/magnesium emphasis to that day's pre-skate meal notes given documented syncope risk on a depleted skate day. This is advance planning based on the recent pattern; the app's daily view still reacts in real time to whatever is actually logged during the week itself.
 - Friday dinner slot is reserved for delivery — acceptable list: poke, sushi, Peruvian, Japanese, never burgers/fast-food junk.
 - 6 slots every day: cafe_da_manha (07:30), lanche_manha (10:30), almoco (12:30 weekdays / 13:00 skate), lanche_tarde (16:00), jantar (20:00), snack_noturno (22:30).
 
@@ -152,7 +143,7 @@ Pessoa A:
 Regras por dia (semana ancorada em domingo):
 - Dom + Seg = skate days (kcal_target ${profile.nutrition_targets.total_kcal_target_skate_day}, ~390g carbo). Café da manhã pré-skate (cuscuz/banana/mel/pasta de amendoim), eletrólito mid-manhã, almoço pós-skate recovery (carbo rápido + whey).
 - Ter–Sáb = dias de trabalho (kcal_target ${profile.nutrition_targets.total_kcal_target_off_day}, proteína ${profile.nutrition_targets.protein_g_per_day}g, ~225g carbo).
-- Qui + Sáb manhã: default "liquid" recovery (pós-estimulante).
+- Shake de recuperação AM: use as datas de uso de substância do resumo de logs abaixo (não um dia fixo da semana) pra decidir quais manhãs da próxima semana provavelmente precisam de default "liquid" — a manhã seguinte a qualquer uso logado. Se um dia de uso no resumo cair dentro de 36h de um dia de skate (dom/seg), reforce eletrólito/magnésio nas notas da refeição pré-skate daquele dia, dado o risco documentado de síncope num dia de skate depletado. Isso é planejamento antecipado baseado no padrão recente; a visão diária do app ainda reage em tempo real ao que for logado de fato durante a semana.
 - Sexta jantar: slot reservado pra delivery — lista aceitável: poke, sushi, peruano, japonês, NUNCA burger/fast-food.
 - 6 slots/dia: cafe_da_manha (07:30), lanche_manha (10:30), almoco (12:30 dia útil / 13:00 skate), lanche_tarde (16:00), jantar (20:00), snack_noturno (22:30).
 
@@ -239,8 +230,9 @@ function buildUserMessage(
 ): string {
   const lines = recentLogs.map(
     (r) =>
-      `${r.date}: ${r.total_kcal} kcal, ${r.total_protein_g}g protein, ${r.meals_logged}/6 slots, states=[${r.states_picked.join("|")}], missed=[${r.missed_slots.join("|")}]`
+      `${r.date}: ${r.total_kcal} kcal, ${r.total_protein_g}g protein, ${r.meals_logged}/6 slots, states=[${r.states_picked.join("|")}], missed=[${r.missed_slots.join("|")}]${r.substances_logged.length ? `, substances=[${r.substances_logged.join("|")}]` : ""}`
   );
+  const substanceDays = recentLogs.filter((r) => r.substances_logged.length > 0).map((r) => r.date);
 
   if (lang === "en") {
     return `Generate the meal plan for the week starting Sunday ${weekStartIso}.
@@ -248,7 +240,8 @@ function buildUserMessage(
 Last 7 days of logs (most recent first):
 ${lines.length ? lines.join("\n") : "(no prior logs — first week)"}
 
-Adapt based on patterns: if recent kcal is low, prefer denser meals; if protein is low, push protein-forward versions; if many "easy/liquid" states were picked, lean into easy defaults; if certain slots were repeatedly missed, simplify those slots.`;
+Adapt based on patterns: if recent kcal is low, prefer denser meals; if protein is low, push protein-forward versions; if many "easy/liquid" states were picked, lean into easy defaults; if certain slots were repeatedly missed, simplify those slots.
+${substanceDays.length ? `Substance use was logged on: ${substanceDays.join(", ")}. Use this actual pattern (not an assumed fixed weekday) to decide which upcoming mornings are most likely to need a "liquid" recovery default — this is advance planning only, the app's daily view still reacts in real time to whatever is actually logged that week.` : "No substance use logged in the last 7 days — no recovery-day defaults needed based on history, but the daily view will still react if something is logged this week."}`;
   }
 
   return `Gere o plano da semana começando domingo ${weekStartIso}.
@@ -256,7 +249,8 @@ Adapt based on patterns: if recent kcal is low, prefer denser meals; if protein 
 Últimos 7 dias de logs (mais recente primeiro):
 ${lines.length ? lines.join("\n") : "(sem logs anteriores — primeira semana)"}
 
-Adapte aos padrões: se kcal recente baixo, priorize refeições mais densas; se proteína baixa, versões protein-forward; se muitos estados "easy/liquid" foram escolhidos, ajuste easy defaults; se slots foram repetidamente pulados, simplifique-os.`;
+Adapte aos padrões: se kcal recente baixo, priorize refeições mais densas; se proteína baixa, versões protein-forward; se muitos estados "easy/liquid" foram escolhidos, ajuste easy defaults; se slots foram repetidamente pulados, simplifique-os.
+${substanceDays.length ? `Uso de substância foi logado em: ${substanceDays.join(", ")}. Use esse padrão real (não um dia fixo assumido) pra decidir quais manhãs da próxima semana provavelmente precisam de default "liquid" de recuperação — isso é planejamento antecipado; a visão diária do app ainda reage em tempo real ao que for logado de fato naquela semana.` : "Nenhum uso de substância logado nos últimos 7 dias — sem necessidade de defaults de recuperação baseados em histórico, mas a visão diária ainda reage se algo for logado durante a semana."}`;
 }
 
 export async function generateWeeklyPlan(
@@ -266,20 +260,30 @@ export async function generateWeeklyPlan(
   lang: "pt" | "en",
   personId: PersonId
 ): Promise<DailyPlan[]> {
-  const client = getClient();
-  const response = await client.messages.create({
-    model: "claude-opus-5",
-    max_tokens: 16000,
-    output_config: {
-      format: {
-        type: "json_schema",
-        schema: WEEKLY_PLAN_SCHEMA,
+  const client = getAnthropicClient();
+  // 7 days x 6 slots x 4 meal versions (label, ingredients, prep_steps,
+  // macros, notes) is a large structured payload — stream it and use a
+  // generous token budget so a long plan doesn't hit max_tokens mid-response
+  // (which would otherwise silently truncate the JSON and fail to parse).
+  const response = await client.messages
+    .stream({
+      model: "claude-opus-5",
+      max_tokens: 48000,
+      output_config: {
+        format: {
+          type: "json_schema",
+          schema: WEEKLY_PLAN_SCHEMA,
+        },
+        effort: "medium",
       },
-      effort: "medium",
-    },
-    system: buildSystemPrompt(profile, lang, personId),
-    messages: [{ role: "user", content: buildUserMessage(weekStartIso, recentLogs, lang) }],
-  });
+      system: buildSystemPrompt(profile, lang, personId),
+      messages: [{ role: "user", content: buildUserMessage(weekStartIso, recentLogs, lang) }],
+    })
+    .finalMessage();
+
+  if (response.stop_reason === "max_tokens") {
+    throw new Error("Plan generation ran out of output space (max_tokens) — try again");
+  }
 
   const textBlock = response.content.find((b) => b.type === "text");
   if (!textBlock || textBlock.type !== "text") {
@@ -293,23 +297,35 @@ export async function generateWeeklyPlan(
   return parsed.days;
 }
 
-export function summarizeMealLogs(logs: MealLog[]): RecentLogSummary[] {
-  const ALL_SLOTS = ["cafe_da_manha", "lanche_manha", "almoco", "lanche_tarde", "jantar", "snack_noturno"];
+export function summarizeMealLogs(logs: MealLog[], substanceLogs: SubstanceLog[] = []): RecentLogSummary[] {
   const byDate = new Map<string, MealLog[]>();
   for (const log of logs) {
     const arr = byDate.get(log.date) ?? [];
     arr.push(log);
     byDate.set(log.date, arr);
   }
+  // Substance-day dates are tracked even if no meal was logged that day —
+  // a use day with zero meal logs is exactly the kind of day the AI needs
+  // to see, not silently drop.
+  const substancesByDate = new Map<string, string[]>();
+  for (const s of substanceLogs) {
+    const arr = substancesByDate.get(s.date) ?? [];
+    arr.push(s.substance);
+    substancesByDate.set(s.date, arr);
+  }
+  const allDates = new Set([...byDate.keys(), ...substancesByDate.keys()]);
+
   const out: RecentLogSummary[] = [];
-  for (const [date, dayLogs] of byDate) {
+  for (const date of allDates) {
+    const dayLogs = byDate.get(date) ?? [];
     out.push({
       date,
       total_kcal: dayLogs.reduce((acc, m) => acc + (m.kcal ?? 0), 0),
       total_protein_g: dayLogs.reduce((acc, m) => acc + (m.protein_g ?? 0), 0),
       meals_logged: dayLogs.length,
-      missed_slots: ALL_SLOTS.filter((s) => !dayLogs.find((m) => m.slot === s)),
+      missed_slots: MEAL_SLOTS.filter((s) => !dayLogs.find((m) => m.slot === s)),
       states_picked: dayLogs.map((m) => m.selected_state),
+      substances_logged: substancesByDate.get(date) ?? [],
     });
   }
   return out.sort((a, b) => (a.date < b.date ? 1 : -1));

@@ -323,6 +323,10 @@ food_preferences:
   soft_dislikes: [figado, couve_flor, mamao, azeitonas]
   seletividade_alimentar_clinica: true
   current_chicken_phase: tolerant                    # fase atual: tolera peito_frango pelo intake proteico fácil
+                                                       # se reverter, seed-plan.ts já tem fallback pré-pronto:
+                                                       # CURRY_SEM_FRANGO (grão-de-bico+tofu) e
+                                                       # BATATA_DOCE_PATINHO — troca no lugar de
+                                                       # FRANGO_CURRY / BATATA_DOCE_FRANGO, sem inventar receita nova
   current_burger_delivery_pattern: high              # CURRENT PROBLEM: cansaço + casa grande -> hambúrguer + delivery noites
   abacate_acceptable_in: [pao, salada, poke]         # NÃO em pasta livre
   iogurte_granola_loved: true                        # combinação favorita — usar como anchor de café/lanche

@@ -3,25 +3,25 @@
 import { useEffect, useState } from "react";
 import type { Lang } from "@/lib/i18n";
 import { t } from "@/lib/i18n";
-import type { MealCard as MealCardType } from "@/lib/types";
+import { todayIso } from "@/lib/dates";
+import type { MealCard as MealCardType, PersonId } from "@/lib/types";
 
 interface Props {
   meals: MealCardType[];
   lang: Lang;
   date: string;
+  personId: PersonId;
 }
 
 type PermState = "default" | "granted" | "denied" | "unsupported";
 
-const STORAGE_KEY = "plano_a_notifications_enabled";
-
 function isToday(iso: string): boolean {
-  const today = new Date().toISOString().slice(0, 10);
-  return iso === today;
+  return iso === todayIso();
 }
 
-export default function MealNotifications({ meals, lang, date }: Props) {
+export default function MealNotifications({ meals, lang, date, personId }: Props) {
   const tr = t(lang);
+  const storageKey = `notifications_enabled_${personId}`;
   const [permState, setPermState] = useState<PermState>("default");
   const [enabled, setEnabled] = useState(false);
 
@@ -32,8 +32,8 @@ export default function MealNotifications({ meals, lang, date }: Props) {
       return;
     }
     setPermState(Notification.permission as PermState);
-    setEnabled(localStorage.getItem(STORAGE_KEY) === "true");
-  }, []);
+    setEnabled(localStorage.getItem(storageKey) === "true");
+  }, [storageKey]);
 
   // Schedule notifications when enabled
   useEffect(() => {
@@ -83,12 +83,12 @@ export default function MealNotifications({ meals, lang, date }: Props) {
       setPermState(result as PermState);
       if (result === "granted") {
         setEnabled(true);
-        localStorage.setItem(STORAGE_KEY, "true");
+        localStorage.setItem(storageKey, "true");
       }
     } else if (permState === "granted") {
       const next = !enabled;
       setEnabled(next);
-      localStorage.setItem(STORAGE_KEY, next ? "true" : "false");
+      localStorage.setItem(storageKey, next ? "true" : "false");
     }
   };
 

@@ -19,19 +19,9 @@ import type { CardState } from "@/lib/types";
 import { getLang } from "@/lib/lang";
 import { getActivePerson } from "@/lib/person";
 import { loadProfile } from "@/lib/profile";
+import { getSundayOfWeek, todayIso } from "@/lib/dates";
 
 export const dynamic = "force-dynamic";
-
-function getSundayOfWeek(iso: string): string {
-  const d = new Date(iso + "T00:00:00");
-  const dow = d.getDay();
-  d.setDate(d.getDate() - dow);
-  return d.toISOString().slice(0, 10);
-}
-
-function todayIso(): string {
-  return new Date().toISOString().slice(0, 10);
-}
 
 function defaultStateFor(opts: {
   isFatigued: boolean;
@@ -92,7 +82,7 @@ export default async function TodayPage({ searchParams }: PageProps) {
     <div>
       <DateNavigator current={selectedDate} lang={lang} />
 
-      <MealNotifications meals={dayPlan.meals} lang={lang} date={selectedDate} />
+      <MealNotifications meals={dayPlan.meals} lang={lang} date={selectedDate} personId={personId} />
 
       <PredictionBanner prediction={predictions} lang={lang} />
 

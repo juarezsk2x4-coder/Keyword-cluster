@@ -69,7 +69,7 @@ He is being correctly treated by Dra. Schlindwein (B12 IM, D3 7000 UI/d, ferro 3
   - **Recent vasovagal syncope** — Mg is central to autonomic tone, vascular smooth muscle, and ATP. Chronic low-tissue Mg is a recognized contributor to vasovagal events.
   - **Short sleep (6.5h)** — both consequence and cause of low Mg.
 
-→ **Worth raising with Dra. Schlindwein**: tissue/RBC Mg test, and whether to add Mg glicinato or citrato 300–400 mg evening. Dietary push regardless: cacau 70%+, castanha-do-pará (1–2/d, also selênio), amêndoa, sementes de abóbora, folhas verde-escuras, banana, abacate.
+→ **Worth raising with Dra. Schlindwein**: tissue/RBC Mg test, and whether magnesium supplementation (form and dose are her call, not this document's) makes sense for him. Dietary push regardless: cacau 70%+, castanha-do-pará (1–2/d, also selênio), amêndoa, sementes de abóbora, folhas verde-escuras, banana, abacate.
 
 ### Testosterone — **suboptimal-not-pathological**
 
@@ -291,7 +291,7 @@ Aceita: salmão, sardinha, atum fresco, pescada, robalo, linguado, merluza, polv
 2. Testosterona livre + SHBG na próxima coleta — dado total 473 + sintomas indiretos.
 3. Eosinofilia 8% persistente — vale screen parasitológico ou alergológico?
 4. Plaquetopenia 112k — repetir em 3 meses para confirmar estabilidade.
-5. Considerar suplementação de zinco quelato 15–25 mg/d? (substrato T, imunidade, paladar autista — alguns autistas têm baixo zinco crônico).
+5. Considerar suplementação de zinco (forma e dose ficam a critério dela)? (substrato T, imunidade, paladar autista — alguns autistas têm baixo zinco crônico).
 6. Estratégias para reduzir cannabis se ele estiver aberto — leverage múltiplo (T, sono, B12 demand, eosinófilos).
 
 ## What we are NOT going to do

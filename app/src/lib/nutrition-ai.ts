@@ -1,15 +1,4 @@
-import Anthropic from "@anthropic-ai/sdk";
-
-let clientInstance: Anthropic | null = null;
-
-function getClient(): Anthropic {
-  if (clientInstance) return clientInstance;
-  if (!process.env.ANTHROPIC_API_KEY) {
-    throw new Error("ANTHROPIC_API_KEY not configured");
-  }
-  clientInstance = new Anthropic();
-  return clientInstance;
-}
+import { getAnthropicClient } from "./anthropic-client";
 
 export interface NutritionEstimate {
   kcal: number;
@@ -108,7 +97,7 @@ export async function estimateNutrition(
     throw new Error("Empty description");
   }
 
-  const client = getClient();
+  const client = getAnthropicClient();
   const response = await client.messages.create({
     model: "claude-sonnet-5",
     max_tokens: 500,

@@ -6,25 +6,9 @@ import { t } from "@/lib/i18n";
 import { isAiEnabled } from "@/lib/nutrition-ai";
 import PlanGenerator from "@/components/PlanGenerator";
 import type { MealSlot, CardState } from "@/lib/types";
+import { getSundayOfWeek, getNextSunday, todayIso } from "@/lib/dates";
 
 export const dynamic = "force-dynamic";
-
-function getSundayOfWeek(iso: string): string {
-  const d = new Date(iso + "T00:00:00");
-  const dow = d.getDay();
-  d.setDate(d.getDate() - dow);
-  return d.toISOString().slice(0, 10);
-}
-
-function getNextSunday(iso: string): string {
-  const d = new Date(iso + "T00:00:00");
-  d.setDate(d.getDate() + 7);
-  return d.toISOString().slice(0, 10);
-}
-
-function todayIso(): string {
-  return new Date().toISOString().slice(0, 10);
-}
 
 interface PageProps {
   searchParams: Promise<{ week?: string }>;

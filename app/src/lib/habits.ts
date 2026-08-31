@@ -5,16 +5,10 @@ import {
   getSubstanceLogsForPast,
   getFatigueDatesForPast,
 } from "./query";
-import type { MealSlot, CardState, PersonId } from "./types";
+import { MEAL_SLOTS } from "./types";
+import type { CardState, MealSlot, PersonId } from "./types";
 
-const ALL_SLOTS: MealSlot[] = [
-  "cafe_da_manha",
-  "lanche_manha",
-  "almoco",
-  "lanche_tarde",
-  "jantar",
-  "snack_noturno",
-];
+const ALL_SLOTS = MEAL_SLOTS;
 
 export interface HabitTargets {
   kcal: number;
@@ -49,6 +43,7 @@ export interface HabitInsight {
     | "substance_correlation"
     | "fatigue_frequent"
     | "sleep_kcal_link"
+    | "consider_professional_support"
     | "on_track";
   payload?: Record<string, string | number>;
 }
@@ -216,8 +211,12 @@ export async function getHabitRollup(
 
   // Build insights
   const insights: HabitInsight[] = [];
-  const kcalUnderPct = Math.round(((targets.kcal - avgKcal) / targets.kcal) * 100);
-  const proteinUnderPct = Math.round(((targets.protein - avgProtein) / targets.protein) * 100);
+  // Guard against an unfilled profile (targets not yet set to real numbers) —
+  // without this, dividing by a zero/invalid target turns every insight
+  // into a literal "NaN%" instead of just producing no insight.
+  const hasValidTargets = targets.kcal > 0 && targets.protein > 0;
+  const kcalUnderPct = hasValidTargets ? Math.round(((targets.kcal - avgKcal) / targets.kcal) * 100) : 0;
+  const proteinUnderPct = hasValidTargets ? Math.round(((targets.protein - avgProtein) / targets.protein) * 100) : 0;
 
   if (kcalUnderPct >= 15 && daysWithData >= 3) {
     insights.push({
@@ -291,6 +290,21 @@ export async function getHabitRollup(
 
   if (sleepKcalCorrelation === "positive") {
     insights.push({ severity: "info", key: "sleep_kcal_link" });
+  }
+
+  // Everything above resolves to "log more" / "adjust the plan" — none of
+  // it ever points toward a human. Only on the longer windows (a single
+  // rough week shouldn't trigger this) and only when multiple severe
+  // signals compound at once — a sustained, combined pattern is a
+  // different thing than any one flag alone, and worth surfacing as such
+  // rather than just another self-serve tip.
+  if (windowDays >= 14) {
+    const compoundingDeficit = kcalUnderPct >= 15 && proteinUnderPct >= 15 && daysWithData >= 5;
+    const compoundingOverwhelm = easyShare >= 70 && fatigueDays >= 3 && totalStates >= 10;
+    const escalatingSubstanceUse = substanceDays >= windowDays * 0.4;
+    if (compoundingDeficit || compoundingOverwhelm || escalatingSubstanceUse) {
+      insights.push({ severity: "alert", key: "consider_professional_support" });
+    }
   }
 
   if (insights.length === 0 && daysWithData >= 5) {

@@ -117,6 +117,15 @@ const SALMAO_BATATA = v({
   notes: "Omega-3 + vit D + batata-doce roxa antocianinas. Anti-asma + anti-inflamatório.",
 });
 
+// current_chicken_phase in person_a.yml is "tolerant" today, but the
+// clinical brief flags a documented chicken aversion as only provisionally
+// resolved ("provisório até confirmar") — and explicitly says the system
+// needs pre-built "if X isn't available, do Y" substitutions rather than
+// asking him to improvise one in the moment (weak cognitive flexibility is
+// the documented pattern, not a hypothetical). CURRY_SEM_FRANGO below is
+// that pre-built fallback: swap FRANGO_CURRY for it (same slot, same
+// macros, same anti-inflammatory spice base) the moment the phase reverses
+// — no new recipe needs to be invented under pressure.
 const FRANGO_CURRY = v({
   label: "Curry de frango com leite de coco + cuscuz marroquino + couve refogada",
   ingredients: [
@@ -142,6 +151,34 @@ const FRANGO_CURRY = v({
     "Couve: refogue rápido no alho. Sirva tudo + limão.",
   ],
   notes: "Indiana sem tomate. Cúrcuma + gengibre + cebola = anti-asma forte.",
+});
+
+const CURRY_SEM_FRANGO = v({
+  label: "Curry de grão-de-bico + tofu com leite de coco + cuscuz marroquino + couve refogada",
+  ingredients: [
+    "grão-de-bico cozido 150g",
+    "tofu firme em cubos 100g",
+    "leite de coco 100ml",
+    "cebola roxa 1/2",
+    "alho 2 dentes",
+    "gengibre 1 colher chá",
+    "cúrcuma 1 colher chá",
+    "coentro em pó 1/2 colher chá",
+    "cuscuz marroquino integral 80g (seco)",
+    "couve manteiga 1/2 maço",
+    "limão 1/2",
+  ],
+  prep_minutes: 25,
+  kcal: 630,
+  protein_g: 32,
+  carbs_g: 68,
+  fat_g: 20,
+  prep_steps: [
+    "Cuscuz: ferva 100ml água, junte cuscuz + sal + colher azeite, tampe 5min.",
+    "Curry: refogue cebola + alho + gengibre, junte grão-de-bico + tofu, tempere, junte leite de coco.",
+    "Couve: refogue rápido no alho. Sirva tudo + limão.",
+  ],
+  notes: "Fallback pré-pronto se a fase de frango reverter — mesmas especiarias anti-asma, sem frango.",
 });
 
 const LINGUADO_KIMCHI = v({
@@ -337,6 +374,26 @@ const BATATA_DOCE_FRANGO = v({
   notes: "Easy: batch já feito, só montar.",
 });
 
+// Fallback if current_chicken_phase reverts — same slot, same batch-cook
+// pattern, patinho instead of frango (already a favorite protein per his
+// profile, so this isn't a stretch substitution).
+const BATATA_DOCE_PATINHO = v({
+  label: "Patinho desfiado + batata-doce laranja + folhas + limão",
+  ingredients: [
+    "patinho desfiado 130g (do batch dominical)",
+    "batata-doce laranja 200g",
+    "rúcula ou alface 1 maço",
+    "azeite 1 colher sopa",
+    "limão 1/2",
+  ],
+  prep_minutes: 5,
+  kcal: 560,
+  protein_g: 40,
+  carbs_g: 55,
+  fat_g: 16,
+  notes: "Fallback pré-pronto se a fase de frango reverter. Easy: batch já feito, só montar.",
+});
+
 const MARMITA_BATCH = v({
   label: "Marmita do batch (esquentar 2min) + salada montada + limão",
   ingredients: [
@@ -448,21 +505,28 @@ export function buildWeeklyPlan(weekStartIso: string): DailyPlan[] {
       is_work_day: false,
       ...SKATE_DAY,
       meals: [
+        // Sunday/Monday originals are boosted here (kcal/carb only, via
+        // per-day overrides — the shared consts below stay untouched since
+        // they're reused as-is on work days) to actually hit the 3300kcal/
+        // 390g-carb skate-day target: the un-boosted originals summed to
+        // only ~2740 kcal / ~310g carb, underfueling the one day with the
+        // highest glycogen/electrolyte demand and the documented syncope
+        // risk — the opposite of what a hard-training day needs.
         card("cafe_da_manha", "07:30",
-          v({ ...PRE_SKATE_FUEL, label: "Pré-skate: " + PRE_SKATE_FUEL.label }),
+          v({ ...PRE_SKATE_FUEL, label: "Pré-skate: " + PRE_SKATE_FUEL.label, kcal: 600, carbs_g: 110, ingredients: [...PRE_SKATE_FUEL.ingredients, "banana extra 1 un"] }),
           IOGURTE_GRANOLA, SHAKE_MANGA, KOMBUCHA_BANANA),
         card("lanche_manha", "10:30",
           ELETROLITO_CASEIRO,
           v({ label: "Banana + tâmara durante skate", ingredients: ["banana 1", "tâmara 2"], prep_minutes: 1, kcal: 200, protein_g: 2, carbs_g: 50, fat_g: 0 }),
           ELETROLITO_CASEIRO, KOMBUCHA_BANANA),
         card("almoco", "13:00",
-          POS_SKATE_RECOVERY,
+          v({ ...POS_SKATE_RECOVERY, kcal: 640, carbs_g: 110, ingredients: [...POS_SKATE_RECOVERY.ingredients, "arroz branco extra 100g"] }),
           MARMITA_BATCH, SHAKE_DENSO, KOMBUCHA_BANANA_CASTANHA),
         card("lanche_tarde", "16:00",
-          PATINHO_QUINOA,
+          v({ ...PATINHO_QUINOA, kcal: 720, carbs_g: 90, ingredients: [...PATINHO_QUINOA.ingredients, "quinoa extra 1/2 xícara"] }),
           MARMITA_BATCH, SHAKE_DENSO, IOGURTE_MEL),
         card("jantar", "20:00",
-          SALMAO_BATATA,
+          v({ ...SALMAO_BATATA, kcal: 830, carbs_g: 85, fat_g: 34, ingredients: [...SALMAO_BATATA.ingredients, "batata-doce roxa extra 100g"] }),
           MARMITA_BATCH, SHAKE_DENSO, IOGURTE_MEL),
         card("snack_noturno", "22:30",
           SNACK_NOTURNO_PROT,
@@ -477,14 +541,22 @@ export function buildWeeklyPlan(weekStartIso: string): DailyPlan[] {
       is_work_day: false,
       ...SKATE_DAY,
       meals: [
-        card("cafe_da_manha", "07:30", PRE_SKATE_FUEL, IOGURTE_GRANOLA, SHAKE_MANGA, KOMBUCHA_BANANA),
+        card("cafe_da_manha", "07:30",
+          v({ ...PRE_SKATE_FUEL, kcal: 600, carbs_g: 110, ingredients: [...PRE_SKATE_FUEL.ingredients, "banana extra 1 un"] }),
+          IOGURTE_GRANOLA, SHAKE_MANGA, KOMBUCHA_BANANA),
         card("lanche_manha", "10:30",
           ELETROLITO_CASEIRO,
           v({ label: "Banana + tâmara", ingredients: ["banana 1", "tâmara 2"], prep_minutes: 1, kcal: 200, protein_g: 2, carbs_g: 50, fat_g: 0 }),
           ELETROLITO_CASEIRO, KOMBUCHA_BANANA),
-        card("almoco", "13:00", POS_SKATE_RECOVERY, MARMITA_BATCH, SHAKE_DENSO, KOMBUCHA_BANANA_CASTANHA),
-        card("lanche_tarde", "16:00", FRANGO_CURRY, BATATA_DOCE_FRANGO, SHAKE_MANGA, IOGURTE_MEL),
-        card("jantar", "20:00", ROBALO_AIPIM, MARMITA_BATCH, SHAKE_DENSO, IOGURTE_MEL),
+        card("almoco", "13:00",
+          v({ ...POS_SKATE_RECOVERY, kcal: 640, carbs_g: 110, ingredients: [...POS_SKATE_RECOVERY.ingredients, "arroz branco extra 100g"] }),
+          MARMITA_BATCH, SHAKE_DENSO, KOMBUCHA_BANANA_CASTANHA),
+        card("lanche_tarde", "16:00",
+          v({ ...FRANGO_CURRY, kcal: 760, carbs_g: 90, fat_g: 25, ingredients: [...FRANGO_CURRY.ingredients, "cuscuz extra 40g"] }),
+          BATATA_DOCE_FRANGO, SHAKE_MANGA, IOGURTE_MEL),
+        card("jantar", "20:00",
+          v({ ...ROBALO_AIPIM, kcal: 750, carbs_g: 90, fat_g: 22, ingredients: [...ROBALO_AIPIM.ingredients, "aipim extra 100g"] }),
+          MARMITA_BATCH, SHAKE_DENSO, IOGURTE_MEL),
         card("snack_noturno", "22:30", SNACK_NOTURNO_PROT, SNACK_QUEIJO_MACA, KOMBUCHA_MEL, KOMBUCHA_MEL),
       ],
     },

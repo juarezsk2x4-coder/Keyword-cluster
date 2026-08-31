@@ -116,6 +116,7 @@ interface Dict {
     fatigue_streak: (days: number) => string;
     post_substance: string;
     post_alcohol: string;
+    skate_syncope_risk: string;
     sleep_short: (hours: number) => string;
     sleep_long: (hours: number) => string;
     on_track: string;
@@ -161,6 +162,7 @@ interface Dict {
     substance_correlation: string;
     fatigue_frequent: (days: number) => string;
     sleep_kcal_link: string;
+    consider_professional_support: string;
     on_track: string;
   };
 }
@@ -312,6 +314,7 @@ const pt: Dict = {
     fatigue_streak: (days) => `${days} dias seguidos com cansaço de casa. Considera meal-prep no domingo.`,
     post_substance: "Estimulante ontem: hidratação +1L, magnésio (cacau/castanhas/folhas), evita álcool, prioriza sono.",
     post_alcohol: "Álcool ontem: hidratação extra + B-complex (ovo/folhas/lentilha).",
+    skate_syncope_risk: "Uso recente + skate hoje: risco maior de síncope (Mg baixo + desidratação prévia). Hidratação extra (+1L), eletrólito antes de sair, considera intensidade mais leve hoje.",
     sleep_short: (hours) => `Só ${hours}h de sono. AM mais líquido + cafeína moderada, PM mais carbo.`,
     sleep_long: (hours) => `${hours}h de sono — corpo ainda processando. AM gentil, sem forçar.`,
     on_track: "Tudo nos eixos nos últimos dias. Mantém o ritmo.",
@@ -357,6 +360,7 @@ const pt: Dict = {
     substance_correlation: "Dias com substâncias coincidem com baixa ingestão. Recovery food no dia seguinte ajuda.",
     fatigue_frequent: (days) => `${days} dias com cansaço de casa registrado. Considera fixar batch-cook no domingo.`,
     sleep_kcal_link: "Sono curto (<6h) coincide com kcal mais alto (compensação). Prioriza sono.",
+    consider_professional_support: "Esse padrão combinado (não um sinal isolado) já passou do que ajuste de plano ou mais logging costuma resolver sozinho. Pode valer a pena levar isso pra uma conversa com seu médico ou terapeuta — não é algo que o app vai resolver por mais dados que você registre.",
     on_track: "Padrões estáveis dentro das metas. Boa cadência.",
   },
 };
@@ -508,6 +512,7 @@ const en: Dict = {
     fatigue_streak: (days) => `${days} days in a row with house fatigue. Consider Sunday batch-cooking.`,
     post_substance: "Stimulant yesterday: hydration +1L, magnesium (cacao/nuts/greens), avoid alcohol, prioritize sleep.",
     post_alcohol: "Alcohol yesterday: extra hydration + B-complex (egg/greens/lentil).",
+    skate_syncope_risk: "Recent use + skate today: higher syncope risk (low Mg + prior dehydration). Extra hydration (+1L), electrolytes before heading out, consider a lighter intensity today.",
     sleep_short: (hours) => `Only ${hours}h sleep. AM more liquid + moderate caffeine, PM more carbs.`,
     sleep_long: (hours) => `${hours}h sleep — body still processing. Gentle AM, no forcing.`,
     on_track: "All on track over recent days. Keep the rhythm.",
@@ -553,6 +558,7 @@ const en: Dict = {
     substance_correlation: "Substance-use days coincide with low intake. Recovery food the next day helps.",
     fatigue_frequent: (days) => `${days} house-fatigue days logged. Consider fixing Sunday batch-cook.`,
     sleep_kcal_link: "Short sleep (<6h) correlates with higher kcal (compensation). Prioritize sleep.",
+    consider_professional_support: "This combined pattern (not just one flag on its own) has gone past what a plan tweak or more logging usually fixes by itself. Might be worth bringing this to your doctor or therapist — it's not something the app is going to solve with more data.",
     on_track: "Patterns stable within targets. Good cadence.",
   },
 };
