@@ -619,13 +619,15 @@ export function buildWeeklyPlan(weekStartIso: string): DailyPlan[] {
       is_work_day: false,
       ...SKATE_DAY,
       meals: [
-        // Sunday/Monday originals are boosted here (kcal/carb only, via
+        // Sunday/Saturday originals are boosted here (kcal/carb only, via
         // per-day overrides — the shared consts below stay untouched since
         // they're reused as-is on work days) to actually hit the 3300kcal/
         // 390g-carb skate-day target: the un-boosted originals summed to
         // only ~2740 kcal / ~310g carb, underfueling the one day with the
         // highest glycogen/electrolyte demand and the documented syncope
-        // risk — the opposite of what a hard-training day needs.
+        // risk — the opposite of what a hard-training day needs. (Skate
+        // anchor moved from Sun/Mon to Sat/Sun in 2026-09 when work moved
+        // to Mon-Fri — see the SATURDAY block below.)
         card("cafe_da_manha", "07:30",
           v({ ...PRE_SKATE_FUEL, label: "Pré-skate: " + PRE_SKATE_FUEL.label, kcal: 600, carbs_g: 110, ingredients: [...PRE_SKATE_FUEL.ingredients, "banana extra 1 un"] }),
           IOGURTE_GRANOLA, SHAKE_MANGA, KOMBUCHA_BANANA),
@@ -647,30 +649,19 @@ export function buildWeeklyPlan(weekStartIso: string): DailyPlan[] {
           SNACK_QUEIJO_MACA, KOMBUCHA_MEL, KOMBUCHA_MEL),
       ],
     },
-    /* MONDAY — skate hard day, off work */
+    /* MONDAY — work day, no skate (schedule changed 2026-09: work moved to Mon-Fri, skate anchor moved to Sat/Sun) */
     {
       date: dates[1],
       day_of_week: "Segunda",
-      is_skate_day: true,
-      is_work_day: false,
-      ...SKATE_DAY,
+      is_skate_day: false,
+      is_work_day: true,
+      ...NORMAL_DAY,
       meals: [
-        card("cafe_da_manha", "07:30",
-          v({ ...PRE_SKATE_FUEL, kcal: 600, carbs_g: 110, ingredients: [...PRE_SKATE_FUEL.ingredients, "banana extra 1 un"] }),
-          IOGURTE_GRANOLA, SHAKE_MANGA, KOMBUCHA_BANANA),
-        card("lanche_manha", "10:30",
-          ELETROLITO_CASEIRO,
-          v({ label: "Banana + tâmara", ingredients: ["banana 1", "tâmara 2"], prep_minutes: 1, kcal: 200, protein_g: 2, carbs_g: 50, fat_g: 0 }),
-          ELETROLITO_CASEIRO, KOMBUCHA_BANANA),
-        card("almoco", "13:00",
-          v({ ...POS_SKATE_RECOVERY, kcal: 640, carbs_g: 110, ingredients: [...POS_SKATE_RECOVERY.ingredients, "arroz branco extra 100g"] }),
-          MARMITA_BATCH, SHAKE_DENSO, KOMBUCHA_BANANA_CASTANHA),
-        card("lanche_tarde", "16:00",
-          v({ ...FRANGO_CURRY, kcal: 760, carbs_g: 90, fat_g: 25, ingredients: [...FRANGO_CURRY.ingredients, "cuscuz extra 40g"] }),
-          BATATA_DOCE_FRANGO, SHAKE_MANGA, IOGURTE_MEL),
-        card("jantar", "20:00",
-          v({ ...ROBALO_AIPIM, kcal: 750, carbs_g: 90, fat_g: 22, ingredients: [...ROBALO_AIPIM.ingredients, "aipim extra 100g"] }),
-          MARMITA_BATCH, SHAKE_DENSO, IOGURTE_MEL),
+        card("cafe_da_manha", "07:30", SHAKE_MANGA, IOGURTE_GRANOLA, SHAKE_MANGA, KOMBUCHA_BANANA),
+        card("lanche_manha", "10:30", IOGURTE_GRANOLA, IOGURTE_GRANOLA, SHAKE_VEGANO_RAKKAU, KOMBUCHA_BANANA_CASTANHA),
+        card("almoco", "12:30", LINGUADO_KIMCHI, MARMITA_BATCH, SOPA_MISSO, KOMBUCHA_BANANA_CASTANHA),
+        card("lanche_tarde", "16:00", PAO_ABACATE, SNACK_QUEIJO_MACA, SHAKE_MANGA, IOGURTE_MEL),
+        card("jantar", "20:00", ROBALO_AIPIM, MARMITA_BATCH, SHAKE_DENSO, IOGURTE_MEL),
         card("snack_noturno", "22:30", SNACK_NOTURNO_PROT, SNACK_QUEIJO_MACA, KOMBUCHA_MEL, KOMBUCHA_MEL),
       ],
     },
@@ -744,23 +735,30 @@ export function buildWeeklyPlan(weekStartIso: string): DailyPlan[] {
         card("snack_noturno", "22:30", SNACK_NOTURNO_PROT, SNACK_QUEIJO_MACA, KOMBUCHA_MEL, KOMBUCHA_MEL),
       ],
     },
-    /* SATURDAY — work, possibly post-stimulant recovery */
+    /* SATURDAY — skate hard day, off work (schedule changed 2026-09: skate anchor moved from Sun/Mon to Sat/Sun) */
     {
       date: dates[6],
       day_of_week: "Sábado",
-      is_skate_day: false,
-      is_work_day: true,
-      ...NORMAL_DAY,
+      is_skate_day: true,
+      is_work_day: false,
+      ...SKATE_DAY,
       meals: [
         card("cafe_da_manha", "07:30",
-          v({ ...SHAKE_MANGA, label: "Shake recovery sat: manga + gengibre + limão + whey + linhaça + cacau" }),
-          IOGURTE_GRANOLA, SHAKE_MANGA, KOMBUCHA_BANANA_CASTANHA),
-        card("lanche_manha", "10:30", IOGURTE_GRANOLA, IOGURTE_GRANOLA, SHAKE_VEGANO_RAKKAU, KOMBUCHA_BANANA_CASTANHA),
-        card("almoco", "12:30", LINGUADO_KIMCHI, MARMITA_BATCH, SOPA_MISSO, KOMBUCHA_BANANA_CASTANHA),
+          v({ ...PRE_SKATE_FUEL, kcal: 600, carbs_g: 110, ingredients: [...PRE_SKATE_FUEL.ingredients, "banana extra 1 un"] }),
+          IOGURTE_GRANOLA, SHAKE_MANGA, KOMBUCHA_BANANA),
+        card("lanche_manha", "10:30",
+          ELETROLITO_CASEIRO,
+          v({ label: "Banana + tâmara", ingredients: ["banana 1", "tâmara 2"], prep_minutes: 1, kcal: 200, protein_g: 2, carbs_g: 50, fat_g: 0 }),
+          ELETROLITO_CASEIRO, KOMBUCHA_BANANA),
+        card("almoco", "13:00",
+          v({ ...POS_SKATE_RECOVERY, kcal: 640, carbs_g: 110, ingredients: [...POS_SKATE_RECOVERY.ingredients, "arroz branco extra 100g"] }),
+          MARMITA_BATCH, SHAKE_DENSO, KOMBUCHA_BANANA_CASTANHA),
         card("lanche_tarde", "16:00",
-          v({ label: "Pré-skate prep sábado: hidratação + Mg + leve", ingredients: ["água 500ml", "limão", "castanha-do-pará 2", "amêndoas 10g"], prep_minutes: 1, kcal: 180, protein_g: 4, carbs_g: 6, fat_g: 16 }),
-          SNACK_QUEIJO_MACA, SHAKE_MANGA, IOGURTE_MEL),
-        card("jantar", "20:00", ROBALO_AIPIM, MARMITA_BATCH, SHAKE_DENSO, IOGURTE_MEL),
+          v({ ...FRANGO_CURRY, kcal: 760, carbs_g: 90, fat_g: 25, ingredients: [...FRANGO_CURRY.ingredients, "cuscuz extra 40g"] }),
+          BATATA_DOCE_FRANGO, SHAKE_MANGA, IOGURTE_MEL),
+        card("jantar", "20:00",
+          v({ ...ROBALO_AIPIM, kcal: 750, carbs_g: 90, fat_g: 22, ingredients: [...ROBALO_AIPIM.ingredients, "aipim extra 100g"] }),
+          MARMITA_BATCH, SHAKE_DENSO, IOGURTE_MEL),
         card("snack_noturno", "22:30", SNACK_NOTURNO_PROT, SNACK_QUEIJO_MACA, KOMBUCHA_MEL, KOMBUCHA_MEL),
       ],
     },

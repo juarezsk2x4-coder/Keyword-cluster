@@ -86,8 +86,8 @@ trajectory: active_gain_muscle_ahead_of_fat   # massa muscular subindo mais ráp
 activity:
   - type: skate
     days_per_week_anchor: 2
-    days_of_week_anchor: [sunday, monday]
-    occasional_days: [wednesday, thursday]
+    days_of_week_anchor: [saturday, sunday]     # updated 2026-09: work moved to Mon-Fri, skate anchor moved to the weekend
+    occasional_days: []                          # no longer fixed weekdays — now weather-opportunistic (see the home-page weather nudge, lib/weather.ts), any off day can become a skate day if it's sunny
     minutes_per_session: 180
     typical_time: morning
     intensity: hard
@@ -121,9 +121,10 @@ activity:
     notes: "weight training — consistent with InBody 10/08/2026 muscle-mass gain"
 
 # ── Work schedule (drives skate-day distribution) ─────────────────────────────
+# Updated 2026-09: now Mon-Fri, was Tue-Sat.
 work_schedule:
-  work_days: [tuesday, wednesday, thursday, friday, saturday]
-  off_days: [sunday, monday]
+  work_days: [monday, tuesday, wednesday, thursday, friday]
+  off_days: [saturday, sunday]
 
 # ── Location (drives the home-page weather lookup / skate-weather nudge) ──────
 location:

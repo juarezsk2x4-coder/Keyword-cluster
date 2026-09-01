@@ -107,9 +107,9 @@ ${profile.name} snapshot:
 - Soft dislikes: ${dislikes}.
 
 Day-type rules (Sunday-anchored):
-- Sun + Mon = skate days (kcal_target ${profile.nutrition_targets.total_kcal_target_skate_day}, ~390g carbs). Pre-skate fuel breakfast (cuscuz/banana/mel/peanut butter type), electrolytes mid-morning, post-skate recovery lunch (fast carbs + whey).
-- Tue–Sat = work days (kcal_target ${profile.nutrition_targets.total_kcal_target_off_day}, protein ${profile.nutrition_targets.protein_g_per_day}g, ~225g carbs).
-- AM recovery shake: use the substance-use dates from the log summary below (not a fixed weekday) to decide which upcoming mornings are likely to need a "liquid" recovery default — the morning after any logged use. If a use day in the log summary falls within 36h of a Sun/Mon skate day, add extra electrolyte/magnesium emphasis to that day's pre-skate meal notes given documented syncope risk on a depleted skate day. This is advance planning based on the recent pattern; the app's daily view still reacts in real time to whatever is actually logged during the week itself.
+- Sat + Sun = skate days (kcal_target ${profile.nutrition_targets.total_kcal_target_skate_day}, ~390g carbs). Pre-skate fuel breakfast (cuscuz/banana/mel/peanut butter type), electrolytes mid-morning, post-skate recovery lunch (fast carbs + whey).
+- Mon–Fri = work days (kcal_target ${profile.nutrition_targets.total_kcal_target_off_day}, protein ${profile.nutrition_targets.protein_g_per_day}g, ~225g carbs).
+- AM recovery shake: use the substance-use dates from the log summary below (not a fixed weekday) to decide which upcoming mornings are likely to need a "liquid" recovery default — the morning after any logged use. If a use day in the log summary falls within 36h of a Sat/Sun skate day, add extra electrolyte/magnesium emphasis to that day's pre-skate meal notes given documented syncope risk on a depleted skate day. This is advance planning based on the recent pattern; the app's daily view still reacts in real time to whatever is actually logged during the week itself.
 - Friday dinner slot is reserved for delivery — acceptable list: poke, sushi, Peruvian, Japanese, never burgers/fast-food junk.
 - 6 slots every day: cafe_da_manha (07:30), lanche_manha (10:30), almoco (12:30 weekdays / 13:00 skate), lanche_tarde (16:00), jantar (20:00), snack_noturno (22:30).
 
@@ -141,9 +141,9 @@ ${profile.name}:
 - Não curte: ${dislikes}.
 
 Regras por dia (semana ancorada em domingo):
-- Dom + Seg = skate days (kcal_target ${profile.nutrition_targets.total_kcal_target_skate_day}, ~390g carbo). Café da manhã pré-skate (cuscuz/banana/mel/pasta de amendoim), eletrólito mid-manhã, almoço pós-skate recovery (carbo rápido + whey).
-- Ter–Sáb = dias de trabalho (kcal_target ${profile.nutrition_targets.total_kcal_target_off_day}, proteína ${profile.nutrition_targets.protein_g_per_day}g, ~225g carbo).
-- Shake de recuperação AM: use as datas de uso de substância do resumo de logs abaixo (não um dia fixo da semana) pra decidir quais manhãs da próxima semana provavelmente precisam de default "liquid" — a manhã seguinte a qualquer uso logado. Se um dia de uso no resumo cair dentro de 36h de um dia de skate (dom/seg), reforce eletrólito/magnésio nas notas da refeição pré-skate daquele dia, dado o risco documentado de síncope num dia de skate depletado. Isso é planejamento antecipado baseado no padrão recente; a visão diária do app ainda reage em tempo real ao que for logado de fato durante a semana.
+- Sáb + Dom = skate days (kcal_target ${profile.nutrition_targets.total_kcal_target_skate_day}, ~390g carbo). Café da manhã pré-skate (cuscuz/banana/mel/pasta de amendoim), eletrólito mid-manhã, almoço pós-skate recovery (carbo rápido + whey).
+- Seg–Sex = dias de trabalho (kcal_target ${profile.nutrition_targets.total_kcal_target_off_day}, proteína ${profile.nutrition_targets.protein_g_per_day}g, ~225g carbo).
+- Shake de recuperação AM: use as datas de uso de substância do resumo de logs abaixo (não um dia fixo da semana) pra decidir quais manhãs da próxima semana provavelmente precisam de default "liquid" — a manhã seguinte a qualquer uso logado. Se um dia de uso no resumo cair dentro de 36h de um dia de skate (sáb/dom), reforce eletrólito/magnésio nas notas da refeição pré-skate daquele dia, dado o risco documentado de síncope num dia de skate depletado. Isso é planejamento antecipado baseado no padrão recente; a visão diária do app ainda reage em tempo real ao que for logado de fato durante a semana.
 - Sexta jantar: slot reservado pra delivery — lista aceitável: poke, sushi, peruano, japonês, NUNCA burger/fast-food.
 - 6 slots/dia: cafe_da_manha (07:30), lanche_manha (10:30), almoco (12:30 dia útil / 13:00 skate), lanche_tarde (16:00), jantar (20:00), snack_noturno (22:30).
 
