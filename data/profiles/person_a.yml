@@ -93,21 +93,16 @@ activity:
     intensity: hard
     estimated_kcal_per_session: 1300
   - type: caminhada
-    days_per_week: 3
-    minutes_per_session: 30
-    typical_time: afternoon
-    intensity: moderate
-  - type: sex
-    days_per_week: 4              # user-updated
-    minutes_per_session: 30       # user-updated
-    typical_time: evening
-    intensity: very_hard
+    days_per_week: FILL_IN         # reset 2026-09 — predates the Mon-Fri schedule change, not re-verified since
+    minutes_per_session: FILL_IN
+    typical_time: FILL_IN
+    intensity: FILL_IN
   - type: racing_sim_direct_drive
-    days_per_week: 1
-    minutes_per_session: 120
-    typical_time: evening
-    intensity: light
-    notes: "force feedback DD wheel — physical effort + sweat, counts as light cardio"
+    days_per_week: FILL_IN         # reset 2026-09 — predates the Mon-Fri schedule change, not re-verified since
+    minutes_per_session: FILL_IN
+    typical_time: FILL_IN
+    intensity: FILL_IN
+    notes: FILL_IN
   - type: pilates
     days_per_week: "2-3"
     typical_time: FILL_IN
