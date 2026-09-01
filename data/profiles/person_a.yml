@@ -164,20 +164,28 @@ substances:
     occasional: marlboro_vermelho
     trend: reducing
     notes: "smoked separately from cannabis; trying to cut down"
+  # Reset 2026-09: the fixed active-use pattern below was a stale assumption
+  # — life is a lot more stable now. Cleared to FILL_IN rather than guessed
+  # at, so he can answer with what's actually current. Nothing about the
+  # app's behavior depends on these fields being filled in: the recovery-day
+  # defaults (liquid AM after a logged use) and the syncope-risk insight in
+  # lib/predictions.ts are driven entirely by what's actually logged day to
+  # day, not by any assumption stored here — that was already true before
+  # this reset (plan_strategy: log_driven, kept below), this just removes
+  # the stale static snapshot that no longer reflects reality.
   stimulant:
-    current_status: active_use_frequent_phase
-    pattern: "cyclical — fases de uso intercaladas com pausas de 1-2+ meses"
-    current_phase: actively_using
-    typical_use_days: [wednesday, friday]            # durante trabalho + simulador racing
-    typical_amount_grams_per_use: "1-2"
-    use_can_extend_multi_day: true                   # 1g pode durar 1-2 dias
-    purchase_frequency_when_active: "1-2x_per_week"
-    contexts: [trabalho, simulador_corrida]
-    intent: reducing_or_quitting
-    historical_severe_use: 2024_2025_chronic_binge_period
-    plan_strategy: log_driven                        # padrão é aleatório — sistema reage ao log
-    skate_collision_risk: HIGH                       # Sex use + Sun skate hard = pior cenário
-                                                     # Domingo é dia mais depletado se houve uso sex/sáb
+    current_status: FILL_IN
+    pattern: FILL_IN
+    current_phase: FILL_IN
+    typical_use_days: FILL_IN
+    typical_amount_grams_per_use: FILL_IN
+    use_can_extend_multi_day: FILL_IN
+    purchase_frequency_when_active: FILL_IN
+    contexts: FILL_IN
+    intent: FILL_IN
+    historical_severe_use: 2024_2025_chronic_binge_period   # kept — historical record, not a current-state assumption
+    plan_strategy: log_driven                        # unchanged — system reacts to actual logs, not a fixed pattern
+    skate_collision_risk: FILL_IN                     # was a static HIGH tied to the old fixed pattern + old Sun skate anchor; real-time risk is now assessed by lib/predictions.ts's skate_syncope_risk insight instead
   psychedelics:
     lsd: { frequency: rare, status: enjoys_uses_sparingly }
     psilocibina_cogumelos: { frequency: rare, status: enjoys_uses_sparingly }

@@ -162,13 +162,22 @@ Neuropsych (Ana Ponilla, CRP 21/2767, set–out 2025) + laudo psiquiátrico (Der
 
 ## Full substance load — clinical re-read
 
+> **Update 2026-09**: the "2×/sem" stimulant frequency below is a stale
+> snapshot from an earlier, harder period — he says life is a lot more
+> stable now. `data/profiles/person_a.yml`'s `substances.stimulant` block
+> has been reset to `FILL_IN` rather than guessed at; treat the table row
+> below as historical context for how this doc's earlier reasoning was
+> built, not as his current pattern. The app itself never depended on this
+> being accurate day-to-day — the recovery-day defaults and syncope-risk
+> insight react to whatever's actually logged, not to any fixed assumption.
+
 Updated stack after follow-up questions:
 
 | Substance | Frequency | Adrenergic load | Notes |
 |---|---|---|---|
 | Lisdexamfetamina (Venvanse) 70 mg | Daily AM | +++ max dose | Prescribed, central para função TDAH |
 | Mate uruguayano 1.5 L | Daily, última 16:30 | ++ | ~250 mg cafeína; horário tardio compromete sono |
-| Estimulante | **2×/sem atual, ciclos de 1–2 meses off** | +++ acute | Quer reduzir/parar |
+| Estimulante | ~~2×/sem atual, ciclos de 1–2 meses off~~ — desatualizado, ver nota acima | +++ acute (quando em uso) | Quer reduzir/parar |
 | Cannabis flor | Daily, 5 joints | — (anti-adrenérgico) | Counterbalance + sleep aid |
 | Álcool | Semanal, 3 unidades | (transitório) | IPA, vinho branco, gin |
 | Tabaco Amsterdam/Marlboro | Semanal, reduzindo | ++ acute | Inflamatório + alta demanda vit C |
@@ -184,7 +193,7 @@ Updated stack after follow-up questions:
 
 2. **O plano apoia a direção de harm-reduction que ele já está perseguindo.** Quer reduzir estimulante + tabaco. Nutrição genuinamente ajuda estabilizando os substratos que o craving explora (glicemia, Mg, precursores dopaminérgicos, sono).
 
-### Stimulant-day recovery protocol (~2 dias/semana)
+### Stimulant-day recovery protocol (applies whenever a use day is actually logged — frequency no longer assumed at ~2×/semana, see the 2026-09 note above)
 
 Aplica no dia *seguinte* ao uso:
 
