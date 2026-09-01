@@ -243,6 +243,33 @@ fallback recipe. Those fixes exist on the original build this was forked
 from, not here, because the content they touch was deliberately stripped
 out of this starter kit in the first place.
 
+## Third pass: daily weather lookup
+
+A small opt-in feature was added: on first home-page load each day, the app
+fetches the day's forecast from [Open-Meteo](https://open-meteo.com) (free,
+no API key, no account — nothing to add to `.env.example`), caches it in a
+new `weather_cache` table so it's fetched at most once per day, and shows a
+small weather card. If today is clear *and* your resolved plan already
+marks it a high-activity day, the card adds a highlighted nudge.
+
+This is entirely inert on both starter profiles as they ship — it's gated
+on a new optional `location` field on `PersonProfile`
+(`{ city, state, country, lat, lon }`), and neither `person_a.yml` nor
+`person_b.yml` sets one. No card renders and no network call happens until
+you add your own city's coordinates to your profile. New files:
+`app/src/lib/weather-client.ts` (the Open-Meteo fetch + WMO-code mapping),
+`app/src/lib/weather.ts` (the DB-cache wrapper), `app/src/components/WeatherCard.tsx`.
+The existing `is_skate_day` field (see the comment on it in `types.ts`) is
+what the nudge checks — same "generic high-activity-day flag" it already
+was, nothing new added to that concept.
+
+Not ported from the original build: the real city/coordinates that make
+the feature actually active there (that's personal location data, not
+something a starter kit should ship with) and the corresponding
+`app/README.md` wording tweaks (that file was independently authored for
+this starter kit already and didn't have the same stale text to begin
+with).
+
 ## Taking ownership
 
 This repo currently lives under the GitHub account that built it for you.

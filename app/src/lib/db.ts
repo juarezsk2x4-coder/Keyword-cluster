@@ -112,6 +112,16 @@ async function runMigration() {
       generated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
       PRIMARY KEY (person_id, week_start)
     );
+
+    CREATE TABLE IF NOT EXISTS weather_cache (
+      date TEXT PRIMARY KEY,
+      city TEXT NOT NULL,
+      condition TEXT NOT NULL,
+      temp_max_c REAL NOT NULL,
+      temp_min_c REAL NOT NULL,
+      precip_prob_pct INTEGER NOT NULL,
+      fetched_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+    );
   `);
 
   // Must run before index creation: on a pre-existing (legacy) DB, the indexes

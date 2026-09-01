@@ -42,6 +42,15 @@ const PersonProfileSchema = z.object({
     texture_aversions: stringArray,
     soft_dislikes: stringArray,
   }),
+  location: z
+    .object({
+      city: z.string(),
+      state: z.string(),
+      country: z.string(),
+      lat: z.number(),
+      lon: z.number(),
+    })
+    .optional(),
 });
 
 function loadFromYaml(profilePath: string): PersonProfile {

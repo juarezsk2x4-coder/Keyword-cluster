@@ -121,6 +121,15 @@ interface Dict {
     sleep_long: (hours: number) => string;
     on_track: string;
   };
+  weather: {
+    clear: string;
+    cloudy: string;
+    rain: string;
+    storm: string;
+    other: string;
+    temp_range: (max: number, min: number) => string;
+    good_skate_weather: string;
+  };
   plan_title: string;
   plan_week_label: string;
   plan_this_week: string;
@@ -319,6 +328,15 @@ const pt: Dict = {
     sleep_long: (hours) => `${hours}h de sono — corpo ainda processando. AM gentil, sem forçar.`,
     on_track: "Tudo nos eixos nos últimos dias. Mantém o ritmo.",
   },
+  weather: {
+    clear: "Céu limpo",
+    cloudy: "Nublado",
+    rain: "Chuva",
+    storm: "Tempestade",
+    other: "Condição indefinida",
+    temp_range: (max, min) => `${Math.round(max)}° / ${Math.round(min)}°`,
+    good_skate_weather: "☀️ Boa condição pra atividade de alta intensidade hoje",
+  },
   plan_title: "🗓 Plano semanal",
   plan_week_label: "Semana começando em",
   plan_this_week: "Esta semana",
@@ -516,6 +534,15 @@ const en: Dict = {
     sleep_short: (hours) => `Only ${hours}h sleep. AM more liquid + moderate caffeine, PM more carbs.`,
     sleep_long: (hours) => `${hours}h sleep — body still processing. Gentle AM, no forcing.`,
     on_track: "All on track over recent days. Keep the rhythm.",
+  },
+  weather: {
+    clear: "Clear skies",
+    cloudy: "Cloudy",
+    rain: "Rain",
+    storm: "Storm",
+    other: "Unknown condition",
+    temp_range: (max, min) => `${Math.round(max)}° / ${Math.round(min)}°`,
+    good_skate_weather: "☀️ Good weather for a high-intensity day today",
   },
   plan_title: "🗓 Weekly plan",
   plan_week_label: "Week starting",

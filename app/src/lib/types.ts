@@ -99,6 +99,25 @@ export interface PersonProfile {
     texture_aversions: string[];
     soft_dislikes: string[];
   };
+  // Opt-in: only a profile that sets this gets a weather lookup + "good
+  // skate weather" nudge on the home page. Leave unset (as the starter
+  // profiles do) and the feature simply does nothing — no card, no
+  // network call — until you fill in your own city.
+  location?: {
+    city: string;
+    state: string;
+    country: string;
+    lat: number;
+    lon: number;
+  };
+}
+
+export interface WeatherSummary {
+  date: string;
+  condition: "clear" | "cloudy" | "rain" | "storm" | "other";
+  temp_max_c: number;
+  temp_min_c: number;
+  precip_prob_pct: number;
 }
 
 export interface MealLog {
