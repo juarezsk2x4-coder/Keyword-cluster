@@ -53,6 +53,7 @@ const PersonProfileSchema = z.object({
       lon: z.number(),
     })
     .optional(),
+  daily_supplements: stringArray.optional(),
 });
 
 function loadFromYaml(profilePath: string): PersonProfile {

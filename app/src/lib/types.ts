@@ -107,6 +107,13 @@ export interface PersonProfile {
     lat: number;
     lon: number;
   };
+  // Opt-in, same pattern as above: a simple list of what to show on the
+  // home page's daily supplement checklist. Deliberately just labels, not
+  // the richer dose/frequency/prescriber detail that lives in the YAML's
+  // substances.supplements_prescribed block (that block isn't read by the
+  // app at all — this one is, so it's the one to keep in sync when the
+  // regimen changes).
+  daily_supplements?: string[];
 }
 
 export interface WeatherSummary {
@@ -174,5 +181,13 @@ export interface BeverageLog {
   amount?: string;
   consumed_at: string;     // ISO datetime
   notes?: string;
+  logged_at: string;
+}
+
+export interface SupplementLog {
+  id?: number;
+  person_id?: PersonId;
+  date: string;
+  supplement_name: string;   // matches an entry in profile.daily_supplements
   logged_at: string;
 }

@@ -7,8 +7,9 @@ it doesn't match what's actually here.
 
 A Next.js 15 web app for meal planning, habit logging, and AI-assisted plan
 generation. See [`app/README.md`](app/README.md) for what it does,
-[`DEPLOY.md`](DEPLOY.md) for how to deploy it, and [`SECURITY.md`](SECURITY.md)
-for the secret-handling model.
+[`DEPLOY.md`](DEPLOY.md) for how to deploy it, [`SECURITY.md`](SECURITY.md)
+for the secret-handling model, and [`CHANGELOG.md`](CHANGELOG.md) for what's
+changed over time.
 
 Supporting content for the app lives alongside it at the repo root:
 

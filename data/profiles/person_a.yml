@@ -491,6 +491,17 @@ guardrails:
 
 clinical_brief_path: data/profiles/person_a_clinical.md
 
+# Drives the home-page daily supplement checklist (app/src/components/
+# SupplementPanel.tsx) — simple labels only, kept in sync by hand with the
+# richer substances.supplements_prescribed block above whenever the
+# regimen changes (that block has dose/frequency/prescriber detail the
+# checklist doesn't need; this one is what the app actually reads).
+daily_supplements:
+  - "Fisiogen Ferro Forte"
+  - "B Complex (magnésio)"
+  - "Sany D 2.000 UI"
+  - "Multivitamínico"
+
 # Drives which AI prompt / seed plan this profile gets (see lib/meal-plan-ai.ts,
 # lib/seed-plan.ts) — data-driven, not hardcoded to this file's person_id, so
 # a third profile could set this too without any code change.

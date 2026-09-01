@@ -8,6 +8,7 @@ import {
   getDaySubstances,
   getPreviousDaySubstances,
   getDayBeverages,
+  getDaySupplements,
 } from "@/lib/query";
 import MealCard from "@/components/MealCard";
 import DayHeader from "@/components/DayHeader";
@@ -15,6 +16,7 @@ import DateNavigator from "@/components/DateNavigator";
 import MealNotifications from "@/components/MealNotifications";
 import PredictionBanner from "@/components/PredictionBanner";
 import WeatherCard from "@/components/WeatherCard";
+import SupplementPanel from "@/components/SupplementPanel";
 import { getPredictions } from "@/lib/predictions";
 import { getTodayWeather } from "@/lib/weather";
 import type { CardState } from "@/lib/types";
@@ -62,7 +64,7 @@ export default async function TodayPage({ searchParams }: PageProps) {
   const resolved = await resolveWeeklyPlan(personId, weekStart);
   const dayPlan = resolved.days.find((d) => d.date === selectedDate) ?? resolved.days[0];
 
-  const [logs, sleep, fatigued, prepMin, totals, daySubs, prevDaySubs, beverages, predictions, weather] =
+  const [logs, sleep, fatigued, prepMin, totals, daySubs, prevDaySubs, beverages, predictions, weather, supplementLogs] =
     await Promise.all([
       getDayMealLogs(personId, selectedDate),
       getDaySleep(personId, selectedDate),
@@ -78,6 +80,7 @@ export default async function TodayPage({ searchParams }: PageProps) {
         protein: profile.nutrition_targets.protein_g_per_day,
       }),
       getTodayWeather(profile),
+      getDaySupplements(personId, selectedDate),
     ]);
   const logsByslot = Object.fromEntries(logs.map((l) => [l.slot, l]));
   const hadStimulantYesterday = prevDaySubs.some((s) => s.substance === "stimulant");
@@ -110,6 +113,13 @@ export default async function TodayPage({ searchParams }: PageProps) {
         hadStimulantYesterday={hadStimulantYesterday}
         substanceLogs={daySubs}
         beverages={beverages}
+        lang={lang}
+      />
+
+      <SupplementPanel
+        date={selectedDate}
+        supplements={profile.daily_supplements ?? []}
+        logs={supplementLogs}
         lang={lang}
       />
 

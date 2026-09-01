@@ -20,6 +20,8 @@ interface Dict {
   substance_log: string;
   logged_today: string;
   tap_to_remove: string;
+  supplements_title: string;
+  tap_to_mark_taken: string;
   skate_day: string;
   recovery: string;
   kcal: string;
@@ -194,6 +196,8 @@ const pt: Dict = {
   substance_log: "Log de substância",
   logged_today: "Logado neste dia",
   tap_to_remove: "Toque pra remover",
+  supplements_title: "Vitaminas de hoje",
+  tap_to_mark_taken: "Toque pra marcar como tomado",
   skate_day: "Dia de skate",
   recovery: "Recuperação",
   kcal: "Kcal",
@@ -401,6 +405,8 @@ const en: Dict = {
   substance_log: "Substance log",
   logged_today: "Logged today",
   tap_to_remove: "Tap to remove",
+  supplements_title: "Today's supplements",
+  tap_to_mark_taken: "Tap to mark as taken",
   skate_day: "Skate day",
   recovery: "Recovery",
   kcal: "Kcal",

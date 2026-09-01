@@ -156,6 +156,32 @@ export async function deleteBeverageLog(id: number) {
   revalidatePath("/");
 }
 
+// One row per supplement per day (unlike substance_logs, which allows
+// several entries) — marking a supplement "taken" is idempotent, so
+// double-tapping or a slow network retry can't create duplicates.
+export async function logSupplement(supplementName: string, date?: string) {
+  await ensureMigrated();
+  const personId = await getActivePerson();
+  const d = date ?? todayIso();
+  await getDb().execute({
+    sql: `INSERT INTO supplement_logs (person_id, date, supplement_name, logged_at) VALUES (?, ?, ?, datetime('now'))
+          ON CONFLICT(person_id, date, supplement_name) DO NOTHING`,
+    args: [personId, d, supplementName],
+  });
+  revalidatePath("/");
+}
+
+export async function deleteSupplementLog(supplementName: string, date?: string) {
+  await ensureMigrated();
+  const personId = await getActivePerson();
+  const d = date ?? todayIso();
+  await getDb().execute({
+    sql: `DELETE FROM supplement_logs WHERE person_id = ? AND date = ? AND supplement_name = ?`,
+    args: [personId, d, supplementName],
+  });
+  revalidatePath("/");
+}
+
 export async function estimateNutritionAction(
   description: string,
   lang: "pt" | "en"
