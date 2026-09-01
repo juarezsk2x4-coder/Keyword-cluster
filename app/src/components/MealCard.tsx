@@ -95,7 +95,7 @@ export default function MealCard({ card, date, log, defaultState, lang }: Props)
   };
 
   return (
-    <div className={`card ${isLogged ? "border-accent/50" : ""}`}>
+    <div className={`card ${isLogged ? "border-accent" : ""}`}>
       <div className="flex items-baseline justify-between mb-2">
         <div>
           <div className="label">{tr.slots[card.slot]}</div>
@@ -108,13 +108,13 @@ export default function MealCard({ card, date, log, defaultState, lang }: Props)
         )}
       </div>
 
-      <div className="flex gap-1.5 mb-3 flex-wrap">
+      <div className="seg mb-3">
         {ORDER.map((s) => (
           <button
             key={s}
             type="button"
             onClick={() => setState(s)}
-            className={`chip ${state === s ? "chip-active" : ""} active:scale-95 transition-transform`}
+            className={`seg-item ${state === s ? "seg-item-active" : ""} active:scale-95 transition-transform`}
           >
             {tr.state[s]}
           </button>

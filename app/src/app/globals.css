@@ -1,21 +1,74 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
-  html, body { background: #0b0d0f; color: #e8eaed; }
-  body { font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  /* Lavender-light identity by default; overridden below for dark. Every
+     component class in this file, and every bg/text/border color utility
+     used across the app, reads from these tokens — this is the single
+     place the app's whole color system lives. */
+  :root {
+    --bg: #f2ecf9;
+    --surface: #ffffff;
+    --surface-2: #eae3f5;
+    --border: #ddd2ee;
+    --text: #2c1b4d;
+    --muted: #6a5a86;
+    --accent: #3b5bdb;
+    --accent-2: #6c8cf5;
+    --ink: #ffffff;
+    --success: #1f8f6e;
+    --success-bg: #e0f2ea;
+    --warn: #b8863a;
+    --warn-bg: #f3e8d3;
+    --danger: #c14953;
+    --danger-bg: #fbe4e6;
+  }
+
+  /* "Midnight indigo" dark identity — a deliberately fresh palette, not a
+     literal inversion of the light tokens above. */
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0a0e1f;
+      --surface: #131a2e;
+      --surface-2: #1a2338;
+      --border: #263252;
+      --text: #eef1fb;
+      --muted: #8b93b8;
+      --accent: #29d3c9;
+      --accent-2: #6fe8df;
+      --ink: #04211f;
+      --success: #58e08a;
+      --success-bg: #113626;
+      --warn: #e8b06b;
+      --warn-bg: #2c2114;
+      --danger: #e87b6b;
+      --danger-bg: #2c1418;
+    }
+  }
+
+  html, body { background: var(--bg); color: var(--text); }
+  body { font-family: "Manrope", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
   * { -webkit-tap-highlight-color: transparent; }
 }
 
 @layer components {
   .card { @apply bg-surface border border-border rounded-2xl p-4; }
   .btn { @apply rounded-xl px-3 py-2 text-sm font-medium transition; }
-  .btn-primary { @apply bg-accent text-bg hover:opacity-90; }
-  .btn-ghost { @apply bg-transparent border border-border text-text hover:bg-surface; }
-  .btn-warn { @apply bg-warn text-bg hover:opacity-90; }
-  .btn-danger { @apply bg-danger text-bg hover:opacity-90; }
+  .btn-primary { @apply bg-accent text-ink hover:opacity-90; }
+  .btn-ghost { @apply bg-transparent border border-border text-text hover:bg-surface2; }
+  .btn-warn { @apply bg-warn text-ink hover:opacity-90; }
+  .btn-danger { @apply bg-danger text-ink hover:opacity-90; }
   .chip { @apply rounded-full px-3 py-1 text-xs border border-border text-muted; }
-  .chip-active { @apply bg-accent text-bg border-accent; }
+  .chip-active { @apply bg-accent text-ink border-accent; }
+  .chip-success { @apply bg-successBg text-success border-transparent; }
   .label { @apply text-xs uppercase tracking-wider text-muted; }
+
+  /* Segmented control — replaces a row of separate floating chips where
+     the options are mutually exclusive (e.g. the meal-card state picker). */
+  .seg { @apply flex bg-surface2 rounded-xl p-1 gap-0.5; }
+  .seg-item { @apply flex-1 text-center rounded-lg px-2 py-1.5 text-xs font-semibold text-muted transition; }
+  .seg-item-active { @apply bg-surface text-accent shadow-sm; }
 }

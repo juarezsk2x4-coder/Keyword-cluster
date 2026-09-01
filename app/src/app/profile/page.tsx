@@ -46,7 +46,7 @@ export default async function ProfilePage() {
         <h2 className="label mb-2">{tr.profile_restrictions}</h2>
         <p className="text-xs text-muted mb-1">{tr.profile_hard_no}</p>
         <div className="flex gap-1.5 flex-wrap mb-3">
-          {p.food_preferences.hard_no.map((x, i) => <span key={i} className="chip" style={{ borderColor: "#e87b6b", color: "#e87b6b" }}>{x}</span>)}
+          {p.food_preferences.hard_no.map((x, i) => <span key={i} className="chip border-danger text-danger">{x}</span>)}
         </div>
         <p className="text-xs text-muted mb-1">{tr.profile_textures}</p>
         <ul className="text-xs text-muted list-disc list-inside space-y-0.5 mb-3">

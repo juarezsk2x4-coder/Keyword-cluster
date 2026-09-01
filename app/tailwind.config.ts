@@ -4,18 +4,28 @@ export default {
   content: ["./src/**/*.{js,ts,jsx,tsx,mdx}"],
   theme: {
     extend: {
+      // Values are CSS custom properties (defined in globals.css) rather
+      // than literal hex, so every class below is automatically light/dark
+      // aware without touching component code.
       colors: {
-        bg: "#0b0d0f",
-        surface: "#15181d",
-        border: "#252a31",
-        text: "#e8eaed",
-        muted: "#9aa3ad",
-        accent: "#7cc4a4",
-        warn: "#e8b06b",
-        danger: "#e87b6b",
+        bg: "var(--bg)",
+        surface: "var(--surface)",
+        surface2: "var(--surface-2)",
+        border: "var(--border)",
+        text: "var(--text)",
+        muted: "var(--muted)",
+        accent: "var(--accent)",
+        accent2: "var(--accent-2)",
+        ink: "var(--ink)",
+        success: "var(--success)",
+        successBg: "var(--success-bg)",
+        warn: "var(--warn)",
+        warnBg: "var(--warn-bg)",
+        danger: "var(--danger)",
+        dangerBg: "var(--danger-bg)",
       },
       fontFamily: {
-        sans: ["ui-sans-serif", "system-ui", "-apple-system", "Segoe UI", "Roboto", "sans-serif"],
+        sans: ["Manrope", "ui-sans-serif", "system-ui", "-apple-system", "Segoe UI", "Roboto", "sans-serif"],
         mono: ["ui-monospace", "SFMono-Regular", "monospace"],
       },
     },

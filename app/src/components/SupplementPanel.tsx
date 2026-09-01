@@ -21,7 +21,7 @@ export default function SupplementPanel({ date, supplements, logs, lang }: Props
   if (supplements.length === 0) return null;
 
   return (
-    <div className="card mb-3">
+    <div className="card h-full">
       <div className="label mb-2">{tr.supplements_title}</div>
       <div className="flex flex-wrap gap-1.5">
         {supplements.map((name) => {
@@ -38,7 +38,7 @@ export default function SupplementPanel({ date, supplements, logs, lang }: Props
               }
               disabled={pending}
               title={tr.tap_to_mark_taken}
-              className={`chip ${taken ? "chip-active" : ""} active:scale-95 transition-transform`}
+              className={`chip ${taken ? "chip-success" : ""} active:scale-95 transition-transform`}
             >
               {taken ? "✓ " : "+ "}
               {name}

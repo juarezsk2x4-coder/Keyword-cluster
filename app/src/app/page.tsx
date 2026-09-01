@@ -11,6 +11,7 @@ import {
   getDaySupplements,
 } from "@/lib/query";
 import MealCard from "@/components/MealCard";
+import DayHero from "@/components/DayHero";
 import DayHeader from "@/components/DayHeader";
 import DateNavigator from "@/components/DateNavigator";
 import MealNotifications from "@/components/MealNotifications";
@@ -95,11 +96,7 @@ export default async function TodayPage({ searchParams }: PageProps) {
 
       <MealNotifications meals={dayPlan.meals} lang={lang} date={selectedDate} personId={personId} />
 
-      <WeatherCard weather={weather} isGoodSkateDay={isGoodSkateDay} lang={lang} />
-
-      <PredictionBanner prediction={predictions} lang={lang} />
-
-      <DayHeader
+      <DayHero
         date={dayPlan.date}
         dayName={dayPlan.day_of_week}
         isSkateDay={dayPlan.is_skate_day}
@@ -107,19 +104,30 @@ export default async function TodayPage({ searchParams }: PageProps) {
         kcalLogged={totals.kcal}
         proteinTarget={dayPlan.protein_g_target}
         proteinLogged={totals.protein_g}
-        sleepHours={sleep?.hours}
-        isFatigued={fatigued}
-        prepMinutes={prepMin}
         hadStimulantYesterday={hadStimulantYesterday}
-        substanceLogs={daySubs}
-        beverages={beverages}
+        isFatigued={fatigued}
         lang={lang}
       />
 
-      <SupplementPanel
-        date={selectedDate}
-        supplements={profile.daily_supplements ?? []}
-        logs={supplementLogs}
+      <div className="grid grid-cols-2 gap-3 mb-3">
+        <WeatherCard weather={weather} isGoodSkateDay={isGoodSkateDay} lang={lang} />
+        <SupplementPanel
+          date={selectedDate}
+          supplements={profile.daily_supplements ?? []}
+          logs={supplementLogs}
+          lang={lang}
+        />
+      </div>
+
+      <PredictionBanner prediction={predictions} lang={lang} />
+
+      <DayHeader
+        date={dayPlan.date}
+        isFatigued={fatigued}
+        sleepHours={sleep?.hours}
+        prepMinutes={prepMin}
+        substanceLogs={daySubs}
+        beverages={beverages}
         lang={lang}
       />
 

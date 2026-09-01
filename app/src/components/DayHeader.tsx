@@ -9,16 +9,9 @@ import BeveragePanel from "./BeveragePanel";
 
 interface Props {
   date: string;
-  dayName: string;
-  isSkateDay: boolean;
-  kcalTarget: number;
-  kcalLogged: number;
-  proteinTarget: number;
-  proteinLogged: number;
-  sleepHours?: number;
   isFatigued: boolean;
+  sleepHours?: number;
   prepMinutes: number | null;
-  hadStimulantYesterday: boolean;
   substanceLogs: SubstanceLog[];
   beverages: BeverageLog[];
   lang: Lang;
@@ -28,40 +21,8 @@ export default function DayHeader(props: Props) {
   const [pending, startTransition] = useTransition();
   const tr = t(props.lang);
 
-  const kcalPct = Math.min(100, Math.round((props.kcalLogged / props.kcalTarget) * 100));
-  const protPct = Math.min(100, Math.round((props.proteinLogged / props.proteinTarget) * 100));
-
   return (
     <div className="space-y-3 mb-6">
-      <div className="card">
-        <div className="flex items-baseline justify-between mb-2">
-          <div>
-            <h1 className="text-xl font-semibold">{props.dayName}</h1>
-            <div className="text-xs text-muted">{props.date}</div>
-          </div>
-          <div className="flex gap-2 flex-wrap justify-end">
-            {props.isSkateDay && <span className="chip chip-active">{tr.skate_day}</span>}
-            {props.hadStimulantYesterday && <span className="chip" style={{ background: "#e87b6b", color: "#0b0d0f", borderColor: "#e87b6b" }}>{tr.recovery}</span>}
-            {props.isFatigued && <span className="chip" style={{ background: "#e8b06b", color: "#0b0d0f", borderColor: "#e8b06b" }}>{tr.house_fatigue}</span>}
-          </div>
-        </div>
-
-        <div className="grid grid-cols-2 gap-3 text-xs">
-          <div>
-            <div className="flex justify-between mb-1"><span className="label">{tr.kcal}</span><span className="text-muted">{props.kcalLogged} / {props.kcalTarget}</span></div>
-            <div className="h-2 bg-border rounded-full overflow-hidden">
-              <div className="h-full bg-accent" style={{ width: `${kcalPct}%` }} />
-            </div>
-          </div>
-          <div>
-            <div className="flex justify-between mb-1"><span className="label">{tr.protein}</span><span className="text-muted">{Math.round(props.proteinLogged)} / {props.proteinTarget} g</span></div>
-            <div className="h-2 bg-border rounded-full overflow-hidden">
-              <div className="h-full bg-accent" style={{ width: `${protPct}%` }} />
-            </div>
-          </div>
-        </div>
-      </div>
-
       <div className="grid grid-cols-2 gap-3">
         <div className="card">
           <div className="label mb-2">{tr.sleep_on_wake}</div>

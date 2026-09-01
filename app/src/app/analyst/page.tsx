@@ -9,9 +9,9 @@ import type { MealSlot, CardState } from "@/lib/types";
 export const dynamic = "force-dynamic";
 
 function severityStyle(s: "info" | "warning" | "alert"): { bg: string; border: string; color: string } {
-  if (s === "alert") return { bg: "#3a1d1a", border: "#e87b6b", color: "#e87b6b" };
-  if (s === "warning") return { bg: "#3a2d18", border: "#e8b06b", color: "#e8b06b" };
-  return { bg: "#1a2820", border: "#7cc4a4", color: "#7cc4a4" };
+  if (s === "alert") return { bg: "var(--danger-bg)", border: "var(--danger)", color: "var(--danger)" };
+  if (s === "warning") return { bg: "var(--warn-bg)", border: "var(--warn)", color: "var(--warn)" };
+  return { bg: "var(--success-bg)", border: "var(--success)", color: "var(--success)" };
 }
 
 interface PageProps {

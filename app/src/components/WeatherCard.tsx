@@ -21,7 +21,7 @@ export default function WeatherCard({ weather, isGoodSkateDay, lang }: Props) {
   const tr = t(lang);
 
   return (
-    <div className="card mb-3 flex items-center justify-between gap-2">
+    <div className="card h-full flex flex-col justify-center gap-2">
       <div className="flex items-center gap-2">
         <span className="text-xl">{CONDITION_EMOJI[weather.condition]}</span>
         <div>
@@ -30,7 +30,7 @@ export default function WeatherCard({ weather, isGoodSkateDay, lang }: Props) {
         </div>
       </div>
       {isGoodSkateDay && (
-        <div className="text-xs font-medium" style={{ color: "#e8b06b" }}>
+        <div className="text-xs font-medium text-accent">
           {tr.weather.good_skate_weather}
         </div>
       )}
