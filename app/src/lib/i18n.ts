@@ -44,10 +44,9 @@ interface Dict {
   custom_kcal: string;
   custom_protein: string;
   custom_hint: string;
-  sub: { cocaine: string; alcohol: string; cannabis: string; tobacco: string; benzo: string };
+  sub: { stimulant: string; alcohol: string; cannabis: string; tobacco: string; benzo: string };
   carbs: string;
   fat: string;
-  toggle_lang: string;
   beverages: string;
   beverage: { mate: string; coffee: string; tea: string; treat: string };
   amount_placeholder: (type: string) => string;
@@ -80,6 +79,12 @@ interface Dict {
   profile_target_hydration: string;
   profile_target_kcal_off: string;
   profile_target_kcal_skate: string;
+  unit_g_per_day: string;
+  unit_l_per_day: string;
+  notif_on: string;
+  notif_off: string;
+  lang_toggle_aria: string;
+  person_toggle_aria: string;
   profile_restrictions: string;
   profile_hard_no: string;
   profile_textures: string;
@@ -111,9 +116,19 @@ interface Dict {
     fatigue_streak: (days: number) => string;
     post_substance: string;
     post_alcohol: string;
+    skate_syncope_risk: string;
     sleep_short: (hours: number) => string;
     sleep_long: (hours: number) => string;
     on_track: string;
+  };
+  weather: {
+    clear: string;
+    cloudy: string;
+    rain: string;
+    storm: string;
+    other: string;
+    temp_range: (max: number, min: number) => string;
+    good_skate_weather: string;
   };
   plan_title: string;
   plan_week_label: string;
@@ -156,6 +171,7 @@ interface Dict {
     substance_correlation: string;
     fatigue_frequent: (days: number) => string;
     sleep_kcal_link: string;
+    consider_professional_support: string;
     on_track: string;
   };
 }
@@ -178,8 +194,8 @@ const pt: Dict = {
   substance_log: "Log de substância",
   logged_today: "Logado neste dia",
   tap_to_remove: "Toque pra remover",
-  skate_day: "Skate day",
-  recovery: "Recovery",
+  skate_day: "Dia de skate",
+  recovery: "Recuperação",
   kcal: "Kcal",
   protein: "Proteína",
   state: {
@@ -209,7 +225,7 @@ const pt: Dict = {
   updating: "Atualizando…",
   saving: "Salvando…",
   logged: "Logado",
-  min_prep: "min prep",
+  min_prep: "min preparo",
   show_ingredients: (n) => `Ver ${n} ingrediente${n === 1 ? "" : "s"}`,
   hide_ingredients: "Esconder ingredientes",
   edit_or_other: "Editar / comi outra coisa",
@@ -219,12 +235,11 @@ const pt: Dict = {
   custom_kcal: "kcal (opcional)",
   custom_protein: "proteína em g (opcional)",
   custom_hint: "Substitui a sugestão. Deixa kcal/proteína em branco se não souber.",
-  sub: { cocaine: "coca", alcohol: "álcool", cannabis: "cannabis", tobacco: "tabaco", benzo: "benzo" },
+  sub: { stimulant: "estimulante", alcohol: "álcool", cannabis: "cannabis", tobacco: "tabaco", benzo: "benzo" },
   carbs: "C",
   fat: "G",
-  toggle_lang: "EN",
-  beverages: "Bebidas (mate / café / chá / treats)",
-  beverage: { mate: "mate", coffee: "café", tea: "chá", treat: "treat" },
+  beverages: "Bebidas (mate / café / chá / guloseimas)",
+  beverage: { mate: "mate", coffee: "café", tea: "chá", treat: "guloseima" },
   amount_placeholder: (type) => {
     if (type === "mate") return "ex: 1 cuia / 500ml";
     if (type === "coffee") return "ex: 1 espresso / 200ml";
@@ -257,20 +272,26 @@ const pt: Dict = {
   store_label: {
     forte_mensal: "Forte (mensal)",
     imperatriz_semanal: "Imperatriz (semanal)",
-    imperatriz_topup: "Imperatriz (top-up)",
+    imperatriz_topup: "Imperatriz (reforço)",
     ifood: "iFood",
   },
   profile_age: "Idade",
   profile_height: "Altura",
   profile_weight: "Peso",
   profile_bodyfat: "% Gordura",
-  profile_bmr: "BMR",
+  profile_bmr: "TMB",
   profile_goal: "Objetivo",
   profile_targets: "Targets nutricionais",
   profile_target_protein: "Proteína",
   profile_target_hydration: "Hidratação",
   profile_target_kcal_off: "Kcal off day",
   profile_target_kcal_skate: "Kcal skate day",
+  unit_g_per_day: "g/dia",
+  unit_l_per_day: "L/dia",
+  notif_on: "✓ LIGADO",
+  notif_off: "DESLIGADO",
+  lang_toggle_aria: "Alternar idioma",
+  person_toggle_aria: "Trocar perfil ativo",
   profile_restrictions: "Restrições e aversões",
   profile_hard_no: "Bloqueio absoluto",
   profile_textures: "Texturas aversivas",
@@ -300,11 +321,21 @@ const pt: Dict = {
     missed_meals: (count) => `Pulou ${count} refeição${count === 1 ? "" : "es"} ontem. Próximas refeições aumentadas.`,
     easy_streak: (days) => `${days} dias seguidos no modo "fácil/líquido". Cansaço crônico ou trabalho pesado?`,
     fatigue_streak: (days) => `${days} dias seguidos com cansaço de casa. Considera meal-prep no domingo.`,
-    post_substance: "Cocaína ontem: hidratação +1L, magnésio (cacau/castanhas/folhas), evita álcool, prioriza sono.",
+    post_substance: "Estimulante ontem: hidratação +1L, magnésio (cacau/castanhas/folhas), evita álcool, prioriza sono.",
     post_alcohol: "Álcool ontem: hidratação extra + B-complex (ovo/folhas/lentilha).",
+    skate_syncope_risk: "Uso recente + skate hoje: risco maior de síncope (Mg baixo + desidratação prévia). Hidratação extra (+1L), eletrólito antes de sair, considera intensidade mais leve hoje.",
     sleep_short: (hours) => `Só ${hours}h de sono. AM mais líquido + cafeína moderada, PM mais carbo.`,
     sleep_long: (hours) => `${hours}h de sono — corpo ainda processando. AM gentil, sem forçar.`,
     on_track: "Tudo nos eixos nos últimos dias. Mantém o ritmo.",
+  },
+  weather: {
+    clear: "Céu limpo",
+    cloudy: "Nublado",
+    rain: "Chuva",
+    storm: "Tempestade",
+    other: "Condição indefinida",
+    temp_range: (max, min) => `${Math.round(max)}° / ${Math.round(min)}°`,
+    good_skate_weather: "☀️ Boa condição pra skate hoje",
   },
   plan_title: "🗓 Plano semanal",
   plan_week_label: "Semana começando em",
@@ -347,6 +378,7 @@ const pt: Dict = {
     substance_correlation: "Dias com substâncias coincidem com baixa ingestão. Recovery food no dia seguinte ajuda.",
     fatigue_frequent: (days) => `${days} dias com cansaço de casa registrado. Considera fixar batch-cook no domingo.`,
     sleep_kcal_link: "Sono curto (<6h) coincide com kcal mais alto (compensação). Prioriza sono.",
+    consider_professional_support: "Esse padrão combinado (não um sinal isolado) já passou do que ajuste de plano ou mais logging costuma resolver sozinho. Pode valer a pena levar isso pra uma conversa com seu médico ou terapeuta — não é algo que o app vai resolver por mais dados que você registre.",
     on_track: "Padrões estáveis dentro das metas. Boa cadência.",
   },
 };
@@ -410,10 +442,9 @@ const en: Dict = {
   custom_kcal: "kcal (optional)",
   custom_protein: "protein in g (optional)",
   custom_hint: "Overrides the suggestion. Leave kcal/protein blank if unknown.",
-  sub: { cocaine: "coke", alcohol: "alcohol", cannabis: "cannabis", tobacco: "tobacco", benzo: "benzo" },
+  sub: { stimulant: "stimulant", alcohol: "alcohol", cannabis: "cannabis", tobacco: "tobacco", benzo: "benzo" },
   carbs: "C",
   fat: "F",
-  toggle_lang: "PT",
   beverages: "Beverages (mate / coffee / tea / treats)",
   beverage: { mate: "mate", coffee: "coffee", tea: "tea", treat: "treat" },
   amount_placeholder: (type) => {
@@ -462,6 +493,12 @@ const en: Dict = {
   profile_target_hydration: "Hydration",
   profile_target_kcal_off: "Kcal off day",
   profile_target_kcal_skate: "Kcal skate day",
+  unit_g_per_day: "g/day",
+  unit_l_per_day: "L/day",
+  notif_on: "✓ ON",
+  notif_off: "OFF",
+  lang_toggle_aria: "Toggle language",
+  person_toggle_aria: "Switch active profile",
   profile_restrictions: "Restrictions & aversions",
   profile_hard_no: "Hard block",
   profile_textures: "Texture aversions",
@@ -491,11 +528,21 @@ const en: Dict = {
     missed_meals: (count) => `Skipped ${count} meal${count === 1 ? "" : "s"} yesterday. Next meals boosted.`,
     easy_streak: (days) => `${days} days in a row in "easy/liquid" mode. Chronic fatigue or heavy work?`,
     fatigue_streak: (days) => `${days} days in a row with house fatigue. Consider Sunday batch-cooking.`,
-    post_substance: "Cocaine yesterday: hydration +1L, magnesium (cacao/nuts/greens), avoid alcohol, prioritize sleep.",
+    post_substance: "Stimulant yesterday: hydration +1L, magnesium (cacao/nuts/greens), avoid alcohol, prioritize sleep.",
     post_alcohol: "Alcohol yesterday: extra hydration + B-complex (egg/greens/lentil).",
+    skate_syncope_risk: "Recent use + skate today: higher syncope risk (low Mg + prior dehydration). Extra hydration (+1L), electrolytes before heading out, consider a lighter intensity today.",
     sleep_short: (hours) => `Only ${hours}h sleep. AM more liquid + moderate caffeine, PM more carbs.`,
     sleep_long: (hours) => `${hours}h sleep — body still processing. Gentle AM, no forcing.`,
     on_track: "All on track over recent days. Keep the rhythm.",
+  },
+  weather: {
+    clear: "Clear skies",
+    cloudy: "Cloudy",
+    rain: "Rain",
+    storm: "Storm",
+    other: "Unknown condition",
+    temp_range: (max, min) => `${Math.round(max)}° / ${Math.round(min)}°`,
+    good_skate_weather: "☀️ Good skate weather today",
   },
   plan_title: "🗓 Weekly plan",
   plan_week_label: "Week starting",
@@ -538,6 +585,7 @@ const en: Dict = {
     substance_correlation: "Substance-use days coincide with low intake. Recovery food the next day helps.",
     fatigue_frequent: (days) => `${days} house-fatigue days logged. Consider fixing Sunday batch-cook.`,
     sleep_kcal_link: "Short sleep (<6h) correlates with higher kcal (compensation). Prioritize sleep.",
+    consider_professional_support: "This combined pattern (not just one flag on its own) has gone past what a plan tweak or more logging usually fixes by itself. Might be worth bringing this to your doctor or therapist — it's not something the app is going to solve with more data.",
     on_track: "Patterns stable within targets. Good cadence.",
   },
 };

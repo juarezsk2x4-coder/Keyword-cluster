@@ -58,14 +58,19 @@ export default function MealCard({ card, date, log, defaultState, lang }: Props)
 
   const handleSaveCustom = () => {
     if (!customLabel.trim()) return;
+    const kcalNum = customKcal.trim() ? Number(customKcal) : undefined;
+    const proteinNum = customProtein.trim() ? Number(customProtein) : undefined;
+    if ((kcalNum !== undefined && !Number.isFinite(kcalNum)) || (proteinNum !== undefined && !Number.isFinite(proteinNum))) {
+      return;
+    }
     startTransition(async () => {
       await logMeal({
         date,
         slot: card.slot,
         selected_state: state,
         actual_label: customLabel.trim(),
-        kcal: customKcal.trim() ? Number(customKcal) : undefined,
-        protein_g: customProtein.trim() ? Number(customProtein) : undefined,
+        kcal: kcalNum,
+        protein_g: proteinNum,
       });
       setEditing(false);
       setAiNotes(null);

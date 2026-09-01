@@ -1,13 +1,12 @@
 import { getHabitRollup } from "@/lib/habits";
 import { getLang } from "@/lib/lang";
+import { getActivePerson } from "@/lib/person";
+import { loadProfile } from "@/lib/profile";
 import { t } from "@/lib/i18n";
+import { todayIso } from "@/lib/dates";
 import type { MealSlot, CardState } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
-
-function todayIso(): string {
-  return new Date().toISOString().slice(0, 10);
-}
 
 function severityStyle(s: "info" | "warning" | "alert"): { bg: string; border: string; color: string } {
   if (s === "alert") return { bg: "#3a1d1a", border: "#e87b6b", color: "#e87b6b" };
@@ -22,12 +21,17 @@ interface PageProps {
 export default async function AnalystPage({ searchParams }: PageProps) {
   const sp = await searchParams;
   const lang = await getLang();
+  const personId = await getActivePerson();
+  const profile = loadProfile(personId);
   const tr = t(lang);
   const windowDaysRaw = parseInt(sp.window ?? "7", 10);
   const windowDays: 7 | 14 | 30 =
     windowDaysRaw === 14 ? 14 : windowDaysRaw === 30 ? 30 : 7;
 
-  const rollup = await getHabitRollup(todayIso(), windowDays);
+  const rollup = await getHabitRollup(personId, todayIso(), windowDays, {
+    kcal: profile.nutrition_targets.total_kcal_target_off_day,
+    protein: profile.nutrition_targets.protein_g_per_day,
+  });
 
   return (
     <div className="space-y-4">
@@ -147,6 +151,9 @@ export default async function AnalystPage({ searchParams }: PageProps) {
                       break;
                     case "sleep_kcal_link":
                       text = tr.habit_insight.sleep_kcal_link;
+                      break;
+                    case "consider_professional_support":
+                      text = tr.habit_insight.consider_professional_support;
                       break;
                     case "on_track":
                       text = tr.habit_insight.on_track;

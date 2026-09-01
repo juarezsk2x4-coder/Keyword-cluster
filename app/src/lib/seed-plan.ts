@@ -1,5 +1,6 @@
-import type { DailyPlan, MealCard, MealVersion, MealSlot } from "./types";
+import type { DailyPlan, MealCard, MealVersion, MealSlot, PersonId, PersonProfile } from "./types";
 import { getStoredWeeklyPlan } from "./query";
+import { loadProfile } from "./profile";
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
@@ -116,6 +117,15 @@ const SALMAO_BATATA = v({
   notes: "Omega-3 + vit D + batata-doce roxa antocianinas. Anti-asma + anti-inflamatório.",
 });
 
+// current_chicken_phase in person_a.yml is "tolerant" today, but the
+// clinical brief flags a documented chicken aversion as only provisionally
+// resolved ("provisório até confirmar") — and explicitly says the system
+// needs pre-built "if X isn't available, do Y" substitutions rather than
+// asking him to improvise one in the moment (weak cognitive flexibility is
+// the documented pattern, not a hypothetical). CURRY_SEM_FRANGO below is
+// that pre-built fallback: swap FRANGO_CURRY for it (same slot, same
+// macros, same anti-inflammatory spice base) the moment the phase reverses
+// — no new recipe needs to be invented under pressure.
 const FRANGO_CURRY = v({
   label: "Curry de frango com leite de coco + cuscuz marroquino + couve refogada",
   ingredients: [
@@ -141,6 +151,34 @@ const FRANGO_CURRY = v({
     "Couve: refogue rápido no alho. Sirva tudo + limão.",
   ],
   notes: "Indiana sem tomate. Cúrcuma + gengibre + cebola = anti-asma forte.",
+});
+
+const CURRY_SEM_FRANGO = v({
+  label: "Curry de grão-de-bico + tofu com leite de coco + cuscuz marroquino + couve refogada",
+  ingredients: [
+    "grão-de-bico cozido 150g",
+    "tofu firme em cubos 100g",
+    "leite de coco 100ml",
+    "cebola roxa 1/2",
+    "alho 2 dentes",
+    "gengibre 1 colher chá",
+    "cúrcuma 1 colher chá",
+    "coentro em pó 1/2 colher chá",
+    "cuscuz marroquino integral 80g (seco)",
+    "couve manteiga 1/2 maço",
+    "limão 1/2",
+  ],
+  prep_minutes: 25,
+  kcal: 630,
+  protein_g: 32,
+  carbs_g: 68,
+  fat_g: 20,
+  prep_steps: [
+    "Cuscuz: ferva 100ml água, junte cuscuz + sal + colher azeite, tampe 5min.",
+    "Curry: refogue cebola + alho + gengibre, junte grão-de-bico + tofu, tempere, junte leite de coco.",
+    "Couve: refogue rápido no alho. Sirva tudo + limão.",
+  ],
+  notes: "Fallback pré-pronto se a fase de frango reverter — mesmas especiarias anti-asma, sem frango.",
 });
 
 const LINGUADO_KIMCHI = v({
@@ -277,7 +315,7 @@ const KOMBUCHA_BANANA_CASTANHA = v({
   protein_g: 4,
   carbs_g: 33,
   fat_g: 8,
-  notes: "Sem fome com Se + Mg. Útil em dia pós-coca.",
+  notes: "Sem fome com Se + Mg. Útil em dia pós-estimulante.",
 });
 
 const IOGURTE_MEL = v({
@@ -334,6 +372,26 @@ const BATATA_DOCE_FRANGO = v({
   carbs_g: 55,
   fat_g: 14,
   notes: "Easy: batch já feito, só montar.",
+});
+
+// Fallback if current_chicken_phase reverts — same slot, same batch-cook
+// pattern, patinho instead of frango (already a favorite protein per his
+// profile, so this isn't a stretch substitution).
+const BATATA_DOCE_PATINHO = v({
+  label: "Patinho desfiado + batata-doce laranja + folhas + limão",
+  ingredients: [
+    "patinho desfiado 130g (do batch dominical)",
+    "batata-doce laranja 200g",
+    "rúcula ou alface 1 maço",
+    "azeite 1 colher sopa",
+    "limão 1/2",
+  ],
+  prep_minutes: 5,
+  kcal: 560,
+  protein_g: 40,
+  carbs_g: 55,
+  fat_g: 16,
+  notes: "Fallback pré-pronto se a fase de frango reverter. Easy: batch já feito, só montar.",
 });
 
 const MARMITA_BATCH = v({
@@ -447,21 +505,28 @@ export function buildWeeklyPlan(weekStartIso: string): DailyPlan[] {
       is_work_day: false,
       ...SKATE_DAY,
       meals: [
+        // Sunday/Monday originals are boosted here (kcal/carb only, via
+        // per-day overrides — the shared consts below stay untouched since
+        // they're reused as-is on work days) to actually hit the 3300kcal/
+        // 390g-carb skate-day target: the un-boosted originals summed to
+        // only ~2740 kcal / ~310g carb, underfueling the one day with the
+        // highest glycogen/electrolyte demand and the documented syncope
+        // risk — the opposite of what a hard-training day needs.
         card("cafe_da_manha", "07:30",
-          v({ ...PRE_SKATE_FUEL, label: "Pré-skate: " + PRE_SKATE_FUEL.label }),
+          v({ ...PRE_SKATE_FUEL, label: "Pré-skate: " + PRE_SKATE_FUEL.label, kcal: 600, carbs_g: 110, ingredients: [...PRE_SKATE_FUEL.ingredients, "banana extra 1 un"] }),
           IOGURTE_GRANOLA, SHAKE_MANGA, KOMBUCHA_BANANA),
         card("lanche_manha", "10:30",
           ELETROLITO_CASEIRO,
           v({ label: "Banana + tâmara durante skate", ingredients: ["banana 1", "tâmara 2"], prep_minutes: 1, kcal: 200, protein_g: 2, carbs_g: 50, fat_g: 0 }),
           ELETROLITO_CASEIRO, KOMBUCHA_BANANA),
         card("almoco", "13:00",
-          POS_SKATE_RECOVERY,
+          v({ ...POS_SKATE_RECOVERY, kcal: 640, carbs_g: 110, ingredients: [...POS_SKATE_RECOVERY.ingredients, "arroz branco extra 100g"] }),
           MARMITA_BATCH, SHAKE_DENSO, KOMBUCHA_BANANA_CASTANHA),
         card("lanche_tarde", "16:00",
-          PATINHO_QUINOA,
+          v({ ...PATINHO_QUINOA, kcal: 720, carbs_g: 90, ingredients: [...PATINHO_QUINOA.ingredients, "quinoa extra 1/2 xícara"] }),
           MARMITA_BATCH, SHAKE_DENSO, IOGURTE_MEL),
         card("jantar", "20:00",
-          SALMAO_BATATA,
+          v({ ...SALMAO_BATATA, kcal: 830, carbs_g: 85, fat_g: 34, ingredients: [...SALMAO_BATATA.ingredients, "batata-doce roxa extra 100g"] }),
           MARMITA_BATCH, SHAKE_DENSO, IOGURTE_MEL),
         card("snack_noturno", "22:30",
           SNACK_NOTURNO_PROT,
@@ -476,14 +541,22 @@ export function buildWeeklyPlan(weekStartIso: string): DailyPlan[] {
       is_work_day: false,
       ...SKATE_DAY,
       meals: [
-        card("cafe_da_manha", "07:30", PRE_SKATE_FUEL, IOGURTE_GRANOLA, SHAKE_MANGA, KOMBUCHA_BANANA),
+        card("cafe_da_manha", "07:30",
+          v({ ...PRE_SKATE_FUEL, kcal: 600, carbs_g: 110, ingredients: [...PRE_SKATE_FUEL.ingredients, "banana extra 1 un"] }),
+          IOGURTE_GRANOLA, SHAKE_MANGA, KOMBUCHA_BANANA),
         card("lanche_manha", "10:30",
           ELETROLITO_CASEIRO,
           v({ label: "Banana + tâmara", ingredients: ["banana 1", "tâmara 2"], prep_minutes: 1, kcal: 200, protein_g: 2, carbs_g: 50, fat_g: 0 }),
           ELETROLITO_CASEIRO, KOMBUCHA_BANANA),
-        card("almoco", "13:00", POS_SKATE_RECOVERY, MARMITA_BATCH, SHAKE_DENSO, KOMBUCHA_BANANA_CASTANHA),
-        card("lanche_tarde", "16:00", FRANGO_CURRY, BATATA_DOCE_FRANGO, SHAKE_MANGA, IOGURTE_MEL),
-        card("jantar", "20:00", ROBALO_AIPIM, MARMITA_BATCH, SHAKE_DENSO, IOGURTE_MEL),
+        card("almoco", "13:00",
+          v({ ...POS_SKATE_RECOVERY, kcal: 640, carbs_g: 110, ingredients: [...POS_SKATE_RECOVERY.ingredients, "arroz branco extra 100g"] }),
+          MARMITA_BATCH, SHAKE_DENSO, KOMBUCHA_BANANA_CASTANHA),
+        card("lanche_tarde", "16:00",
+          v({ ...FRANGO_CURRY, kcal: 760, carbs_g: 90, fat_g: 25, ingredients: [...FRANGO_CURRY.ingredients, "cuscuz extra 40g"] }),
+          BATATA_DOCE_FRANGO, SHAKE_MANGA, IOGURTE_MEL),
+        card("jantar", "20:00",
+          v({ ...ROBALO_AIPIM, kcal: 750, carbs_g: 90, fat_g: 22, ingredients: [...ROBALO_AIPIM.ingredients, "aipim extra 100g"] }),
+          MARMITA_BATCH, SHAKE_DENSO, IOGURTE_MEL),
         card("snack_noturno", "22:30", SNACK_NOTURNO_PROT, SNACK_QUEIJO_MACA, KOMBUCHA_MEL, KOMBUCHA_MEL),
       ],
     },
@@ -503,7 +576,7 @@ export function buildWeeklyPlan(weekStartIso: string): DailyPlan[] {
         card("snack_noturno", "22:30", SNACK_NOTURNO_PROT, SNACK_QUEIJO_MACA, KOMBUCHA_MEL, KOMBUCHA_MEL),
       ],
     },
-    /* WEDNESDAY — work + possible coca use day → next day will need recovery */
+    /* WEDNESDAY — work + possible stimulant use day → next day will need recovery */
     {
       date: dates[3],
       day_of_week: "Quarta",
@@ -519,7 +592,7 @@ export function buildWeeklyPlan(weekStartIso: string): DailyPlan[] {
         card("snack_noturno", "22:30", SNACK_NOTURNO_PROT, SNACK_QUEIJO_MACA, KOMBUCHA_MEL, KOMBUCHA_MEL),
       ],
     },
-    /* THURSDAY — work, possibly post-coca recovery */
+    /* THURSDAY — work, possibly post-stimulant recovery */
     {
       date: dates[4],
       day_of_week: "Quinta",
@@ -532,14 +605,14 @@ export function buildWeeklyPlan(weekStartIso: string): DailyPlan[] {
           IOGURTE_GRANOLA, SHAKE_MANGA, KOMBUCHA_BANANA_CASTANHA),
         card("lanche_manha", "10:30", IOGURTE_GRANOLA, IOGURTE_GRANOLA, SHAKE_MANGA, KOMBUCHA_BANANA_CASTANHA),
         card("almoco", "12:30",
-          v({ ...PATINHO_QUINOA, label: "Recovery: " + PATINHO_QUINOA.label, notes: "Tirosina + Mg + B6. Pós-coca." }),
+          v({ ...PATINHO_QUINOA, label: "Recovery: " + PATINHO_QUINOA.label, notes: "Tirosina + Mg + B6. Pós-estimulante." }),
           MARMITA_BATCH, SOPA_MISSO, KOMBUCHA_BANANA_CASTANHA),
         card("lanche_tarde", "16:00", PAO_ABACATE, SNACK_QUEIJO_MACA, SHAKE_MANGA, IOGURTE_MEL),
         card("jantar", "20:00", SALMAO_BATATA, MARMITA_BATCH, SHAKE_DENSO, IOGURTE_MEL),
         card("snack_noturno", "22:30", SNACK_NOTURNO_PROT, SNACK_QUEIJO_MACA, KOMBUCHA_MEL, KOMBUCHA_MEL),
       ],
     },
-    /* FRIDAY — work, possible coca, jantar fora reserved */
+    /* FRIDAY — work, possible stimulant use, jantar fora reserved */
     {
       date: dates[5],
       day_of_week: "Sexta",
@@ -557,7 +630,7 @@ export function buildWeeklyPlan(weekStartIso: string): DailyPlan[] {
         card("snack_noturno", "22:30", SNACK_NOTURNO_PROT, SNACK_QUEIJO_MACA, KOMBUCHA_MEL, KOMBUCHA_MEL),
       ],
     },
-    /* SATURDAY — work, possibly post-coca recovery */
+    /* SATURDAY — work, possibly post-stimulant recovery */
     {
       date: dates[6],
       day_of_week: "Sábado",
@@ -580,6 +653,58 @@ export function buildWeeklyPlan(weekStartIso: string): DailyPlan[] {
   ];
 }
 
+// ─── Generic starter seed (any profile without a hand-authored week) ──────────
+
+const GENERIC_DOW_NAMES = ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"];
+
+function genericPlaceholder(label: string, kcal: number, protein_g: number, carbs_g: number, fat_g: number): MealVersion {
+  return { label, ingredients: [], prep_minutes: 10, kcal, protein_g, carbs_g, fat_g, notes: "Modelo inicial — gere um plano com IA pra personalizar." };
+}
+
+const GENERIC_MEALS: Record<MealSlot, { time: string; kcalShare: number; label: string }> = {
+  cafe_da_manha: { time: "08:00", kcalShare: 0.2, label: "Iogurte natural + granola + fruta" },
+  lanche_manha: { time: "10:30", kcalShare: 0.1, label: "Fruta + castanhas" },
+  almoco: { time: "12:30", kcalShare: 0.3, label: "Proteína + carbo + salada" },
+  lanche_tarde: { time: "16:00", kcalShare: 0.1, label: "Sanduíche integral simples" },
+  jantar: { time: "20:00", kcalShare: 0.25, label: "Sopa ou proteína leve + vegetais" },
+  snack_noturno: { time: "22:00", kcalShare: 0.05, label: "Iogurte + mel" },
+};
+
+export function buildGenericSeedPlan(weekStartIso: string, profile: PersonProfile): DailyPlan[] {
+  const base = new Date(weekStartIso + "T00:00:00");
+  const kcalTarget = profile.nutrition_targets.total_kcal_target_off_day;
+  const proteinTarget = profile.nutrition_targets.protein_g_per_day;
+
+  return Array.from({ length: 7 }, (_, i) => {
+    const d = new Date(base);
+    d.setDate(base.getDate() + i);
+    const date = d.toISOString().slice(0, 10);
+
+    const meals: MealCard[] = (Object.keys(GENERIC_MEALS) as MealSlot[]).map((slot) => {
+      const spec = GENERIC_MEALS[slot];
+      const kcal = Math.round(kcalTarget * spec.kcalShare);
+      const protein_g = Math.round(proteinTarget * spec.kcalShare);
+      const original = genericPlaceholder(spec.label, kcal, protein_g, Math.round(kcal * 0.5) / 4, Math.round(kcal * 0.25) / 9);
+      const easy = genericPlaceholder(`${spec.label} (fácil)`, kcal, protein_g, Math.round(kcal * 0.5) / 4, Math.round(kcal * 0.25) / 9);
+      const liquid = genericPlaceholder("Shake ou smoothie proteico", kcal, protein_g, Math.round(kcal * 0.5) / 4, Math.round(kcal * 0.2) / 9);
+      const no_hunger = genericPlaceholder("Kombucha + fruta", Math.round(kcal * 0.4), Math.round(protein_g * 0.3), 20, 0);
+      return { slot, scheduled_time: spec.time, alternatives: { original, easy, liquid, no_hunger } };
+    });
+
+    return {
+      date,
+      day_of_week: GENERIC_DOW_NAMES[d.getDay()],
+      is_skate_day: false,
+      is_work_day: true,
+      kcal_target: kcalTarget,
+      protein_g_target: proteinTarget,
+      carb_g_target: Math.round((kcalTarget * 0.45) / 4),
+      fat_g_target: Math.round((kcalTarget * 0.25) / 9),
+      meals,
+    };
+  });
+}
+
 // ─── Plan resolution (DB-backed > hand-crafted seed) ──────────────────────────
 
 export interface ResolvedWeeklyPlan {
@@ -588,8 +713,8 @@ export interface ResolvedWeeklyPlan {
   generated_at?: string;
 }
 
-export async function resolveWeeklyPlan(weekStartIso: string): Promise<ResolvedWeeklyPlan> {
-  const stored = await getStoredWeeklyPlan(weekStartIso);
+export async function resolveWeeklyPlan(personId: PersonId, weekStartIso: string): Promise<ResolvedWeeklyPlan> {
+  const stored = await getStoredWeeklyPlan(personId, weekStartIso);
   if (stored) {
     try {
       const days = JSON.parse(stored.plan_json) as DailyPlan[];
@@ -600,7 +725,11 @@ export async function resolveWeeklyPlan(weekStartIso: string): Promise<ResolvedW
       // Fall through to seed
     }
   }
-  return { days: buildWeeklyPlan(weekStartIso), source: "seed" };
+  const profile = loadProfile(personId);
+  if (profile.has_custom_meal_plan) {
+    return { days: buildWeeklyPlan(weekStartIso), source: "seed" };
+  }
+  return { days: buildGenericSeedPlan(weekStartIso, profile), source: "seed" };
 }
 
 // ─── Shopping list (derived from week plan) ───────────────────────────────────

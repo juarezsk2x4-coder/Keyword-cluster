@@ -1,11 +1,14 @@
-import { loadPersonA } from "@/lib/profile";
+import { loadProfile } from "@/lib/profile";
 import { getLang } from "@/lib/lang";
+import { getActivePerson } from "@/lib/person";
 import { t } from "@/lib/i18n";
 
 export default async function ProfilePage() {
-  const p = loadPersonA();
+  const personId = await getActivePerson();
+  const p = loadProfile(personId);
   const lang = await getLang();
   const tr = t(lang);
+  const profileFile = `${personId}.yml`;
 
   return (
     <div className="space-y-4">
@@ -32,8 +35,8 @@ export default async function ProfilePage() {
       <div className="card">
         <h2 className="label mb-2">{tr.profile_targets}</h2>
         <div className="grid grid-cols-2 gap-2 text-sm">
-          <div><span className="label block">{tr.profile_target_protein}</span>{p.nutrition_targets.protein_g_per_day} g/dia</div>
-          <div><span className="label block">{tr.profile_target_hydration}</span>{p.nutrition_targets.hydration_l_per_day} L/dia</div>
+          <div><span className="label block">{tr.profile_target_protein}</span>{p.nutrition_targets.protein_g_per_day} {tr.unit_g_per_day}</div>
+          <div><span className="label block">{tr.profile_target_hydration}</span>{p.nutrition_targets.hydration_l_per_day} {tr.unit_l_per_day}</div>
           <div><span className="label block">{tr.profile_target_kcal_off}</span>{p.nutrition_targets.total_kcal_target_off_day}</div>
           <div><span className="label block">{tr.profile_target_kcal_skate}</span>{p.nutrition_targets.total_kcal_target_skate_day}</div>
         </div>
@@ -64,8 +67,8 @@ export default async function ProfilePage() {
 
       <div className="card text-xs text-muted">
         {lang === "en"
-          ? <>Profile loaded from <code className="text-text">data/profiles/person_a.yml</code>. Full clinical synthesis in <code className="text-text">data/profiles/person_a_clinical.md</code>.</>
-          : <>Perfil carregado de <code className="text-text">data/profiles/person_a.yml</code>. Síntese clínica completa em <code className="text-text">data/profiles/person_a_clinical.md</code>.</>}
+          ? <>Profile loaded from <code className="text-text">data/profiles/{profileFile}</code>.{p.clinical_brief_path && <> Full clinical synthesis in <code className="text-text">{p.clinical_brief_path}</code>.</>}</>
+          : <>Perfil carregado de <code className="text-text">data/profiles/{profileFile}</code>.{p.clinical_brief_path && <> Síntese clínica completa em <code className="text-text">{p.clinical_brief_path}</code>.</>}</>}
       </div>
     </div>
   );

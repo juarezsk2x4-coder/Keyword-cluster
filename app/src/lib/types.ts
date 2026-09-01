@@ -1,3 +1,5 @@
+export type PersonId = "person_a" | "person_b";
+
 export type MealSlot =
   | "cafe_da_manha"
   | "lanche_manha"
@@ -90,10 +92,34 @@ export interface PersonProfile {
     texture_aversions: string[];
     soft_dislikes: string[];
   };
+  // These two are data-driven opt-ins rather than hardcoded to a specific
+  // person_id — any profile (not just "person_a") can set them and get the
+  // same treatment, so adding a third/fourth person never requires a code
+  // change, just their own YAML.
+  has_custom_meal_plan?: boolean; // true = has a hand-authored seed-plan.ts week + tailored AI prompt
+  clinical_brief_path?: string;   // optional path to a fuller clinical write-up, shown on /profile if set
+  // Opt-in, same as above: only a profile that sets this gets a weather
+  // lookup + "good skate weather" nudge on the home page.
+  location?: {
+    city: string;
+    state: string;
+    country: string;
+    lat: number;
+    lon: number;
+  };
+}
+
+export interface WeatherSummary {
+  date: string;
+  condition: "clear" | "cloudy" | "rain" | "storm" | "other";
+  temp_max_c: number;
+  temp_min_c: number;
+  precip_prob_pct: number;
 }
 
 export interface MealLog {
   id?: number;
+  person_id?: PersonId;
   date: string;
   slot: MealSlot;
   selected_state: CardState;
@@ -106,6 +132,7 @@ export interface MealLog {
 
 export interface SleepLog {
   id?: number;
+  person_id?: PersonId;
   date: string;
   hours: number;
   quality?: number;
@@ -114,8 +141,9 @@ export interface SleepLog {
 
 export interface SubstanceLog {
   id?: number;
+  person_id?: PersonId;
   date: string;
-  substance: "cocaine" | "alcohol" | "cannabis" | "tobacco" | "benzo" | "psychedelic" | "ketamine";
+  substance: "stimulant" | "alcohol" | "cannabis" | "tobacco" | "benzo" | "psychedelic" | "ketamine";
   amount?: string;
   notes?: string;
   logged_at: string;
@@ -123,12 +151,14 @@ export interface SubstanceLog {
 
 export interface FatigueLog {
   id?: number;
+  person_id?: PersonId;
   date: string;
   logged_at: string;
 }
 
 export interface PrepTimeLog {
   id?: number;
+  person_id?: PersonId;
   date: string;
   available_minutes: number;
   logged_at: string;
@@ -138,6 +168,7 @@ export type BeverageType = "mate" | "coffee" | "tea" | "treat";
 
 export interface BeverageLog {
   id?: number;
+  person_id?: PersonId;
   date: string;
   type: BeverageType;
   amount?: string;

@@ -1,14 +1,14 @@
 # Person A — João Eduardo de Lucena Linhares
-# Last updated: 2026-05-10
+# Last updated: 2026-08-31
 # See data/profiles/person_a_clinical.md for the interpretive clinical synthesis.
 
 name: João Eduardo de Lucena Linhares
 sex: male
 date_of_birth: 1994-06-27
-age_years: 31                  # turns 32 on 2026-06-27
+age_years: 32                  # turned 32 on 2026-06-27
 height_cm: 168                 # InBody measured; user-self-reported 166 (using InBody value)
-weight_kg: 64.5
-body_fat_pct: 16.3             # RelaxFit 15/12/2025 (most recent)
+weight_kg: 66.4                # InBody 10/08/2026 (most recent)
+body_fat_pct: 17.2             # InBody 10/08/2026 (most recent) — stable/slightly down vs 17.5% despite weight gain (recomp)
 neurotype: [tea_autismo_alto_funcionamento_cid11_6a02, tdah]
 neuropsych_evaluation:
   date: 2025-10-11
@@ -75,8 +75,12 @@ body_comp_history:
   - { date: 2023-11-12, source: InBody, weight_kg: 65.0, body_fat_pct: 18.4, musc_esq_kg: 29.7 }
   - { date: 2025-11-11, source: InBody, weight_kg: 63.3, body_fat_pct: 17.5, musc_esq_kg: 29.3, proteina_kg: 10.4, bmr_kcal: 1497, gordura_visceral: 4 }
   - { date: 2025-12-15, source: RelaxFit, weight_kg: 64.5, body_fat_pct: 16.3, massa_magra_kg: 54.0, proteina_kg: 12.3, bmr_kcal: 1535, body_age: 27, flags: [proteina_baixa] }
-estimated_bmr_kcal: 1535
-trajectory: active_recomp_working   # fat down, lean up over 5 weeks; protein still subdimensionado
+  - { date: 2026-08-10, source: InBody, weight_kg: 66.4, body_fat_pct: 17.2, musc_esq_kg: 31.0, proteina_kg: 10.9, bmr_kcal: 1557, gordura_visceral: 5, inbody_score: 80, waist_hip_ratio: 0.90 }
+estimated_bmr_kcal: 1557
+# InBody 10/08/2026 vs 11/11/2025: peso +3.1kg, massa muscular esquelética +1.7kg,
+# PGC estável/leve queda (17.5%→17.2%) — ganho é majoritariamente massa magra,
+# não gordura. Fase mudou de "déficit corrigindo" pra "ganho ativo com recomp".
+trajectory: active_gain_muscle_ahead_of_fat   # massa muscular subindo mais rápido que gordura
 
 # ── Activity ──────────────────────────────────────────────────────────────────
 activity:
@@ -104,11 +108,30 @@ activity:
     typical_time: evening
     intensity: light
     notes: "force feedback DD wheel — physical effort + sweat, counts as light cardio"
+  - type: pilates
+    days_per_week: "2-3"
+    typical_time: FILL_IN
+    intensity: moderate
+    added: 2026-08-14                 # per Dra. Schlindwein's Organização de Hábitos doc
+  - type: musculacao
+    days_per_week: 2
+    typical_time: FILL_IN
+    intensity: moderate
+    added: 2026-08-14                 # per Dra. Schlindwein's Organização de Hábitos doc
+    notes: "weight training — consistent with InBody 10/08/2026 muscle-mass gain"
 
 # ── Work schedule (drives skate-day distribution) ─────────────────────────────
 work_schedule:
   work_days: [tuesday, wednesday, thursday, friday, saturday]
   off_days: [sunday, monday]
+
+# ── Location (drives the home-page weather lookup / skate-weather nudge) ──────
+location:
+  city: "Florianópolis"
+  state: "SC"
+  country: "BR"
+  lat: -27.5969
+  lon: -48.5495
 
 # ── Sleep ─────────────────────────────────────────────────────────────────────
 sleep:
@@ -140,7 +163,7 @@ substances:
     occasional: marlboro_vermelho
     trend: reducing
     notes: "smoked separately from cannabis; trying to cut down"
-  cocaine:
+  stimulant:
     current_status: active_use_frequent_phase
     pattern: "cyclical — fases de uso intercaladas com pausas de 1-2+ meses"
     current_phase: actively_using
@@ -172,6 +195,9 @@ substances:
       dose_mg: 70                          # MAX DOSE
       time: "08:00"
       indication: tdah
+  # Regimen as of prescrição 10/08/2026 (Dra. Juliana Schlindwein). Bedoze IM
+  # was discontinued/replaced by oral B-complex + multivitamínico — consistent
+  # with B12 rising 241→329 pg/ml without further injections needed.
   supplements_prescribed:
     - name: bedoze
       compound: hidroxocobalamina_b12
@@ -180,17 +206,37 @@ substances:
       duration: 4_months
       prescribed_by: dra_juliana_schlindwein
       indication: deficiencia_b12_d51
-    - name: sany_d_caps
+      status: discontinued_2026_08              # replaced by oral B Complex below
+    - name: sany_d
       compound: colecalciferol_vit_d3
-      dose_ui: 7000
+      dose_ui: 2000                             # DOWN from 7000 UI — D improved 16.2→26 ng/ml
       frequency: daily
-      until: novos_exames
+      regimen: uso_continuo
+      prescribed_by: dra_juliana_schlindwein
       indication: deficiencia_vit_d_e55
+      since: 2026-08-10
     - name: fisiogen_ferro_forte
       compound: "ferro_30mg + vit_c_64mg"
       frequency: daily
       until: novos_exames
+      prescribed_by: dra_juliana_schlindwein
       indication: deficiencia_ferro_serico_d50
+      since: 2026-08-10
+    - name: b_complex
+      brand: essential_nutrition
+      compound: "complexo_b + magnesio_63mg"
+      frequency: daily
+      until: novos_exames
+      prescribed_by: dra_juliana_schlindwein
+      indication: [deficiencia_b12_d51, suporte_magnesio_funcional]
+      since: 2026-08-10                          # NEW — first time Mg is actually prescribed, not just discussed
+    - name: multivitaminico_0
+      compound: complexo_multivitaminico
+      frequency: daily
+      regimen: uso_continuo
+      prescribed_by: dra_juliana_schlindwein
+      indication: suporte_geral
+      since: 2026-08-10
 
 # ── Medical flags (encoded for nutrition planning calibration) ────────────────
 medical_flags:
@@ -208,12 +254,12 @@ medical_flags:
   - hiperfoco_padrao
   - psicoterapia_descontinuada_2023_recomendado_retomar
   - sincope_vasovagal_postural_2025_10            # CID-10 R55
-  - plaquetopenia_leve_112k
-  - deficiencia_b12_em_tratamento                 # CID-10 D51
-  - deficiencia_vit_d_em_tratamento               # CID-10 E55
-  - deficiencia_ferro_serico_em_tratamento        # CID-10 D50
+  - plaquetopenia_leve_128k                       # melhorou de 112k, ainda abaixo da faixa (150k-450k)
+  - deficiencia_b12_em_tratamento                 # CID-10 D51 (oficial); labs 06/08/26: 329 pg/ml, melhorando (era 241) mas ainda abaixo do alvo funcional 400
+  - deficiencia_vit_d_em_tratamento               # CID-10 E55 (oficial); labs 06/08/26: 26 ng/ml, melhorando (era 16.2) mas ainda abaixo do alvo ativo 40-60
+  - deficiencia_ferro_serico_em_tratamento        # CID-10 D50 (oficial); labs 06/08/26: sat. transferrina 17% (piorou vs 21%), ferro/ferritina normais
   - homocisteinemia_elevada
-  - eosinofilia_leve_8pct
+  - eosinofilia_resolvida_2026_08                 # normalizou: 8.0% (2025-10) → 5.3% (2026-08), dentro da faixa (1-6%)
   - historico_subnutricao_severa_2024_2025
   - alergia_tomate
   - massa_proteica_subdimensionada
@@ -223,50 +269,107 @@ medical_flags:
   - historico_familiar_psiquiatrico_significativo
   - padrao_atual_delivery_burger_cansaco_noturno      # CURRENT problem to solve
 
-# ── Bloodwork (24/10/2025, Lab. Santa Luzia) ──────────────────────────────────
-bloodwork:
-  date: 2025-10-24
-  hemograma:
-    hemacias_milhoes_mm3: 4.99
-    hemoglobina_g_dl: 15.2
-    hematocrito_pct: 43.8
-    vcm_fl: 87.8
-    plaquetas_mm3: 112000             # LOW (ref 150k-450k)
-    eosinofilos_pct: 8.0              # HIGH (ref 0-7)
-    eosinofilos_mm3: 503              # HIGH (ref 30-460)
-  iron_panel:
-    ferro_serico_ug_dl: 65            # floor for male
-    ferritina_ng_ml: 167.2
-    sat_transferrina_pct: 21          # floor
-    ctcf_ug_dl: 307
-    clcf_ug_dl: 242                   # HIGH (ref 140-238)
-  vitamins:
-    vit_d_25oh_ng_ml: 16.2            # DEFICIENT (target 40-60)
-    vit_b12_pg_ml: 241                # functional deficient (optimal >400)
-    acido_folico_ng_ml: 9.34
-    homocisteina: elevada              # per medical report
-  endocrine:
-    tsh_uiu_ml: 1.11
-    t4_livre_ng_dl: 1.27
-    testosterona_total_ng_dl: 473     # suboptimal for lean 31yo male
-  metabolic:
-    glicose_mg_dl: 95
-    hba1c_pct: 5.3
-    insulina_uui_ml: 4.6
-    homa_ir_calc: 1.08                # excellent
-    colesterol_total_mg_dl: 144
-    hdl_mg_dl: 57
-    ldl_mg_dl: 69
-    triglicerideos_mg_dl: 95
-  liver:
-    ast_u_l: 19
-    alt_u_l: 16
-    ggt_u_l: 17
-  renal:
-    creatinina_mg_dl: 0.96
-    ureia_mg_dl: 31
-  electrolytes:
-    magnesio_total_mg_dl: 1.9         # serum total — poor marker of tissue Mg
+# ── Bloodwork history ───────────────────────────────────────────────────────
+# Most recent entry first is NOT assumed by any code — this is documentation
+# only (bloodwork isn't a typed PersonProfile field); order is chronological.
+bloodwork_history:
+  - date: 2025-10-24
+    source: lab_santa_luzia
+    hemograma:
+      hemacias_milhoes_mm3: 4.99
+      hemoglobina_g_dl: 15.2
+      hematocrito_pct: 43.8
+      vcm_fl: 87.8
+      plaquetas_mm3: 112000             # LOW (ref 150k-450k)
+      eosinofilos_pct: 8.0              # HIGH (ref 0-7)
+      eosinofilos_mm3: 503              # HIGH (ref 30-460)
+    iron_panel:
+      ferro_serico_ug_dl: 65            # floor for male
+      ferritina_ng_ml: 167.2
+      sat_transferrina_pct: 21          # floor
+      ctcf_ug_dl: 307
+      clcf_ug_dl: 242                   # HIGH (ref 140-238)
+    vitamins:
+      vit_d_25oh_ng_ml: 16.2            # DEFICIENT (target 40-60)
+      vit_b12_pg_ml: 241                # functional deficient (optimal >400)
+      acido_folico_ng_ml: 9.34
+      homocisteina: elevada              # per medical report
+    endocrine:
+      tsh_uiu_ml: 1.11
+      t4_livre_ng_dl: 1.27
+      testosterona_total_ng_dl: 473     # suboptimal for lean 31yo male
+    metabolic:
+      glicose_mg_dl: 95
+      hba1c_pct: 5.3
+      insulina_uui_ml: 4.6
+      homa_ir_calc: 1.08                # excellent
+      colesterol_total_mg_dl: 144
+      hdl_mg_dl: 57
+      ldl_mg_dl: 69
+      triglicerideos_mg_dl: 95
+    liver:
+      ast_u_l: 19
+      alt_u_l: 16
+      ggt_u_l: 17
+    renal:
+      creatinina_mg_dl: 0.96
+      ureia_mg_dl: 31
+    electrolytes:
+      magnesio_total_mg_dl: 1.9         # serum total — poor marker of tissue Mg
+  - date: 2026-08-06
+    source: lab_santa_luzia
+    solicitante: dra_juliana_cristina_schlindwein_crm_26809_sc
+    hemograma:
+      hemacias_milhoes_mm3: 5.22
+      hemoglobina_g_dl: 15.5
+      hematocrito_pct: 46.2
+      vcm_fl: 88.5
+      hcm_pg: 29.7
+      chcm_g_dl: 33.5
+      rdw_pct: 13.1
+      leucocitos_mm3: 7980
+      neutrofilos_pct: 57.6
+      plaquetas_mm3: 128000             # still LOW (ref 150k-450k), improved from 112k
+      vpm_fl: 12.3
+      eosinofilos_pct: 5.3              # NORMAL now (ref 1.0-6.0) — was 8.0% HIGH
+      eosinofilos_mm3: 423
+      basofilos_pct: 0.1
+      linfocitos_pct: 29.3
+      monocitos_pct: 7.7
+    iron_panel:
+      ferro_serico_ug_dl: 63            # normal (ref 50-212)
+      ferritina_ng_ml: 172              # normal (ref 24-336)
+      sat_transferrina_pct: 17          # still LOW (ref 24-37), worse than 21%
+      clcf_ug_dl: 304                   # capacidade de fixação latente (ref 155-355)
+      ctcf_ug_dl: 367                   # capacidade total de fixação do ferro
+    vitamins:
+      vit_d_25oh_ng_ml: 26              # improved from 16.2; lab-normal (>20) but below active-adult optimal 40-60
+      vit_b12_pg_ml: 329                # improved from 241; lab-normal (180-914) but below functional target 400
+      acido_folico_ng_ml: 7.4           # normal (ref >5.9)
+    endocrine:
+      tsh_uiu_ml: 1.81                  # normal (ref 0.38-5.33)
+    metabolic:
+      glicose_basal_mg_dl: 97           # normal (ref 70-99)
+      hba1c_pct: 5.4                    # normal (<5.7), essentially unchanged
+      glicose_media_estimada_mg_dl: 107
+    renal:
+      creatinina_mg_dl: 0.91
+      egfr: ">90"                       # normal
+    electrolytes:
+      magnesio_total_mg_dl: 2.1         # improved from 1.9, mid-normal (ref 1.8-2.9) — serum total, still a poor tissue-Mg marker
+    minerals:
+      zinco_serico_ug_dl: 102.7         # NORMAL (ref 70.0-120.0) — resolves the open "supplement zinc?" question, answer is no
+
+# Official CID-10 diagnoses (Relatório Médico, 14/08/2026, Dra. Schlindwein — uso insurance/afastamento).
+# Note: the official report keeps these 4 listed as active/in-treatment even
+# though B12/vit D/ferritina/ferro are now within the lab's reference range —
+# framing is "responding to treatment, not yet at functional/optimal target."
+official_cid10_diagnoses:
+  - { cid10: E53.8, desc: deficiencia_vitamina_b12 }
+  - { cid10: E53.8, desc: deficiencia_acido_folico }
+  - { cid10: E61.1, desc: deficiencia_ferro }
+  - { cid10: E55.9, desc: deficiencia_vitamina_d }
+    # (ex: sat. transferrina 17% ainda baixa; B12/D abaixo do alvo funcional/ótimo)
 
 # ── Nutrition targets (derived; see clinical brief for reasoning) ─────────────
 nutrition_targets:
@@ -323,6 +426,10 @@ food_preferences:
   soft_dislikes: [figado, couve_flor, mamao, azeitonas]
   seletividade_alimentar_clinica: true
   current_chicken_phase: tolerant                    # fase atual: tolera peito_frango pelo intake proteico fácil
+                                                       # se reverter, seed-plan.ts já tem fallback pré-pronto:
+                                                       # CURRY_SEM_FRANGO (grão-de-bico+tofu) e
+                                                       # BATATA_DOCE_PATINHO — troca no lugar de
+                                                       # FRANGO_CURRY / BATATA_DOCE_FRANGO, sem inventar receita nova
   current_burger_delivery_pattern: high              # CURRENT PROBLEM: cansaço + casa grande -> hambúrguer + delivery noites
   abacate_acceptable_in: [pao, salada, poke]         # NÃO em pasta livre
   iogurte_granola_loved: true                        # combinação favorita — usar como anchor de café/lanche
@@ -379,3 +486,8 @@ guardrails:
   sleep_variability_aware: true
 
 clinical_brief_path: data/profiles/person_a_clinical.md
+
+# Drives which AI prompt / seed plan this profile gets (see lib/meal-plan-ai.ts,
+# lib/seed-plan.ts) — data-driven, not hardcoded to this file's person_id, so
+# a third profile could set this too without any code change.
+has_custom_meal_plan: true

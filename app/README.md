@@ -1,6 +1,6 @@
-# Plano A — Test App (Person A only)
+# Plano A — Test App
 
-Meal-planning + logging app calibrated for Person A. Next.js 15 + libSQL (Turso) + Tailwind.
+Meal-planning + logging app, shared between two profiles via an A/B switcher — plan and targets are calibrated per active profile. Next.js 15 + libSQL (Turso) + Tailwind.
 
 **Quer rodar do celular sem instalar nada?** Veja [`DEPLOY.md`](../DEPLOY.md) na raiz — guia passo a passo pra subir no Vercel + Turso (15 min, free, só navegador).
 
@@ -9,17 +9,17 @@ Meal-planning + logging app calibrated for Person A. Next.js 15 + libSQL (Turso)
 - **Today dashboard** with 6 meal cards (café / lanche manhã / almoço / lanche tarde / jantar / snack noturno).
 - **Card state toggle** with 4 alternatives per slot: `Original` / `Fácil` / `Líquido` / `Sem fome`. Single tap cycles between them.
 - **Smart defaults driven by overlays**:
-  - Cocaine logged yesterday → AM defaults to `liquid` (post-stim recovery)
+  - Stimulant logged yesterday → AM defaults to `liquid` (post-stim recovery)
   - Slept <5h → AM defaults to `liquid`; slept ≥9h → AM defaults to `no_hunger`
   - "Tô cansado da casa hoje" button → all defaults shift to `easy`
   - Prep time chosen ≤5min → `liquid`; ≤15min → `easy`
 - **Meal logging** with macro tally per day (kcal / protein progress bars vs target).
 - **Sleep input** (4–10h chips, one tap).
-- **Substance log** (coca / álcool / cannabis / tabaco / benzo — one tap each, today's date).
+- **Substance log** (stimulant / álcool / cannabis / tabaco / benzo — one tap each, today's date).
 - **Prep time today** input.
 - **Shopping list** view: split into `🚚 Delivery` and `🚶 Subir`, grouped by store (Forte mensal, Imperatriz semanal, iFood), with per-item weight and total kg load.
-- **Profile view**: reads `data/profiles/person_a.yml` and shows targets, restrictions, medical flags.
-- **History view**: last 60 logs grouped by day, with kcal + protein totals and state-distribution chips.
+- **Profile view**: reads the active person's profile (`data/profiles/person_a.yml` or `person_b.yml`, via `loadProfile(personId)`) and shows targets, restrictions, medical flags.
+- **History view**: last 14 days of logs grouped by day, with kcal + protein totals and state-distribution chips.
 
 ## Quick start (rodar localmente — precisa Node + pnpm instalado)
 
@@ -39,14 +39,21 @@ Veja [`DEPLOY.md`](../DEPLOY.md) na raiz do repo. Tudo via navegador, ~15 min.
 
 ## Architecture
 
-- **Profile data**: read from `../data/profiles/person_a.yml` at request time (via `js-yaml`).
+- **Profile data**: read from the active person's YAML (`../data/profiles/person_a.yml` or `person_b.yml`, selected by the A/B toggle's cookie) at request time (via `js-yaml`).
 - **Meal plan**: hardcoded for week 1 in `src/lib/seed-plan.ts`, anchored to Sunday. Calibrated for:
   - Skate days (Sun + Mon): high-carb (~3300 kcal target, refeed pre/post-skate fuel)
   - Work days (Tue–Sat): eucaloric recomp (~2500 kcal, 130g protein)
   - Friday jantar slot: reserved for delivery (acceptable list — never burger junk)
-  - Cocaine-aware: Thu and Sat AM defaults to recovery shake when Wed/Fri use is logged
+  - Stimulant-aware: Thu and Sat AM defaults to recovery shake when Wed/Fri use is logged
 - **DB**: SQLite at `app/data/app.db` (auto-created). Tables: `meal_logs`, `sleep_logs`, `substance_logs`, `fatigue_logs`, `prep_time_logs`.
 - **UI**: Mobile-first Tailwind. Dark theme. Server components + server actions (no client-side fetching).
+
+## Multi-person
+
+Both Person A and Person B share this deployment. A profile switcher (A / B chips)
+in the nav sets which person is active; every meal log, sleep/substance log, AI
+meal plan, and Habit Analyst view is scoped to the active person. The shopping
+list stays combined — one household, one shop.
 
 ## What's NOT in v1 (intentionally)
 
@@ -78,7 +85,7 @@ app/
     └── lib/
         ├── types.ts                    # MealSlot, CardState, MealVersion, etc.
         ├── db.ts                       # SQLite connection + migrations
-        ├── profile.ts                  # YAML loader for person_a.yml
+        ├── profile.ts                  # YAML loader for the active person's profile (person_a.yml / person_b.yml)
         ├── query.ts                    # Read queries
         └── seed-plan.ts                # Hand-crafted week 1 plan + shopping list
 ```
@@ -96,10 +103,11 @@ The dev server binds to `0.0.0.0` by default (see `package.json` `dev` script), 
 1. **Week 1** (this app): use it daily, log meals, see what works and what doesn't.
 2. **Week 2+**: the AI Meal Plan Designer generates the plan from the previous week's logs and your profile.
 3. **Ongoing**: Reconciler (predictions banner) adjusts each day; Habit Analyst surfaces 7/14/30-day patterns.
+4. **Person B**: fill in `data/profiles/person_b.yml`, switch to her profile with the A/B toggle in the nav, and repeat the same loop independently.
 
 ## Troubleshooting
 
 - **`better-sqlite3` install fails**: needs Node ≥18 and Python + build tools available for the native compile. On Ubuntu: `sudo apt install build-essential python3`. On macOS: `xcode-select --install`.
 - **Port 3000 in use**: edit the `dev` script in `package.json` or pass `--port 3001`.
 - **Phone can't reach the IP**: check macOS firewall / Windows Defender. Sometimes you need to allow the port explicitly.
-- **YAML parse error**: `data/profiles/person_a.yml` got out of sync — restore from git.
+- **YAML parse error**: `data/profiles/person_a.yml` or `person_b.yml` got out of sync — restore from git.

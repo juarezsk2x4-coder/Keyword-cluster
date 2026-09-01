@@ -9,7 +9,7 @@ The user has documented:
 - ADHD on max-dose Venvanse (AM appetite suppression)
 - Anedonia clinically relevant (low motivation for cooking)
 - Sleep variability (hipo + hipersonia)
-- Substance days (post-cocaine appetite shifts, cannabis snack windows)
+- Substance days (post-stimulant appetite shifts, cannabis snack windows)
 - Real-life fatigue from caring for a big house, leading to **delivery + burgers** when planned meals feel like too much
 
 A static meal plan ("today at 12:30 you eat patinho + arroz + brócolis") fails on the days he's tired, has no appetite, just woke up at 14h, or just doesn't want to chew. Result: plan ignored, delivery wins, day's nutrition collapses.
@@ -108,7 +108,7 @@ For every slot, generate 4 versions with these constraints:
 
 ## Special case: substance-day overlay
 
-If the day's log includes `cocaine` or `alcohol >2 units` the night before:
+If the day's log includes `stimulant` or `alcohol >2 units` the night before:
 - `original` card auto-replaced by the **post-substance recovery template** (extra hidratação, Mg, tirosina-rich foods, no álcool, sleep priority).
 - `easy` and `liquid` alternatives still respect the recovery profile.
 - `no_hunger` warns: "Você usou X ontem. Recomendado pelo menos os líquidos de hoje pra repor magnésio e potássio."
@@ -149,7 +149,7 @@ For the **Sunday batch session**, a separate weekly input is asked Saturday nigh
 | `120–180 min` | 7 marmitas variadas + bechamel para a semana + molhos + granola caseira opcional |
 | `<30 min` | Sistema sugere delivery-heavy semana ou marmita pré-pronta de fornecedor (Marmitex saudável Canasvieiras) |
 
-The Sunday-prep input is per-person, but currently only Person A is configured.
+The Sunday-prep input is per-person — each of Person A and Person B answers it independently for their own week.
 
 ## Special case: 3rd floor walk-up shopping logic
 

@@ -5,13 +5,12 @@ import { getDb, ensureMigrated } from "@/lib/db";
 import type { CardState, MealSlot } from "@/lib/types";
 import { estimateNutrition, isAiEnabled, type NutritionEstimate } from "@/lib/nutrition-ai";
 import { generateWeeklyPlan, summarizeMealLogs } from "@/lib/meal-plan-ai";
-import { getMealLogsForPast, saveWeeklyPlan } from "@/lib/query";
-import { loadPersonA } from "@/lib/profile";
+import { getMealLogsForPast, getSubstanceLogsForPast, saveWeeklyPlan } from "@/lib/query";
+import { loadProfile } from "@/lib/profile";
 import { getLang } from "@/lib/lang";
-
-function todayIso() {
-  return new Date().toISOString().slice(0, 10);
-}
+import { getActivePerson } from "@/lib/person";
+import { todayIso } from "@/lib/dates";
+import { logAnthropicError } from "@/lib/anthropic-client";
 
 export async function logMeal(input: {
   date?: string;
@@ -23,18 +22,21 @@ export async function logMeal(input: {
   notes?: string;
 }) {
   await ensureMigrated();
+  const personId = await getActivePerson();
   const date = input.date ?? todayIso();
+  const kcal = typeof input.kcal === "number" && Number.isFinite(input.kcal) ? input.kcal : null;
+  const protein_g = typeof input.protein_g === "number" && Number.isFinite(input.protein_g) ? input.protein_g : null;
   await getDb().execute({
-    sql: `INSERT INTO meal_logs (date, slot, selected_state, actual_label, kcal, protein_g, notes, logged_at)
-          VALUES (?, ?, ?, ?, ?, ?, ?, datetime('now'))
-          ON CONFLICT(date, slot) DO UPDATE SET
+    sql: `INSERT INTO meal_logs (person_id, date, slot, selected_state, actual_label, kcal, protein_g, notes, logged_at)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
+          ON CONFLICT(person_id, date, slot) DO UPDATE SET
             selected_state = excluded.selected_state,
             actual_label = excluded.actual_label,
             kcal = excluded.kcal,
             protein_g = excluded.protein_g,
             notes = excluded.notes,
             logged_at = datetime('now')`,
-    args: [date, input.slot, input.selected_state, input.actual_label ?? null, input.kcal ?? null, input.protein_g ?? null, input.notes ?? null],
+    args: [personId, date, input.slot, input.selected_state, input.actual_label ?? null, kcal, protein_g, input.notes ?? null],
   });
   revalidatePath("/");
   revalidatePath("/history");
@@ -42,33 +44,39 @@ export async function logMeal(input: {
 
 export async function deleteMealLog(date: string, slot: MealSlot) {
   await ensureMigrated();
-  await getDb().execute({ sql: `DELETE FROM meal_logs WHERE date = ? AND slot = ?`, args: [date, slot] });
+  const personId = await getActivePerson();
+  await getDb().execute({
+    sql: `DELETE FROM meal_logs WHERE person_id = ? AND date = ? AND slot = ?`,
+    args: [personId, date, slot],
+  });
   revalidatePath("/");
   revalidatePath("/history");
 }
 
 export async function logSleep(hours: number, date?: string, quality?: number) {
   await ensureMigrated();
+  const personId = await getActivePerson();
   const d = date ?? todayIso();
   await getDb().execute({
-    sql: `INSERT INTO sleep_logs (date, hours, quality, logged_at) VALUES (?, ?, ?, datetime('now'))
-          ON CONFLICT(date) DO UPDATE SET hours = excluded.hours, quality = excluded.quality, logged_at = datetime('now')`,
-    args: [d, hours, quality ?? null],
+    sql: `INSERT INTO sleep_logs (person_id, date, hours, quality, logged_at) VALUES (?, ?, ?, ?, datetime('now'))
+          ON CONFLICT(person_id, date) DO UPDATE SET hours = excluded.hours, quality = excluded.quality, logged_at = datetime('now')`,
+    args: [personId, d, hours, quality ?? null],
   });
   revalidatePath("/");
 }
 
 export async function logSubstance(input: {
   date?: string;
-  substance: "cocaine" | "alcohol" | "cannabis" | "tobacco" | "benzo" | "psychedelic" | "ketamine";
+  substance: "stimulant" | "alcohol" | "cannabis" | "tobacco" | "benzo" | "psychedelic" | "ketamine";
   amount?: string;
   notes?: string;
 }) {
   await ensureMigrated();
+  const personId = await getActivePerson();
   const d = input.date ?? todayIso();
   await getDb().execute({
-    sql: `INSERT INTO substance_logs (date, substance, amount, notes, logged_at) VALUES (?, ?, ?, ?, datetime('now'))`,
-    args: [d, input.substance, input.amount ?? null, input.notes ?? null],
+    sql: `INSERT INTO substance_logs (person_id, date, substance, amount, notes, logged_at) VALUES (?, ?, ?, ?, ?, datetime('now'))`,
+    args: [personId, d, input.substance, input.amount ?? null, input.notes ?? null],
   });
   revalidatePath("/");
   revalidatePath("/history");
@@ -76,36 +84,46 @@ export async function logSubstance(input: {
 
 export async function deleteSubstanceLog(id: number) {
   await ensureMigrated();
-  await getDb().execute({ sql: `DELETE FROM substance_logs WHERE id = ?`, args: [id] });
+  const personId = await getActivePerson();
+  await getDb().execute({
+    sql: `DELETE FROM substance_logs WHERE id = ? AND person_id = ?`,
+    args: [id, personId],
+  });
   revalidatePath("/");
   revalidatePath("/history");
 }
 
 export async function logFatigue(date?: string) {
   await ensureMigrated();
+  const personId = await getActivePerson();
   const d = date ?? todayIso();
   await getDb().execute({
-    sql: `INSERT INTO fatigue_logs (date, logged_at) VALUES (?, datetime('now'))
-          ON CONFLICT(date) DO UPDATE SET logged_at = datetime('now')`,
-    args: [d],
+    sql: `INSERT INTO fatigue_logs (person_id, date, logged_at) VALUES (?, ?, datetime('now'))
+          ON CONFLICT(person_id, date) DO UPDATE SET logged_at = datetime('now')`,
+    args: [personId, d],
   });
   revalidatePath("/");
 }
 
 export async function clearFatigue(date?: string) {
   await ensureMigrated();
+  const personId = await getActivePerson();
   const d = date ?? todayIso();
-  await getDb().execute({ sql: `DELETE FROM fatigue_logs WHERE date = ?`, args: [d] });
+  await getDb().execute({
+    sql: `DELETE FROM fatigue_logs WHERE person_id = ? AND date = ?`,
+    args: [personId, d],
+  });
   revalidatePath("/");
 }
 
 export async function logPrepTime(minutes: number, date?: string) {
   await ensureMigrated();
+  const personId = await getActivePerson();
   const d = date ?? todayIso();
   await getDb().execute({
-    sql: `INSERT INTO prep_time_logs (date, available_minutes, logged_at) VALUES (?, ?, datetime('now'))
-          ON CONFLICT(date) DO UPDATE SET available_minutes = excluded.available_minutes, logged_at = datetime('now')`,
-    args: [d, minutes],
+    sql: `INSERT INTO prep_time_logs (person_id, date, available_minutes, logged_at) VALUES (?, ?, ?, datetime('now'))
+          ON CONFLICT(person_id, date) DO UPDATE SET available_minutes = excluded.available_minutes, logged_at = datetime('now')`,
+    args: [personId, d, minutes],
   });
   revalidatePath("/");
 }
@@ -118,18 +136,23 @@ export async function logBeverage(input: {
   notes?: string;
 }) {
   await ensureMigrated();
+  const personId = await getActivePerson();
   const d = input.date ?? todayIso();
   const consumed = input.consumed_at ?? new Date().toISOString();
   await getDb().execute({
-    sql: `INSERT INTO beverage_logs (date, type, amount, consumed_at, notes, logged_at) VALUES (?, ?, ?, ?, ?, datetime('now'))`,
-    args: [d, input.type, input.amount ?? null, consumed, input.notes ?? null],
+    sql: `INSERT INTO beverage_logs (person_id, date, type, amount, consumed_at, notes, logged_at) VALUES (?, ?, ?, ?, ?, ?, datetime('now'))`,
+    args: [personId, d, input.type, input.amount ?? null, consumed, input.notes ?? null],
   });
   revalidatePath("/");
 }
 
 export async function deleteBeverageLog(id: number) {
   await ensureMigrated();
-  await getDb().execute({ sql: `DELETE FROM beverage_logs WHERE id = ?`, args: [id] });
+  const personId = await getActivePerson();
+  await getDb().execute({
+    sql: `DELETE FROM beverage_logs WHERE id = ? AND person_id = ?`,
+    args: [id, personId],
+  });
   revalidatePath("/");
 }
 
@@ -144,6 +167,7 @@ export async function estimateNutritionAction(
     const data = await estimateNutrition(description, lang);
     return { ok: true, data };
   } catch (err) {
+    logAnthropicError("estimateNutritionAction", err);
     const message = err instanceof Error ? err.message : "unknown_error";
     return { ok: false, error: message };
   }
@@ -161,20 +185,23 @@ export async function generateWeekPlanAction(
   }
   try {
     const lang = await getLang();
-    const profile = loadPersonA();
+    const personId = await getActivePerson();
+    const profile = loadProfile(personId);
     const dayBeforeWeekStart = new Date(weekStart + "T00:00:00");
     dayBeforeWeekStart.setDate(dayBeforeWeekStart.getDate() - 1);
-    const priorLogs = await getMealLogsForPast(
-      dayBeforeWeekStart.toISOString().slice(0, 10),
-      7
-    );
-    const summary = summarizeMealLogs(priorLogs);
+    const dayBeforeWeekStartIso = dayBeforeWeekStart.toISOString().slice(0, 10);
+    const [priorLogs, priorSubstanceLogs] = await Promise.all([
+      getMealLogsForPast(personId, dayBeforeWeekStartIso, 7),
+      getSubstanceLogsForPast(personId, dayBeforeWeekStartIso, 7),
+    ]);
+    const summary = summarizeMealLogs(priorLogs, priorSubstanceLogs);
     const days = await generateWeeklyPlan(profile, summary, weekStart, lang);
-    await saveWeeklyPlan(weekStart, JSON.stringify(days), "ai");
+    await saveWeeklyPlan(personId, weekStart, JSON.stringify(days), "ai");
     revalidatePath("/");
     revalidatePath("/plan");
     return { ok: true, source: "ai", days: days.length };
   } catch (err) {
+    logAnthropicError("generateWeekPlanAction", err);
     const message = err instanceof Error ? err.message : "unknown_error";
     return { ok: false, error: message };
   }
@@ -185,9 +212,10 @@ export async function deleteWeekPlanAction(
 ): Promise<{ ok: true } | { ok: false; error: string }> {
   try {
     await ensureMigrated();
+    const personId = await getActivePerson();
     await getDb().execute({
-      sql: `DELETE FROM weekly_plans WHERE week_start = ?`,
-      args: [weekStart],
+      sql: `DELETE FROM weekly_plans WHERE person_id = ? AND week_start = ?`,
+      args: [personId, weekStart],
     });
     revalidatePath("/");
     revalidatePath("/plan");

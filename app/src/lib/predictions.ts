@@ -1,5 +1,6 @@
 import { getDb, ensureMigrated } from "./db";
-import type { MealLog, SleepLog, SubstanceLog } from "./types";
+import { MEAL_SLOTS } from "./types";
+import type { MealLog, SleepLog, SubstanceLog, PersonId } from "./types";
 
 export interface DayRollup {
   date: string;
@@ -26,7 +27,7 @@ export interface Prediction {
   consecutive_easy_or_liquid: number;
   consecutive_low_kcal_days: number;
   missed_meals_yesterday: string[];
-  cocaine_in_last_3d: boolean;
+  stimulant_in_last_3d: boolean;
   alcohol_in_last_3d: boolean;
   sleep_short_today: boolean;
   sleep_long_today: boolean;
@@ -52,42 +53,50 @@ export interface PredictionInsight {
     | "fatigue_streak"
     | "post_substance"
     | "post_alcohol"
+    | "skate_syncope_risk"
     | "sleep_short"
     | "sleep_long"
     | "on_track";
   payload?: Record<string, string | number>;
 }
 
-const PROTEIN_TARGET = 130;
-const KCAL_TARGET_NORMAL = 2500;
-const KCAL_TARGET_SKATE = 3300;
+export interface PredictionTargets {
+  kcalNormal: number;
+  kcalSkate: number;
+  protein: number;
+}
 
 export async function getPredictions(
+  personId: PersonId,
   todayIso: string,
-  isSkateDayToday: boolean
+  isSkateDayToday: boolean,
+  targets: PredictionTargets
 ): Promise<Prediction> {
   await ensureMigrated();
 
   const dates = lastNDates(todayIso, 3);
   const yesterdayIso = dates[1];
+  const PROTEIN_TARGET = targets.protein;
+  const KCAL_TARGET_NORMAL = targets.kcalNormal;
+  const KCAL_TARGET_SKATE = targets.kcalSkate;
 
   const db = getDb();
   const [mealsResp, sleepResp, subsResp, fatigueResp] = await Promise.all([
     db.execute({
-      sql: `SELECT * FROM meal_logs WHERE date IN (?, ?, ?) ORDER BY date DESC, slot ASC`,
-      args: dates as [string, string, string],
+      sql: `SELECT * FROM meal_logs WHERE person_id = ? AND date IN (?, ?, ?) ORDER BY date DESC, slot ASC`,
+      args: [personId, ...dates] as [string, string, string, string],
     }),
     db.execute({
-      sql: `SELECT * FROM sleep_logs WHERE date IN (?, ?, ?)`,
-      args: dates as [string, string, string],
+      sql: `SELECT * FROM sleep_logs WHERE person_id = ? AND date IN (?, ?, ?)`,
+      args: [personId, ...dates] as [string, string, string, string],
     }),
     db.execute({
-      sql: `SELECT * FROM substance_logs WHERE date IN (?, ?, ?)`,
-      args: dates as [string, string, string],
+      sql: `SELECT * FROM substance_logs WHERE person_id = ? AND date IN (?, ?, ?)`,
+      args: [personId, ...dates] as [string, string, string, string],
     }),
     db.execute({
-      sql: `SELECT * FROM fatigue_logs WHERE date IN (?, ?, ?)`,
-      args: dates as [string, string, string],
+      sql: `SELECT * FROM fatigue_logs WHERE person_id = ? AND date IN (?, ?, ?)`,
+      args: [personId, ...dates] as [string, string, string, string],
     }),
   ]);
 
@@ -96,7 +105,7 @@ export async function getPredictions(
   const subs = subsResp.rows as unknown as SubstanceLog[];
   const fatigues = fatigueResp.rows as unknown as { date: string }[];
 
-  const ALL_SLOTS = ["cafe_da_manha", "lanche_manha", "almoco", "lanche_tarde", "jantar", "snack_noturno"];
+  const ALL_SLOTS = MEAL_SLOTS;
 
   const rollups: DayRollup[] = dates.map((d) => {
     const dayMeals = meals.filter((m) => m.date === d);
@@ -126,11 +135,13 @@ export async function getPredictions(
 
   const kcalTargetToday = isSkateDayToday ? KCAL_TARGET_SKATE : KCAL_TARGET_NORMAL;
   const proteinTarget = PROTEIN_TARGET;
+  // Guard against an unfilled profile (targets not yet set to real numbers).
+  const hasValidTargets = KCAL_TARGET_NORMAL > 0 && proteinTarget > 0;
 
-  const kcal_deficit_pct = daysWithData > 0
+  const kcal_deficit_pct = daysWithData > 0 && hasValidTargets
     ? Math.round(((avg_kcal - KCAL_TARGET_NORMAL) / KCAL_TARGET_NORMAL) * 100)
     : 0;
-  const protein_deficit_pct = daysWithData > 0
+  const protein_deficit_pct = daysWithData > 0 && hasValidTargets
     ? Math.round(((avg_protein - proteinTarget) / proteinTarget) * 100)
     : 0;
 
@@ -146,13 +157,24 @@ export async function getPredictions(
 
   // Substance / sleep flags
   const yesterday = rollups[1];
-  const cocaine_in_last_3d = past.some((r) => r.substances.includes("cocaine"));
+  const stimulant_in_last_3d = past.some((r) => r.substances.includes("stimulant"));
   const alcohol_in_last_3d = past.some((r) => r.substances.includes("alcohol"));
   const today = rollups[0];
   const sleep_short_today = today.sleep_hours !== null && today.sleep_hours < 5;
   const sleep_long_today = today.sleep_hours !== null && today.sleep_hours >= 9;
 
-  const missed_meals_yesterday = yesterday.missed_slots;
+  // Don't count AM slots as "missed" for alerting when yesterday was a
+  // documented long-sleep (hypersonia) morning — sleeping through
+  // cafe_da_manha/lanche_manha on a 9h+ night is an explained, expected
+  // pattern (see the sleep overlay elsewhere in this file), not neglect
+  // that should surface as a warning. The slots still count as "not eaten"
+  // for kcal/macro purposes; this only changes whether they trigger the
+  // missed_meals insight.
+  const yesterdaySleptLong = yesterday.sleep_hours !== null && yesterday.sleep_hours >= 9;
+  const AM_SLOTS = ["cafe_da_manha", "lanche_manha"];
+  const missed_meals_yesterday = yesterdaySleptLong
+    ? yesterday.missed_slots.filter((s) => !AM_SLOTS.includes(s))
+    : yesterday.missed_slots;
 
   // Compute today's adjustments
   let protein_boost_g = 0;
@@ -165,11 +187,19 @@ export async function getPredictions(
   if (kcal_deficit_pct < -15) {
     kcal_boost = Math.round(KCAL_TARGET_NORMAL * Math.abs(kcal_deficit_pct) / 100 / 2);
   }
-  if (cocaine_in_last_3d || alcohol_in_last_3d) {
+  if (stimulant_in_last_3d || alcohol_in_last_3d) {
     hydration_extra_l += 1;
   }
   if (sleep_short_today) {
     hydration_extra_l += 0.5;
+  }
+  // Recent stimulant use going into a hard skate day is exactly the
+  // collision the profile's own notes flag as highest syncope risk
+  // (depleted Mg/electrolytes + prior dehydration + accumulated cardiac
+  // load). Extra hydration on top of the general post-substance bump.
+  const skate_syncope_risk = isSkateDayToday && stimulant_in_last_3d;
+  if (skate_syncope_risk) {
+    hydration_extra_l += 1;
   }
 
   // Build insights
@@ -217,11 +247,14 @@ export async function getPredictions(
       payload: { days: fatigue_streak },
     });
   }
-  if (yesterday.substances.includes("cocaine")) {
+  if (yesterday.substances.includes("stimulant")) {
     insights.push({ severity: "alert", key: "post_substance" });
   }
   if (yesterday.substances.includes("alcohol")) {
     insights.push({ severity: "info", key: "post_alcohol" });
+  }
+  if (skate_syncope_risk) {
+    insights.push({ severity: "alert", key: "skate_syncope_risk" });
   }
   if (sleep_short_today) {
     insights.push({
@@ -252,7 +285,7 @@ export async function getPredictions(
     consecutive_easy_or_liquid,
     consecutive_low_kcal_days,
     missed_meals_yesterday,
-    cocaine_in_last_3d,
+    stimulant_in_last_3d,
     alcohol_in_last_3d,
     sleep_short_today,
     sleep_long_today,
