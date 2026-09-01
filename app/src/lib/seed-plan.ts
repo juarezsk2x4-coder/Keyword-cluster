@@ -394,6 +394,120 @@ const BATATA_DOCE_PATINHO = v({
   notes: "Fallback pré-pronto se a fase de frango reverter. Easy: batch já feito, só montar.",
 });
 
+// The five recipes below come from Dra. Schlindwein's "Organização de
+// Hábitos" doc (14/08/2026) — practical lunch/dinner ideas (sopas de
+// lentilha, quinoa bowls, "Rap 10" wraps, homus, hambúrguer caseiro) and a
+// vegan-shake backup. Wired into specific days below rather than left as
+// notes-only, so they're actually part of the served week.
+const SOPA_LENTILHA = v({
+  label: "Sopa de lentilha com legumes + frango desfiado + cúrcuma",
+  ingredients: [
+    "lentilha vermelha 150g (seca)",
+    "frango desfiado 100g (do batch dominical)",
+    "cenoura em cubos 1/2 xícara",
+    "cebola roxa 1/4",
+    "alho 2 dentes",
+    "cúrcuma + pimenta-do-reino a gosto",
+    "caldo de legumes caseiro 400ml",
+    "limão 1/2",
+  ],
+  prep_minutes: 15,
+  kcal: 580,
+  protein_g: 36,
+  carbs_g: 58,
+  fat_g: 18,
+  prep_steps: [
+    "Refogue cebola + alho, junte lentilha + caldo, cozinhe até macia (~15min).",
+    "Junte frango desfiado + cúrcuma + pimenta, aqueça.",
+    "Sirva com limão espremido.",
+  ],
+  notes: "Sopa de lentilha da nutricionista. Sem tomate.",
+});
+
+const BOWL_QUINOA_VEGETARIANO = v({
+  label: "Bowl vegetariano: quinoa + grão-de-bico + vegetais assados + homus + ovo cozido",
+  ingredients: [
+    "quinoa cozida 1 xícara",
+    "grão-de-bico cozido 100g",
+    "abobrinha em cubos assada 1 xícara",
+    "cenoura assada 1/2 xícara",
+    "abacate 1/4",
+    "homus (grão-de-bico + tahine + limão + azeite) 3 colheres sopa",
+    "ovo cozido dura 1 un",
+    "limão 1/2",
+  ],
+  prep_minutes: 15,
+  kcal: 620,
+  protein_g: 34,
+  carbs_g: 62,
+  fat_g: 24,
+  prep_steps: [
+    "Vegetais assados no forno 200°C 20min (pode ser do batch dominical).",
+    "Monte a tigela: quinoa, grão-de-bico, vegetais, abacate, ovo cozido.",
+    "Cubra com homus e esprema limão.",
+  ],
+  notes: "Bowl vegetariano da nutricionista (quinoa + homus). Ovo cozido dura, sem gema mole. Sem tomate.",
+});
+
+const RAP10_PROTEINA = v({
+  label: "Rap 10 com frango ou patinho desfiado + alface + cenoura + homus",
+  ingredients: [
+    "wrap integral (Rap 10) 1 un",
+    "frango ou patinho desfiado 100g (do batch dominical)",
+    "alface 1 punhado",
+    "cenoura ralada 1/2 xícara",
+    "homus 2 colheres sopa",
+    "limão 1/4",
+  ],
+  prep_minutes: 6,
+  kcal: 540,
+  protein_g: 32,
+  carbs_g: 48,
+  fat_g: 18,
+  prep_steps: ["Espalhe o homus no wrap.", "Monte com proteína desfiada + alface + cenoura.", "Enrole e corte ao meio."],
+  notes: "Wrap rápido da nutricionista — usa proteína já desfiada do batch. Sem tomate.",
+});
+
+const HAMBURGUER_CASEIRO = v({
+  label: "Hambúrguer caseiro (patinho ou frango) + pão integral + abacate + picles",
+  ingredients: [
+    "patinho moído magro ou peito de frango moído 150g",
+    "pão integral de hambúrguer 1 un",
+    "abacate em fatias 1/4",
+    "alface 2 folhas",
+    "cebola roxa em fatias finas 1/4",
+    "picles caseiro (sem tomate) a gosto",
+    "azeite + sal + pimenta-do-reino",
+  ],
+  prep_minutes: 18,
+  kcal: 680,
+  protein_g: 42,
+  carbs_g: 62,
+  fat_g: 28,
+  prep_steps: [
+    "Tempere e modele o hambúrguer, grelhe 4min cada lado.",
+    "Monte no pão com abacate, alface, cebola roxa e picles.",
+  ],
+  notes: "Hambúrguer caseiro sugerido pela nutricionista — não é o burger de delivery. Sem tomate.",
+});
+
+const SHAKE_VEGANO_RAKKAU = v({
+  label: "Shake de proteína vegana (Rakkau) + banana + leite vegetal + pasta de amendoim",
+  ingredients: [
+    "proteína vegana em pó (Rakkau) 1 dose",
+    "banana 1 un",
+    "leite vegetal (aveia ou amêndoas) 300ml",
+    "pasta de amendoim 100% 1 colher sopa",
+  ],
+  prep_minutes: 3,
+  kcal: 450,
+  protein_g: 30,
+  carbs_g: 45,
+  fat_g: 14,
+  prep_steps: ["Tudo no liquidificador 60s."],
+  notes: "Opção backup vegana sugerida pela nutricionista — não substitui o smoothie de manga (receita signature dele).",
+});
+
 const MARMITA_BATCH = v({
   label: "Marmita do batch (esquentar 2min) + salada montada + limão",
   ingredients: [
@@ -570,9 +684,9 @@ export function buildWeeklyPlan(weekStartIso: string): DailyPlan[] {
       meals: [
         card("cafe_da_manha", "07:30", SHAKE_MANGA, IOGURTE_GRANOLA, SHAKE_MANGA, KOMBUCHA_BANANA),
         card("lanche_manha", "10:30", IOGURTE_GRANOLA, IOGURTE_GRANOLA, SHAKE_MANGA, KOMBUCHA_BANANA),
-        card("almoco", "12:30", PATINHO_QUINOA, MARMITA_BATCH, SOPA_MISSO, KOMBUCHA_BANANA_CASTANHA),
+        card("almoco", "12:30", SOPA_LENTILHA, MARMITA_BATCH, SOPA_MISSO, KOMBUCHA_BANANA_CASTANHA),
         card("lanche_tarde", "16:00", PAO_ABACATE, SNACK_QUEIJO_MACA, SHAKE_MANGA, IOGURTE_MEL),
-        card("jantar", "20:00", LINGUADO_KIMCHI, MARMITA_BATCH, SHAKE_DENSO, IOGURTE_MEL),
+        card("jantar", "20:00", LINGUADO_KIMCHI, RAP10_PROTEINA, SHAKE_DENSO, IOGURTE_MEL),
         card("snack_noturno", "22:30", SNACK_NOTURNO_PROT, SNACK_QUEIJO_MACA, KOMBUCHA_MEL, KOMBUCHA_MEL),
       ],
     },
@@ -588,7 +702,7 @@ export function buildWeeklyPlan(weekStartIso: string): DailyPlan[] {
         card("lanche_manha", "10:30", IOGURTE_GRANOLA, IOGURTE_GRANOLA, SHAKE_MANGA, KOMBUCHA_BANANA),
         card("almoco", "12:30", FRANGO_CURRY, MARMITA_BATCH, SOPA_MISSO, KOMBUCHA_BANANA_CASTANHA),
         card("lanche_tarde", "16:00", PAO_ABACATE, SNACK_QUEIJO_MACA, SHAKE_MANGA, IOGURTE_MEL),
-        card("jantar", "20:00", POKE_ATUM, POKE_ATUM, SHAKE_DENSO, IOGURTE_MEL),
+        card("jantar", "20:00", BOWL_QUINOA_VEGETARIANO, BOWL_QUINOA_VEGETARIANO, SHAKE_DENSO, IOGURTE_MEL),
         card("snack_noturno", "22:30", SNACK_NOTURNO_PROT, SNACK_QUEIJO_MACA, KOMBUCHA_MEL, KOMBUCHA_MEL),
       ],
     },
@@ -603,7 +717,7 @@ export function buildWeeklyPlan(weekStartIso: string): DailyPlan[] {
         card("cafe_da_manha", "07:30",
           v({ ...SHAKE_MANGA, label: "Shake recovery: manga + gengibre + limão + whey + linhaça + cacau", kcal: 510, protein_g: 36 }),
           IOGURTE_GRANOLA, SHAKE_MANGA, KOMBUCHA_BANANA_CASTANHA),
-        card("lanche_manha", "10:30", IOGURTE_GRANOLA, IOGURTE_GRANOLA, SHAKE_MANGA, KOMBUCHA_BANANA_CASTANHA),
+        card("lanche_manha", "10:30", IOGURTE_GRANOLA, IOGURTE_GRANOLA, SHAKE_VEGANO_RAKKAU, KOMBUCHA_BANANA_CASTANHA),
         card("almoco", "12:30",
           v({ ...PATINHO_QUINOA, label: "Recovery: " + PATINHO_QUINOA.label, notes: "Tirosina + Mg + B6. Pós-estimulante." }),
           MARMITA_BATCH, SOPA_MISSO, KOMBUCHA_BANANA_CASTANHA),
@@ -625,7 +739,7 @@ export function buildWeeklyPlan(weekStartIso: string): DailyPlan[] {
         card("almoco", "12:30", POKE_ATUM, MARMITA_BATCH, SOPA_MISSO, KOMBUCHA_BANANA_CASTANHA),
         card("lanche_tarde", "16:00", PAO_ABACATE, SNACK_QUEIJO_MACA, SHAKE_MANGA, IOGURTE_MEL),
         card("jantar", "20:00",
-          v({ label: "Jantar fora (slot reservado) — escolha poke/sushi/peruano/japonês", ingredients: [], prep_minutes: 0, kcal: 700, protein_g: 40, carbs_g: 70, fat_g: 25, notes: "Delivery aceitável OK. Sem tomate, sem burger." }),
+          HAMBURGUER_CASEIRO,
           MARMITA_BATCH, SHAKE_DENSO, IOGURTE_MEL),
         card("snack_noturno", "22:30", SNACK_NOTURNO_PROT, SNACK_QUEIJO_MACA, KOMBUCHA_MEL, KOMBUCHA_MEL),
       ],
@@ -641,7 +755,7 @@ export function buildWeeklyPlan(weekStartIso: string): DailyPlan[] {
         card("cafe_da_manha", "07:30",
           v({ ...SHAKE_MANGA, label: "Shake recovery sat: manga + gengibre + limão + whey + linhaça + cacau" }),
           IOGURTE_GRANOLA, SHAKE_MANGA, KOMBUCHA_BANANA_CASTANHA),
-        card("lanche_manha", "10:30", IOGURTE_GRANOLA, IOGURTE_GRANOLA, SHAKE_MANGA, KOMBUCHA_BANANA_CASTANHA),
+        card("lanche_manha", "10:30", IOGURTE_GRANOLA, IOGURTE_GRANOLA, SHAKE_VEGANO_RAKKAU, KOMBUCHA_BANANA_CASTANHA),
         card("almoco", "12:30", LINGUADO_KIMCHI, MARMITA_BATCH, SOPA_MISSO, KOMBUCHA_BANANA_CASTANHA),
         card("lanche_tarde", "16:00",
           v({ label: "Pré-skate prep sábado: hidratação + Mg + leve", ingredients: ["água 500ml", "limão", "castanha-do-pará 2", "amêndoas 10g"], prep_minutes: 1, kcal: 180, protein_g: 4, carbs_g: 6, fat_g: 16 }),
