@@ -1,3 +1,4 @@
+import { headers } from "next/headers";
 import { loadProfile } from "@/lib/profile";
 import { getLang } from "@/lib/lang";
 import { getActivePerson } from "@/lib/person";
@@ -9,6 +10,10 @@ export default async function ProfilePage() {
   const lang = await getLang();
   const tr = t(lang);
   const profileFile = `${personId}.yml`;
+
+  const calendarToken = process.env.CALENDAR_FEED_TOKEN;
+  const host = (await headers()).get("host");
+  const calendarUrl = calendarToken && host ? `https://${host}/api/calendar/${personId}?token=${calendarToken}` : null;
 
   return (
     <div className="space-y-4">
@@ -63,6 +68,18 @@ export default async function ProfilePage() {
         <ul className="text-xs text-muted space-y-0.5">
           {p.medical_flags.map((f, i) => <li key={i}>• {f.replace(/_/g, " ")}</li>)}
         </ul>
+      </div>
+
+      <div className="card">
+        <h2 className="label mb-2">{tr.calendar_feed_title}</h2>
+        {calendarUrl ? (
+          <>
+            <p className="text-xs text-muted mb-2">{tr.calendar_feed_hint}</p>
+            <code className="block text-xs text-text bg-surface2 rounded-lg p-2 break-all">{calendarUrl}</code>
+          </>
+        ) : (
+          <p className="text-xs text-muted">{tr.calendar_feed_not_configured}</p>
+        )}
       </div>
 
       <div className="card text-xs text-muted">

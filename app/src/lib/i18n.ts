@@ -92,6 +92,9 @@ interface Dict {
   profile_textures: string;
   profile_dislikes: string;
   profile_medical_flags: string;
+  calendar_feed_title: string;
+  calendar_feed_hint: string;
+  calendar_feed_not_configured: string;
   history_title: (n: number) => string;
   history_empty: string;
   history_kcal_protein: (kcal: number, prot: number, n: number) => string;
@@ -301,6 +304,9 @@ const pt: Dict = {
   profile_textures: "Texturas aversivas",
   profile_dislikes: "Não curte",
   profile_medical_flags: "Flags clínicas",
+  calendar_feed_title: "Calendário (assinatura)",
+  calendar_feed_hint: "Cole esta URL no Google Calendar / Apple Calendar como \"assinar calendário por URL\" — horários das refeições e dias de skate aparecem automaticamente.",
+  calendar_feed_not_configured: "Assinatura de calendário desativada — falta configurar CALENDAR_FEED_TOKEN nas variáveis de ambiente.",
   history_title: (n) => `Histórico (últimos ${n} dia${n === 1 ? "" : "s"})`,
   history_empty: "Nada logado ainda. Comece marcando refeições em Hoje.",
   history_kcal_protein: (kcal, prot, n) => `${kcal} kcal · ${Math.round(prot)}g proteína · ${n} refeição${n === 1 ? "" : "es"}`,
@@ -510,6 +516,9 @@ const en: Dict = {
   profile_textures: "Texture aversions",
   profile_dislikes: "Soft dislikes",
   profile_medical_flags: "Clinical flags",
+  calendar_feed_title: "Calendar subscription",
+  calendar_feed_hint: "Paste this URL into Google Calendar / Apple Calendar as \"subscribe to calendar by URL\" — meal times and skate days show up automatically.",
+  calendar_feed_not_configured: "Calendar subscription disabled — CALENDAR_FEED_TOKEN needs to be set in environment variables.",
   history_title: (n) => `History (last ${n} day${n === 1 ? "" : "s"})`,
   history_empty: "Nothing logged yet. Start by logging meals in Today.",
   history_kcal_protein: (kcal, prot, n) => `${kcal} kcal · ${Math.round(prot)}g protein · ${n} meal${n === 1 ? "" : "s"}`,
