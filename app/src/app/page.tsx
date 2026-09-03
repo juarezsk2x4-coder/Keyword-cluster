@@ -9,6 +9,7 @@ import {
   getPreviousDaySubstances,
   getDayBeverages,
   getDaySupplements,
+  getDayExercises,
 } from "@/lib/query";
 import MealCard from "@/components/MealCard";
 import DayHero from "@/components/DayHero";
@@ -65,7 +66,7 @@ export default async function TodayPage({ searchParams }: PageProps) {
   const resolved = await resolveWeeklyPlan(personId, weekStart);
   const dayPlan = resolved.days.find((d) => d.date === selectedDate) ?? resolved.days[0];
 
-  const [logs, sleep, fatigued, prepMin, totals, daySubs, prevDaySubs, beverages, predictions, weather, supplementLogs] =
+  const [logs, sleep, fatigued, prepMin, totals, daySubs, prevDaySubs, beverages, predictions, weather, supplementLogs, exerciseLogs] =
     await Promise.all([
       getDayMealLogs(personId, selectedDate),
       getDaySleep(personId, selectedDate),
@@ -82,6 +83,7 @@ export default async function TodayPage({ searchParams }: PageProps) {
       }),
       getTodayWeather(profile),
       getDaySupplements(personId, selectedDate),
+      getDayExercises(personId, selectedDate),
     ]);
   const logsByslot = Object.fromEntries(logs.map((l) => [l.slot, l]));
   const hadStimulantYesterday = prevDaySubs.some((s) => s.substance === "stimulant");
@@ -128,6 +130,8 @@ export default async function TodayPage({ searchParams }: PageProps) {
         prepMinutes={prepMin}
         substanceLogs={daySubs}
         beverages={beverages}
+        exercises={profile.loggable_exercises ?? []}
+        exerciseLogs={exerciseLogs}
         lang={lang}
       />
 

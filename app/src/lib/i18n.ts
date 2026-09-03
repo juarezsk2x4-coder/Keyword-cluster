@@ -22,6 +22,9 @@ interface Dict {
   tap_to_remove: string;
   supplements_title: string;
   tap_to_mark_taken: string;
+  exercise_log_title: string;
+  exercise_other_label: string;
+  exercise_other_placeholder: string;
   skate_day: string;
   recovery: string;
   kcal: string;
@@ -92,6 +95,9 @@ interface Dict {
   profile_textures: string;
   profile_dislikes: string;
   profile_medical_flags: string;
+  calendar_feed_title: string;
+  calendar_feed_hint: string;
+  calendar_feed_not_configured: string;
   history_title: (n: number) => string;
   history_empty: string;
   history_kcal_protein: (kcal: number, prot: number, n: number) => string;
@@ -198,6 +204,9 @@ const pt: Dict = {
   tap_to_remove: "Toque pra remover",
   supplements_title: "Vitaminas de hoje",
   tap_to_mark_taken: "Toque pra marcar como tomado",
+  exercise_log_title: "Exercício de hoje",
+  exercise_other_label: "+ Outro",
+  exercise_other_placeholder: "Qual exercício?",
   skate_day: "Dia de skate",
   recovery: "Recuperação",
   kcal: "Kcal",
@@ -301,6 +310,9 @@ const pt: Dict = {
   profile_textures: "Texturas aversivas",
   profile_dislikes: "Não curte",
   profile_medical_flags: "Flags clínicas",
+  calendar_feed_title: "Calendário (assinatura)",
+  calendar_feed_hint: "Cole esta URL no Google Calendar / Apple Calendar como \"assinar calendário por URL\" — horários das refeições e dias de skate aparecem automaticamente.",
+  calendar_feed_not_configured: "Assinatura de calendário desativada — falta configurar CALENDAR_FEED_TOKEN nas variáveis de ambiente.",
   history_title: (n) => `Histórico (últimos ${n} dia${n === 1 ? "" : "s"})`,
   history_empty: "Nada logado ainda. Comece marcando refeições em Hoje.",
   history_kcal_protein: (kcal, prot, n) => `${kcal} kcal · ${Math.round(prot)}g proteína · ${n} refeição${n === 1 ? "" : "es"}`,
@@ -407,6 +419,9 @@ const en: Dict = {
   tap_to_remove: "Tap to remove",
   supplements_title: "Today's supplements",
   tap_to_mark_taken: "Tap to mark as taken",
+  exercise_log_title: "Today's exercise",
+  exercise_other_label: "+ Other",
+  exercise_other_placeholder: "Which exercise?",
   skate_day: "Skate day",
   recovery: "Recovery",
   kcal: "Kcal",
@@ -510,6 +525,9 @@ const en: Dict = {
   profile_textures: "Texture aversions",
   profile_dislikes: "Soft dislikes",
   profile_medical_flags: "Clinical flags",
+  calendar_feed_title: "Calendar subscription",
+  calendar_feed_hint: "Paste this URL into Google Calendar / Apple Calendar as \"subscribe to calendar by URL\" — meal times and skate days show up automatically.",
+  calendar_feed_not_configured: "Calendar subscription disabled — CALENDAR_FEED_TOKEN needs to be set in environment variables.",
   history_title: (n) => `History (last ${n} day${n === 1 ? "" : "s"})`,
   history_empty: "Nothing logged yet. Start by logging meals in Today.",
   history_kcal_protein: (kcal, prot, n) => `${kcal} kcal · ${Math.round(prot)}g protein · ${n} meal${n === 1 ? "" : "s"}`,

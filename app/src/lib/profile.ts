@@ -54,6 +54,7 @@ const PersonProfileSchema = z.object({
     })
     .optional(),
   daily_supplements: stringArray.optional(),
+  loggable_exercises: stringArray.optional(),
 });
 
 function loadFromYaml(profilePath: string): PersonProfile {

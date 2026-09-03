@@ -92,17 +92,6 @@ activity:
     typical_time: morning
     intensity: hard
     estimated_kcal_per_session: 1300
-  - type: caminhada
-    days_per_week: FILL_IN         # reset 2026-09 — predates the Mon-Fri schedule change, not re-verified since
-    minutes_per_session: FILL_IN
-    typical_time: FILL_IN
-    intensity: FILL_IN
-  - type: racing_sim_direct_drive
-    days_per_week: FILL_IN         # reset 2026-09 — predates the Mon-Fri schedule change, not re-verified since
-    minutes_per_session: FILL_IN
-    typical_time: FILL_IN
-    intensity: FILL_IN
-    notes: FILL_IN
   - type: pilates
     days_per_week: "2-3"
     typical_time: FILL_IN
@@ -168,19 +157,23 @@ substances:
   # day, not by any assumption stored here — that was already true before
   # this reset (plan_strategy: log_driven, kept below), this just removes
   # the stale static snapshot that no longer reflects reality.
+  # Update 2026-09: confirmed occasional/sparing possible use, no fixed
+  # pattern — not the regular phase described before the reset, but not
+  # nothing either. Amount/multi-day/context specifics genuinely weren't
+  # given, so those stay FILL_IN rather than guessed.
   stimulant:
-    current_status: FILL_IN
-    pattern: FILL_IN
-    current_phase: FILL_IN
-    typical_use_days: FILL_IN
+    current_status: occasional_sparing_use
+    pattern: sparing_no_fixed_schedule
+    current_phase: inactive_between_uses
+    typical_use_days: not_applicable_no_fixed_pattern
     typical_amount_grams_per_use: FILL_IN
     use_can_extend_multi_day: FILL_IN
-    purchase_frequency_when_active: FILL_IN
+    purchase_frequency_when_active: not_applicable_no_fixed_pattern
     contexts: FILL_IN
-    intent: FILL_IN
+    intent: maintaining_low_sparing_use
     historical_severe_use: 2024_2025_chronic_binge_period   # kept — historical record, not a current-state assumption
     plan_strategy: log_driven                        # unchanged — system reacts to actual logs, not a fixed pattern
-    skate_collision_risk: FILL_IN                     # was a static HIGH tied to the old fixed pattern + old Sun skate anchor; real-time risk is now assessed by lib/predictions.ts's skate_syncope_risk insight instead
+    skate_collision_risk: assessed_live_via_predictions_ts  # closed out — superseded by the real-time skate_syncope_risk insight, not still-TBD
   psychedelics:
     lsd: { frequency: rare, status: enjoys_uses_sparingly }
     psilocibina_cogumelos: { frequency: rare, status: enjoys_uses_sparingly }
@@ -501,6 +494,15 @@ daily_supplements:
   - "B Complex (magnésio)"
   - "Sany D 2.000 UI"
   - "Multivitamínico"
+
+# Drives the home-page daily exercise log (app/src/components/
+# ExercisePanel.tsx) — same pattern as daily_supplements above: simple
+# labels only, kept in sync by hand with the `activity` block, plus a
+# free-text "other" option the app adds automatically (not listed here).
+loggable_exercises:
+  - "Skate"
+  - "Pilates"
+  - "Musculação"
 
 # Drives which AI prompt / seed plan this profile gets (see lib/meal-plan-ai.ts,
 # lib/seed-plan.ts) — data-driven, not hardcoded to this file's person_id, so

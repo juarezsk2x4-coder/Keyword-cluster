@@ -2,10 +2,11 @@
 
 import { useTransition } from "react";
 import { logSleep, logFatigue, clearFatigue, logPrepTime, logSubstance, deleteSubstanceLog } from "@/app/actions";
-import type { SubstanceLog, BeverageLog } from "@/lib/types";
+import type { SubstanceLog, BeverageLog, ExerciseLog } from "@/lib/types";
 import type { Lang } from "@/lib/i18n";
 import { t } from "@/lib/i18n";
 import BeveragePanel from "./BeveragePanel";
+import ExercisePanel from "./ExercisePanel";
 
 interface Props {
   date: string;
@@ -14,6 +15,8 @@ interface Props {
   prepMinutes: number | null;
   substanceLogs: SubstanceLog[];
   beverages: BeverageLog[];
+  exercises: string[];
+  exerciseLogs: ExerciseLog[];
   lang: Lang;
 }
 
@@ -58,6 +61,8 @@ export default function DayHeader(props: Props) {
           </div>
         </div>
       </div>
+
+      <ExercisePanel date={props.date} exercises={props.exercises} logs={props.exerciseLogs} lang={props.lang} />
 
       <div className="card">
         <div className="flex items-center justify-between mb-2 gap-2">

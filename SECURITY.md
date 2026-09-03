@@ -45,6 +45,12 @@ Como manter `ANTHROPIC_API_KEY`, `TURSO_AUTH_TOKEN` e qualquer credencial fora d
 3. Generate novo
 4. Vercel → atualiza `TURSO_AUTH_TOKEN` → Redeploy
 
+### Calendar Feed Token
+Menor risco que os dois acima — não é uma chave de terceiros, é uma string que você mesmo escolhe (`openssl rand -hex 32`), e só protege a assinatura de calendário (horários de refeição + dias de skate, sem dado clínico). Ainda assim, se a URL da página `/profile` for compartilhada sem querer:
+1. Gera um novo valor (`openssl rand -hex 32`)
+2. Vercel → atualiza `CALENDAR_FEED_TOKEN` → Redeploy
+3. A URL antiga (com o token velho) para de funcionar; a nova URL aparece automaticamente na página `/profile`.
+
 ## Push Protection no GitHub (gratuito em repos públicos)
 
 Se o teu repo for **público**, ative o GitHub Push Protection — ele bloqueia commits que contêm chaves de provedores conhecidos (Anthropic incluso) **antes** de ir pra branch:
