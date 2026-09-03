@@ -182,6 +182,34 @@ export async function deleteSupplementLog(supplementName: string, date?: string)
   revalidatePath("/");
 }
 
+// Presets (skate/pilates/musculação, from profile.loggable_exercises) are
+// idempotent per day like supplements, via the DB's UNIQUE constraint —
+// but exercise_type "other" allows several distinct custom_label entries
+// on the same day, which a single (person_id, date, exercise_type) key
+// couldn't. custom_label defaults to "" for presets, keeping the same
+// one-row-per-day behavior there.
+export async function logExercise(exerciseType: string, date?: string, customLabel?: string) {
+  await ensureMigrated();
+  const personId = await getActivePerson();
+  const d = date ?? todayIso();
+  await getDb().execute({
+    sql: `INSERT INTO exercise_logs (person_id, date, exercise_type, custom_label, logged_at) VALUES (?, ?, ?, ?, datetime('now'))
+          ON CONFLICT(person_id, date, exercise_type, custom_label) DO NOTHING`,
+    args: [personId, d, exerciseType, customLabel ?? ""],
+  });
+  revalidatePath("/");
+}
+
+export async function deleteExerciseLog(id: number) {
+  await ensureMigrated();
+  const personId = await getActivePerson();
+  await getDb().execute({
+    sql: `DELETE FROM exercise_logs WHERE id = ? AND person_id = ?`,
+    args: [id, personId],
+  });
+  revalidatePath("/");
+}
+
 export async function estimateNutritionAction(
   description: string,
   lang: "pt" | "en"

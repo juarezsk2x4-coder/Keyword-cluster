@@ -114,6 +114,10 @@ export interface PersonProfile {
   // app at all — this one is, so it's the one to keep in sync when the
   // regimen changes).
   daily_supplements?: string[];
+  // Opt-in, same pattern: preset labels for the daily exercise log's tap
+  // chips. The app adds a fixed "other" free-text option on top of this
+  // list — not listed here since it isn't a profile-specific label.
+  loggable_exercises?: string[];
 }
 
 export interface WeatherSummary {
@@ -189,5 +193,14 @@ export interface SupplementLog {
   person_id?: PersonId;
   date: string;
   supplement_name: string;   // matches an entry in profile.daily_supplements
+  logged_at: string;
+}
+
+export interface ExerciseLog {
+  id?: number;
+  person_id?: PersonId;
+  date: string;
+  exercise_type: string;     // matches an entry in profile.loggable_exercises, or "other"
+  custom_label?: string;     // only meaningful when exercise_type === "other"
   logged_at: string;
 }

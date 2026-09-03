@@ -1,5 +1,5 @@
 import { getDb, ensureMigrated } from "./db";
-import type { MealLog, SleepLog, SubstanceLog, BeverageLog, SupplementLog, PersonId } from "./types";
+import type { MealLog, SleepLog, SubstanceLog, BeverageLog, SupplementLog, ExerciseLog, PersonId } from "./types";
 
 export async function getDayBeverages(personId: PersonId, date: string): Promise<BeverageLog[]> {
   await ensureMigrated();
@@ -17,6 +17,26 @@ export async function getDaySupplements(personId: PersonId, date: string): Promi
     args: [personId, date],
   });
   return r.rows as unknown as SupplementLog[];
+}
+
+export async function getDayExercises(personId: PersonId, date: string): Promise<ExerciseLog[]> {
+  await ensureMigrated();
+  const r = await getDb().execute({
+    sql: `SELECT * FROM exercise_logs WHERE person_id = ? AND date = ? ORDER BY logged_at ASC`,
+    args: [personId, date],
+  });
+  // libSQL Row objects aren't plain JS objects (they support both
+  // index and named access via getters) — mapping to a literal here
+  // is what actually makes this passable from a Server Component to
+  // the client ExercisePanel, not just the `as unknown as` cast below.
+  return r.rows.map((row) => ({
+    id: row.id as number,
+    person_id: row.person_id as PersonId,
+    date: row.date as string,
+    exercise_type: row.exercise_type as string,
+    custom_label: (row.custom_label as string) || undefined,
+    logged_at: row.logged_at as string,
+  }));
 }
 
 export async function getDayMealLogs(personId: PersonId, date: string): Promise<MealLog[]> {

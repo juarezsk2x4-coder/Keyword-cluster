@@ -131,6 +131,16 @@ async function runMigration() {
       logged_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
       UNIQUE(person_id, date, supplement_name)
     );
+
+    CREATE TABLE IF NOT EXISTS exercise_logs (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      person_id TEXT NOT NULL DEFAULT 'person_a',
+      date TEXT NOT NULL,
+      exercise_type TEXT NOT NULL,
+      custom_label TEXT NOT NULL DEFAULT '',
+      logged_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      UNIQUE(person_id, date, exercise_type, custom_label)
+    );
   `);
 
   // Must run before index creation: on a pre-existing (legacy) DB, the indexes
@@ -143,6 +153,7 @@ async function runMigration() {
     CREATE INDEX IF NOT EXISTS idx_substance_logs_date ON substance_logs(person_id, date);
     CREATE INDEX IF NOT EXISTS idx_beverage_logs_date ON beverage_logs(person_id, date);
     CREATE INDEX IF NOT EXISTS idx_supplement_logs_date ON supplement_logs(person_id, date);
+    CREATE INDEX IF NOT EXISTS idx_exercise_logs_date ON exercise_logs(person_id, date);
   `);
 
   initialized = true;

@@ -495,6 +495,15 @@ daily_supplements:
   - "Sany D 2.000 UI"
   - "Multivitamínico"
 
+# Drives the home-page daily exercise log (app/src/components/
+# ExercisePanel.tsx) — same pattern as daily_supplements above: simple
+# labels only, kept in sync by hand with the `activity` block, plus a
+# free-text "other" option the app adds automatically (not listed here).
+loggable_exercises:
+  - "Skate"
+  - "Pilates"
+  - "Musculação"
+
 # Drives which AI prompt / seed plan this profile gets (see lib/meal-plan-ai.ts,
 # lib/seed-plan.ts) — data-driven, not hardcoded to this file's person_id, so
 # a third profile could set this too without any code change.

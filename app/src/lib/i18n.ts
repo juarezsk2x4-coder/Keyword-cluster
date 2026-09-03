@@ -22,6 +22,9 @@ interface Dict {
   tap_to_remove: string;
   supplements_title: string;
   tap_to_mark_taken: string;
+  exercise_log_title: string;
+  exercise_other_label: string;
+  exercise_other_placeholder: string;
   skate_day: string;
   recovery: string;
   kcal: string;
@@ -201,6 +204,9 @@ const pt: Dict = {
   tap_to_remove: "Toque pra remover",
   supplements_title: "Vitaminas de hoje",
   tap_to_mark_taken: "Toque pra marcar como tomado",
+  exercise_log_title: "Exercício de hoje",
+  exercise_other_label: "+ Outro",
+  exercise_other_placeholder: "Qual exercício?",
   skate_day: "Dia de skate",
   recovery: "Recuperação",
   kcal: "Kcal",
@@ -413,6 +419,9 @@ const en: Dict = {
   tap_to_remove: "Tap to remove",
   supplements_title: "Today's supplements",
   tap_to_mark_taken: "Tap to mark as taken",
+  exercise_log_title: "Today's exercise",
+  exercise_other_label: "+ Other",
+  exercise_other_placeholder: "Which exercise?",
   skate_day: "Skate day",
   recovery: "Recovery",
   kcal: "Kcal",
