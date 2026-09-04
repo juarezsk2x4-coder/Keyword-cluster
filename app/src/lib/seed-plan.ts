@@ -1,6 +1,7 @@
 import type { DailyPlan, MealCard, MealVersion, MealSlot, PersonId, PersonProfile } from "./types";
 import { getStoredWeeklyPlan } from "./query";
 import { loadProfile } from "./profile";
+import { getSundayOfWeek } from "./dates";
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
@@ -571,14 +572,17 @@ const ELETROLITO_CASEIRO = v({
 
 // ─── Targets ──────────────────────────────────────────────────────────────────
 
-const SKATE_DAY = {
+// Exported so meal-plan-ai.ts's prompt text can cite these same numbers
+// instead of carrying its own hardcoded duplicate that could silently
+// drift out of sync.
+export const SKATE_DAY = {
   kcal_target: 3300,
   protein_g_target: 130,
   carb_g_target: 390,
   fat_g_target: 95,
 };
 
-const NORMAL_DAY = {
+export const NORMAL_DAY = {
   kcal_target: 2500,
   protein_g_target: 130,
   carb_g_target: 225,
@@ -782,10 +786,21 @@ const GENERIC_MEALS: Record<MealSlot, { time: string; kcalShare: number; label: 
   snack_noturno: { time: "22:00", kcalShare: 0.05, label: "Iogurte + mel" },
 };
 
+// Used only when nutrition_targets is still the literal "FILL_IN" placeholder
+// (a profile nobody has filled in yet — see profile.ts) — modest, clearly
+// generic adult-recomp numbers so the starter plan below renders usable
+// kcal/protein figures instead of "NaN kcal" on every meal card. Not meant
+// as a real recommendation; every generated meal already carries a "starter
+// template" note pointing at generating an AI plan to personalize.
+const GENERIC_FALLBACK_KCAL = 2200;
+const GENERIC_FALLBACK_PROTEIN = 100;
+
 export function buildGenericSeedPlan(weekStartIso: string, profile: PersonProfile): DailyPlan[] {
   const base = new Date(weekStartIso + "T00:00:00");
-  const kcalTarget = profile.nutrition_targets.total_kcal_target_off_day;
-  const proteinTarget = profile.nutrition_targets.protein_g_per_day;
+  const rawKcal = profile.nutrition_targets.total_kcal_target_off_day;
+  const rawProtein = profile.nutrition_targets.protein_g_per_day;
+  const kcalTarget = typeof rawKcal === "number" && rawKcal > 0 ? rawKcal : GENERIC_FALLBACK_KCAL;
+  const proteinTarget = typeof rawProtein === "number" && rawProtein > 0 ? rawProtein : GENERIC_FALLBACK_PROTEIN;
 
   return Array.from({ length: 7 }, (_, i) => {
     const d = new Date(base);
@@ -842,6 +857,32 @@ export async function resolveWeeklyPlan(personId: PersonId, weekStartIso: string
     return { days: buildWeeklyPlan(weekStartIso), source: "seed" };
   }
   return { days: buildGenericSeedPlan(weekStartIso, profile), source: "seed" };
+}
+
+// What a given date's plan actually budgeted for kcal — the same number
+// the home page shows if you navigate to that date — rather than assuming
+// every day was an "off day". Skate days budget for meaningfully more, and
+// skate days aren't fixed weekdays (weather-opportunistic), so trend code
+// comparing logged intake against a flat number reads a correctly-fueled
+// skate day as overeating. resolveWeeklyPlan is a cheap DB read/local
+// computation (no network call), so calling this once per date is fine.
+// Falls back to the flat off-day target only if that date's plan can't be
+// resolved at all.
+export async function getDayKcalTarget(
+  personId: PersonId,
+  dateIso: string,
+  fallbackNormal: number
+): Promise<number> {
+  try {
+    const resolved = await resolveWeeklyPlan(personId, getSundayOfWeek(dateIso));
+    const day = resolved.days.find((d) => d.date === dateIso);
+    if (day && typeof day.kcal_target === "number" && day.kcal_target > 0) {
+      return day.kcal_target;
+    }
+  } catch {
+    // fall through to the flat fallback below
+  }
+  return fallbackNormal;
 }
 
 // ─── Shopping list (derived from week plan) ───────────────────────────────────

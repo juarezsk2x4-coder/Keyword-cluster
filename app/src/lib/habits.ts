@@ -5,6 +5,7 @@ import {
   getSubstanceLogsForPast,
   getFatigueDatesForPast,
 } from "./query";
+import { getDayKcalTarget } from "./seed-plan";
 import { MEAL_SLOTS } from "./types";
 import type { CardState, MealSlot, PersonId } from "./types";
 
@@ -215,7 +216,19 @@ export async function getHabitRollup(
   // without this, dividing by a zero/invalid target turns every insight
   // into a literal "NaN%" instead of just producing no insight.
   const hasValidTargets = targets.kcal > 0 && targets.protein > 0;
-  const kcalUnderPct = hasValidTargets ? Math.round(((targets.kcal - avgKcal) / targets.kcal) * 100) : 0;
+  // A flat off-day target here would misread a window that includes skate
+  // days (which budget for meaningfully more kcal) as "chronically under
+  // target" — pull each logged day's own planned target instead, same fix
+  // as the home-page predictions. Protein target doesn't vary by day type
+  // in this app, so `targets.protein` alone is still correct.
+  const daysWithMeals = perDay.filter((d) => d.dayMeals.length > 0);
+  const perDayTargets = hasValidTargets
+    ? await Promise.all(daysWithMeals.map((d) => getDayKcalTarget(personId, d.date, targets.kcal)))
+    : [];
+  const avgTargetKcal = perDayTargets.length > 0
+    ? perDayTargets.reduce((a, b) => a + b, 0) / perDayTargets.length
+    : targets.kcal;
+  const kcalUnderPct = hasValidTargets ? Math.round(((avgTargetKcal - avgKcal) / avgTargetKcal) * 100) : 0;
   const proteinUnderPct = hasValidTargets ? Math.round(((targets.protein - avgProtein) / targets.protein) * 100) : 0;
 
   if (kcalUnderPct >= 15 && daysWithData >= 3) {

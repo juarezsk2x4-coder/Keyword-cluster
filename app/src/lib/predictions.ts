@@ -1,6 +1,7 @@
 import { getDb, ensureMigrated } from "./db";
 import { MEAL_SLOTS } from "./types";
 import type { MealLog, SleepLog, SubstanceLog, PersonId } from "./types";
+import { getDayKcalTarget } from "./seed-plan";
 
 export interface DayRollup {
   date: string;
@@ -22,10 +23,9 @@ export interface Prediction {
   protein_target: number;
 
   // detected patterns
-  kcal_deficit_pct: number;          // negative = under, positive = over (avg vs target)
+  kcal_deficit_pct: number;          // negative = under, positive = over (avg vs each day's own target)
   protein_deficit_pct: number;
   consecutive_easy_or_liquid: number;
-  consecutive_low_kcal_days: number;
   missed_meals_yesterday: string[];
   stimulant_in_last_3d: boolean;
   alcohol_in_last_3d: boolean;
@@ -138,20 +138,35 @@ export async function getPredictions(
   // Guard against an unfilled profile (targets not yet set to real numbers).
   const hasValidTargets = KCAL_TARGET_NORMAL > 0 && proteinTarget > 0;
 
+  // Each past day budgeted a different kcal_target depending on whether it
+  // was a skate day (a schedule/weather thing, not a fixed weekday) — a
+  // flat off-day number here would read a correctly-fueled skate day as
+  // "overeating". Pull each day's OWN planned target instead (same source
+  // dayPlan.kcal_target on the home page uses for that date). Only days
+  // that actually have logged data count, same as avg_kcal above — an
+  // unfilled day's target shouldn't dilute the comparison. Protein target
+  // doesn't vary by day type in this app, so no equivalent is needed there.
+  const pastKcalTargets = hasValidTargets
+    ? await Promise.all(past.map((r) => getDayKcalTarget(personId, r.date, KCAL_TARGET_NORMAL)))
+    : [];
+  const avgTargetKcal = daysWithData > 0
+    ? past.reduce((sum, r, i) => sum + (r.meals_logged > 0 ? pastKcalTargets[i] : 0), 0) / daysWithData
+    : KCAL_TARGET_NORMAL;
+
   const kcal_deficit_pct = daysWithData > 0 && hasValidTargets
-    ? Math.round(((avg_kcal - KCAL_TARGET_NORMAL) / KCAL_TARGET_NORMAL) * 100)
+    ? Math.round(((avg_kcal - avgTargetKcal) / avgTargetKcal) * 100)
     : 0;
   const protein_deficit_pct = daysWithData > 0 && hasValidTargets
     ? Math.round(((avg_protein - proteinTarget) / proteinTarget) * 100)
     : 0;
 
-  // Streak analysis
+  // Streak analysis. The lookback window is only 2 days (yesterday +
+  // day-before), so a ">=3 days" threshold here could never fire — dead
+  // code masquerading as a live warning. Thresholds below are capped to
+  // what a 2-day window can actually produce.
   const consecutive_easy_or_liquid = countConsecutive(past, (r) =>
     r.states_picked.length > 0 &&
     r.states_picked.every((s) => s === "easy" || s === "liquid" || s === "no_hunger")
-  );
-  const consecutive_low_kcal_days = countConsecutive(past, (r) =>
-    r.total_kcal > 0 && r.total_kcal < KCAL_TARGET_NORMAL * 0.7
   );
   const fatigue_streak = countConsecutive(past, (r) => r.was_fatigued);
 
@@ -181,11 +196,14 @@ export async function getPredictions(
   let kcal_boost = 0;
   let hydration_extra_l = 0;
 
-  if (protein_deficit_pct < -10) {
-    protein_boost_g = Math.round(Math.abs(protein_deficit_pct) * 0.5);
+  // Trigger thresholds match the protein_deficit/kcal_deficit insights
+  // below exactly, so a "+Xg protein" / "+X kcal" adjustment never shows
+  // up in the UI without the insight text that explains why.
+  if (protein_deficit_pct <= -15) {
+    protein_boost_g = Math.round(proteinTarget * Math.abs(protein_deficit_pct) / 100 / 2);
   }
-  if (kcal_deficit_pct < -15) {
-    kcal_boost = Math.round(KCAL_TARGET_NORMAL * Math.abs(kcal_deficit_pct) / 100 / 2);
+  if (kcal_deficit_pct <= -20) {
+    kcal_boost = Math.round(kcalTargetToday * Math.abs(kcal_deficit_pct) / 100 / 2);
   }
   if (stimulant_in_last_3d || alcohol_in_last_3d) {
     hydration_extra_l += 1;
@@ -233,7 +251,7 @@ export async function getPredictions(
       payload: { count: missed_meals_yesterday.length },
     });
   }
-  if (consecutive_easy_or_liquid >= 3) {
+  if (consecutive_easy_or_liquid >= 2) {
     insights.push({
       severity: "warning",
       key: "easy_streak",
@@ -247,10 +265,14 @@ export async function getPredictions(
       payload: { days: fatigue_streak },
     });
   }
-  if (yesterday.substances.includes("stimulant")) {
+  // Matches stimulant_in_last_3d/alcohol_in_last_3d exactly (both look back
+  // over the same 2-day window) — previously these only checked yesterday,
+  // so a substance logged the day before yesterday could add hydration_extra_l
+  // with no insight text explaining why.
+  if (stimulant_in_last_3d) {
     insights.push({ severity: "alert", key: "post_substance" });
   }
-  if (yesterday.substances.includes("alcohol")) {
+  if (alcohol_in_last_3d) {
     insights.push({ severity: "info", key: "post_alcohol" });
   }
   if (skate_syncope_risk) {
@@ -283,7 +305,6 @@ export async function getPredictions(
     kcal_deficit_pct,
     protein_deficit_pct,
     consecutive_easy_or_liquid,
-    consecutive_low_kcal_days,
     missed_meals_yesterday,
     stimulant_in_last_3d,
     alcohol_in_last_3d,

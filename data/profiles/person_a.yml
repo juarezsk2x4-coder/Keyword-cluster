@@ -513,11 +513,11 @@ loggable_exercises:
 # Skate is listed in duration_variable_exercises below, so its number here
 # is a kcal-PER-MINUTE rate instead of a flat per-session figure — session
 # length is too variable (20min to 3h+) for one flat number to make sense.
-# 7.2/min = activity[0].estimated_kcal_per_session (1300) ÷
+# 7.22/min = activity[0].estimated_kcal_per_session (1300) ÷
 # activity[0].minutes_per_session (180), i.e. the same overall intensity as
 # before, just scaled by however long that day's session actually ran.
 exercise_kcal_estimates:
-  Skate: 7.2
+  Skate: 7.22
   Pilates: 400
   Musculação: 350
 

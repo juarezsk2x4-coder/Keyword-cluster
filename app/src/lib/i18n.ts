@@ -32,7 +32,6 @@ interface Dict {
   kcal: string;
   protein: string;
   state: Record<CardState, string>;
-  state_desc: Record<CardState, string>;
   slots: Record<MealSlot, string>;
   ate_this: string;
   update_version: string;
@@ -220,12 +219,6 @@ const pt: Dict = {
     easy: "Fácil",
     liquid: "Líquido",
     no_hunger: "Sem fome",
-  },
-  state_desc: {
-    original: "Refeição completa planejada",
-    easy: "Pegar e comer, sem cozinhar",
-    liquid: "Smoothie, shake ou sopa",
-    no_hunger: "Mínimo pra não quebrar a cadeia",
   },
   slots: {
     cafe_da_manha: "Café da manhã",
@@ -437,12 +430,6 @@ const en: Dict = {
     easy: "Easy",
     liquid: "Liquid",
     no_hunger: "Not hungry",
-  },
-  state_desc: {
-    original: "Full planned meal",
-    easy: "Grab-and-eat, no cooking",
-    liquid: "Smoothie, shake, or soup",
-    no_hunger: "Minimum to keep the chain unbroken",
   },
   slots: {
     cafe_da_manha: "Breakfast",
