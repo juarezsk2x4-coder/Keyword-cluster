@@ -1,13 +1,69 @@
 import { getDb, ensureMigrated } from "./db";
 import type { MealLog, SleepLog, SubstanceLog, BeverageLog, SupplementLog, ExerciseLog, PersonId } from "./types";
 
+// libSQL Row objects aren't plain JS objects — they support both index and
+// named access via getters on the prototype, which Next.js's Server->Client
+// boundary rejects ("Only plain objects can be passed...") the moment one
+// reaches a "use client" component as a prop, even though `as unknown as T`
+// satisfies TypeScript. Every function below whose result crosses that
+// boundary maps rows to literal objects explicitly instead of casting.
+function toPlainBeverageLog(row: Record<string, unknown>): BeverageLog {
+  return {
+    id: row.id as number,
+    person_id: row.person_id as PersonId,
+    date: row.date as string,
+    type: row.type as BeverageLog["type"],
+    amount: (row.amount as string) ?? undefined,
+    consumed_at: row.consumed_at as string,
+    notes: (row.notes as string) ?? undefined,
+    logged_at: row.logged_at as string,
+  };
+}
+
+function toPlainSupplementLog(row: Record<string, unknown>): SupplementLog {
+  return {
+    id: row.id as number,
+    person_id: row.person_id as PersonId,
+    date: row.date as string,
+    supplement_name: row.supplement_name as string,
+    logged_at: row.logged_at as string,
+  };
+}
+
+function toPlainMealLog(row: Record<string, unknown>): MealLog {
+  return {
+    id: row.id as number,
+    person_id: row.person_id as PersonId,
+    date: row.date as string,
+    slot: row.slot as MealLog["slot"],
+    selected_state: row.selected_state as MealLog["selected_state"],
+    actual_label: (row.actual_label as string) ?? undefined,
+    kcal: (row.kcal as number) ?? undefined,
+    protein_g: (row.protein_g as number) ?? undefined,
+    notes: (row.notes as string) ?? undefined,
+    logged_at: row.logged_at as string,
+  };
+}
+
+function toPlainSubstanceLog(row: Record<string, unknown>): SubstanceLog {
+  return {
+    id: row.id as number,
+    person_id: row.person_id as PersonId,
+    date: row.date as string,
+    substance: row.substance as SubstanceLog["substance"],
+    amount: (row.amount as string) ?? undefined,
+    notes: (row.notes as string) ?? undefined,
+    logged_at: row.logged_at as string,
+  };
+}
+
 export async function getDayBeverages(personId: PersonId, date: string): Promise<BeverageLog[]> {
   await ensureMigrated();
   const r = await getDb().execute({
     sql: `SELECT * FROM beverage_logs WHERE person_id = ? AND date = ? ORDER BY consumed_at DESC`,
     args: [personId, date],
   });
-  return r.rows as unknown as BeverageLog[];
+  return r.rows.map((row) => toPlainBeverageLog(row as unknown as Record<string, unknown>));
 }
 
 export async function getDaySupplements(personId: PersonId, date: string): Promise<SupplementLog[]> {
@@ -16,7 +72,7 @@ export async function getDaySupplements(personId: PersonId, date: string): Promi
     sql: `SELECT * FROM supplement_logs WHERE person_id = ? AND date = ? ORDER BY logged_at ASC`,
     args: [personId, date],
   });
-  return r.rows as unknown as SupplementLog[];
+  return r.rows.map((row) => toPlainSupplementLog(row as unknown as Record<string, unknown>));
 }
 
 export async function getDayExercises(personId: PersonId, date: string): Promise<ExerciseLog[]> {
@@ -25,10 +81,6 @@ export async function getDayExercises(personId: PersonId, date: string): Promise
     sql: `SELECT * FROM exercise_logs WHERE person_id = ? AND date = ? ORDER BY logged_at ASC`,
     args: [personId, date],
   });
-  // libSQL Row objects aren't plain JS objects (they support both
-  // index and named access via getters) — mapping to a literal here
-  // is what actually makes this passable from a Server Component to
-  // the client ExercisePanel, not just the `as unknown as` cast below.
   return r.rows.map((row) => ({
     id: row.id as number,
     person_id: row.person_id as PersonId,
@@ -45,7 +97,7 @@ export async function getDayMealLogs(personId: PersonId, date: string): Promise<
     sql: `SELECT * FROM meal_logs WHERE person_id = ? AND date = ? ORDER BY slot`,
     args: [personId, date],
   });
-  return r.rows as unknown as MealLog[];
+  return r.rows.map((row) => toPlainMealLog(row as unknown as Record<string, unknown>));
 }
 
 export async function getDaySleep(personId: PersonId, date: string): Promise<SleepLog | undefined> {
@@ -63,7 +115,7 @@ export async function getDaySubstances(personId: PersonId, date: string): Promis
     sql: `SELECT * FROM substance_logs WHERE person_id = ? AND date = ? ORDER BY logged_at DESC`,
     args: [personId, date],
   });
-  return r.rows as unknown as SubstanceLog[];
+  return r.rows.map((row) => toPlainSubstanceLog(row as unknown as Record<string, unknown>));
 }
 
 export async function getPreviousDaySubstances(personId: PersonId, date: string): Promise<SubstanceLog[]> {

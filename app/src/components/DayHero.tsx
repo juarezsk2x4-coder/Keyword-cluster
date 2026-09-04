@@ -11,6 +11,7 @@ interface Props {
   proteinLogged: number;
   hadStimulantYesterday: boolean;
   isFatigued: boolean;
+  exerciseKcalBonus?: number;
   lang: Lang;
 }
 
@@ -74,6 +75,9 @@ export default function DayHero(props: Props) {
           <div className="h-1.5 bg-surface2 rounded-full overflow-hidden">
             <div className="h-full bg-success rounded-full" style={{ width: `${protPct}%` }} />
           </div>
+          {!!props.exerciseKcalBonus && (
+            <div className="text-xs text-success mt-2">{tr.exercise_kcal_bonus(props.exerciseKcalBonus)}</div>
+          )}
         </div>
       </div>
     </div>

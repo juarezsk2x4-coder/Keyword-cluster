@@ -91,6 +91,14 @@ export default async function TodayPage({ searchParams }: PageProps) {
   // plan — browsing a past/future date's card shouldn't imply the weather
   // shown (always "today's") applies to that other date's skate status.
   const isGoodSkateDay = selectedDate === todayIso() && weather?.condition === "clear" && dayPlan.is_skate_day;
+  // Logging an exercise otherwise had no effect on the shown target at
+  // all — this is what actually connects the exercise log to calorie
+  // needs. "Other" (free-text) entries don't have an estimate to add.
+  const exerciseKcalBonus = exerciseLogs.reduce(
+    (sum, log) => sum + (profile.exercise_kcal_estimates?.[log.exercise_type] ?? 0),
+    0
+  );
+  const adjustedKcalTarget = dayPlan.kcal_target + exerciseKcalBonus;
 
   return (
     <div>
@@ -102,12 +110,13 @@ export default async function TodayPage({ searchParams }: PageProps) {
         date={dayPlan.date}
         dayName={dayPlan.day_of_week}
         isSkateDay={dayPlan.is_skate_day}
-        kcalTarget={dayPlan.kcal_target}
+        kcalTarget={adjustedKcalTarget}
         kcalLogged={totals.kcal}
         proteinTarget={dayPlan.protein_g_target}
         proteinLogged={totals.protein_g}
         hadStimulantYesterday={hadStimulantYesterday}
         isFatigued={fatigued}
+        exerciseKcalBonus={exerciseKcalBonus}
         lang={lang}
       />
 

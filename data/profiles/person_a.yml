@@ -504,6 +504,17 @@ loggable_exercises:
   - "Pilates"
   - "Musculação"
 
+# Kcal burned per session, keyed by the labels above (plus "Skate" reusing
+# the same number as activity[0].estimated_kcal_per_session — kept in sync
+# by hand). Logging one of these for a day adds this to that day's kcal
+# target on the home page. Pilates set higher than a generic estimate —
+# the instructor pushes the intensity up for him specifically, not a
+# typical class. Adjust freely, these are estimates, not measurements.
+exercise_kcal_estimates:
+  Skate: 1300
+  Pilates: 400
+  Musculação: 350
+
 # Drives which AI prompt / seed plan this profile gets (see lib/meal-plan-ai.ts,
 # lib/seed-plan.ts) — data-driven, not hardcoded to this file's person_id, so
 # a third profile could set this too without any code change.

@@ -118,6 +118,13 @@ export interface PersonProfile {
   // chips. The app adds a fixed "other" free-text option on top of this
   // list — not listed here since it isn't a profile-specific label.
   loggable_exercises?: string[];
+  // Opt-in: kcal burned per session, keyed by the exact label in
+  // loggable_exercises (or the pre-existing skate activity type). When an
+  // exercise is logged for a day, its estimate is added to that day's kcal
+  // target on the home page — logging exercise otherwise had no effect on
+  // the displayed target at all. Entries logged as "other" (free text, no
+  // matching key here) don't get a bonus — no estimate exists for them.
+  exercise_kcal_estimates?: Record<string, number>;
 }
 
 export interface WeatherSummary {
