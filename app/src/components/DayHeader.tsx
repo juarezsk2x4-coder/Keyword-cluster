@@ -37,6 +37,7 @@ export default function DayHeader(props: Props) {
                 type="button"
                 onClick={() => startTransition(async () => { await logSleep(h, props.date); })}
                 disabled={pending}
+                aria-pressed={props.sleepHours === h}
                 className={`chip ${props.sleepHours === h ? "chip-active" : ""} active:scale-95 transition-transform`}
               >
                 {h}h
@@ -54,6 +55,7 @@ export default function DayHeader(props: Props) {
                 type="button"
                 onClick={() => startTransition(async () => { await logPrepTime(m, props.date); })}
                 disabled={pending}
+                aria-pressed={props.prepMinutes === m}
                 className={`chip ${props.prepMinutes === m ? "chip-active" : ""} active:scale-95 transition-transform`}
               >
                 {m === 5 ? "≤5min" : m === 15 ? "15min" : m === 30 ? "30min" : "60min+"}

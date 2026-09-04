@@ -1,7 +1,7 @@
 import type { DailyPlan, MealCard, MealVersion, MealSlot, PersonId, PersonProfile } from "./types";
 import { getStoredWeeklyPlan } from "./query";
 import { loadProfile } from "./profile";
-import { getSundayOfWeek } from "./dates";
+import { getSundayOfWeek, addDaysIso, dowForIso } from "./dates";
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
@@ -29,20 +29,23 @@ const SHAKE_MANGA = v({
   notes: "Receita signature dele com proteína adicionada. Top pós-Venvanse sem fome.",
 });
 
+// Portions trimmed 2026-09: at 520 kcal this mid-morning snack plus PAO_ABACATE
+// (480) made up 40% of a 2500 kcal day on its own, pushing every weekday ~24%
+// over its own kcal_target. Granola halved, iogurte and mel reduced; the
+// castanha-do-pará stays because it's there for selenium, not calories.
 const IOGURTE_GRANOLA = v({
-  label: "Iogurte natural + granola + frutas vermelhas + castanha-do-pará + mel",
+  label: "Iogurte natural + granola + frutas vermelhas + castanha-do-pará",
   ingredients: [
-    "iogurte natural integral 200g",
-    "granola sem açúcar 40g",
+    "iogurte natural integral 170g",
+    "granola sem açúcar 20g",
     "morango ou framboesa 100g",
     "castanha-do-pará 2 un",
-    "mel 1 colher chá",
   ],
   prep_minutes: 2,
-  kcal: 520,
-  protein_g: 18,
-  carbs_g: 60,
-  fat_g: 22,
+  kcal: 285,
+  protein_g: 10,
+  carbs_g: 29,
+  fat_g: 15,
   notes: "Anchor café/lanche. Selênio (Pará) + probióticos + polifenóis.",
 });
 
@@ -341,20 +344,22 @@ const KOMBUCHA_MEL = v({
   notes: "Sem fome / liquid snack noturno.",
 });
 
+// Portions trimmed 2026-09 alongside IOGURTE_GRANOLA — see the note there.
+// One slice instead of two; the egg stays (it carries most of the protein).
 const PAO_ABACATE = v({
   label: "Pão integral + abacate amassado + limão + sal + ovo cozido",
   ingredients: [
-    "pão integral 2 fatias",
+    "pão integral 1 fatia",
     "abacate 1/2",
     "limão 1/2",
     "sal e pimenta",
     "ovo cozido dura 1 un",
   ],
   prep_minutes: 8,
-  kcal: 480,
-  protein_g: 18,
-  carbs_g: 42,
-  fat_g: 26,
+  kcal: 275,
+  protein_g: 11,
+  carbs_g: 21,
+  fat_g: 17,
   notes: "Abacate em pão (aceito). Ovo cozido dura. Sem gema mole.",
 });
 
@@ -607,12 +612,7 @@ function card(slot: MealSlot, time: string, original: MealVersion, easy?: MealVe
 // ─── Weekly plan (Sunday-anchored) ────────────────────────────────────────────
 
 export function buildWeeklyPlan(weekStartIso: string): DailyPlan[] {
-  const base = new Date(weekStartIso + "T00:00:00");
-  const dates = Array.from({ length: 7 }, (_, i) => {
-    const d = new Date(base);
-    d.setDate(base.getDate() + i);
-    return d.toISOString().slice(0, 10);
-  });
+  const dates = Array.from({ length: 7 }, (_, i) => addDaysIso(weekStartIso, i));
 
   return [
     /* SUNDAY — skate hard day, off work, batch-cook session */
@@ -796,16 +796,13 @@ const GENERIC_FALLBACK_KCAL = 2200;
 const GENERIC_FALLBACK_PROTEIN = 100;
 
 export function buildGenericSeedPlan(weekStartIso: string, profile: PersonProfile): DailyPlan[] {
-  const base = new Date(weekStartIso + "T00:00:00");
   const rawKcal = profile.nutrition_targets.total_kcal_target_off_day;
   const rawProtein = profile.nutrition_targets.protein_g_per_day;
   const kcalTarget = typeof rawKcal === "number" && rawKcal > 0 ? rawKcal : GENERIC_FALLBACK_KCAL;
   const proteinTarget = typeof rawProtein === "number" && rawProtein > 0 ? rawProtein : GENERIC_FALLBACK_PROTEIN;
 
   return Array.from({ length: 7 }, (_, i) => {
-    const d = new Date(base);
-    d.setDate(base.getDate() + i);
-    const date = d.toISOString().slice(0, 10);
+    const date = addDaysIso(weekStartIso, i);
 
     const meals: MealCard[] = (Object.keys(GENERIC_MEALS) as MealSlot[]).map((slot) => {
       const spec = GENERIC_MEALS[slot];
@@ -820,7 +817,7 @@ export function buildGenericSeedPlan(weekStartIso: string, profile: PersonProfil
 
     return {
       date,
-      day_of_week: GENERIC_DOW_NAMES[d.getDay()],
+      day_of_week: GENERIC_DOW_NAMES[dowForIso(date)],
       is_skate_day: false,
       is_work_day: true,
       kcal_target: kcalTarget,
@@ -840,14 +837,42 @@ export interface ResolvedWeeklyPlan {
   generated_at?: string;
 }
 
+// A stored plan is JSON written by the AI generator, so it can be malformed in
+// ways an `Array.isArray(x) && x.length === 7` check sails straight past: a day
+// missing `kcal_target` made the home page compute `undefined + bonus` and
+// render a NaN ring, and a day missing `meals` threw inside the meal list.
+// Validate the shape the UI actually depends on before trusting it, and fall
+// back to the deterministic seed plan (loudly) when it doesn't hold.
+function isUsableWeek(days: unknown, weekStartIso: string): days is DailyPlan[] {
+  if (!Array.isArray(days) || days.length !== 7) return false;
+  return days.every((d, i) => {
+    if (!d || typeof d !== "object") return false;
+    const day = d as Partial<DailyPlan>;
+    return (
+      day.date === addDaysIso(weekStartIso, i) &&
+      typeof day.kcal_target === "number" &&
+      Number.isFinite(day.kcal_target) &&
+      typeof day.protein_g_target === "number" &&
+      Number.isFinite(day.protein_g_target) &&
+      typeof day.day_of_week === "string" &&
+      Array.isArray(day.meals) &&
+      day.meals.length > 0 &&
+      day.meals.every((m) => m && typeof m.slot === "string" && m.alternatives?.original)
+    );
+  });
+}
+
 export async function resolveWeeklyPlan(personId: PersonId, weekStartIso: string): Promise<ResolvedWeeklyPlan> {
   const stored = await getStoredWeeklyPlan(personId, weekStartIso);
   if (stored) {
     try {
       const days = JSON.parse(stored.plan_json) as DailyPlan[];
-      if (Array.isArray(days) && days.length === 7) {
+      if (isUsableWeek(days, weekStartIso)) {
         return { days, source: stored.source, generated_at: stored.generated_at };
       }
+      console.error(
+        `[seed-plan] stored plan for ${personId}/${weekStartIso} failed validation; falling back to seed`
+      );
     } catch {
       // Fall through to seed
     }

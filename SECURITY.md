@@ -9,6 +9,28 @@ Como manter `ANTHROPIC_API_KEY`, `TURSO_AUTH_TOKEN` e qualquer credencial fora d
 3. **Vercel armazena a chave em ambiente isolado.** Ela existe só dentro do container de execução do servidor. Não aparece nos logs públicos, nem no front-end, nem no GitHub.
 4. **`.gitignore` reforçado** bloqueia qualquer `.env*` (exceto `.env.example` que tem só placeholders), além de `*.pem`, `*.key`, `credentials.json`, `service-account*.json`, etc.
 
+### Exceção importante: `CALENDAR_FEED_TOKEN`
+
+Os pontos 1–3 acima valem pra `ANTHROPIC_API_KEY` e `TURSO_AUTH_TOKEN`, que
+nunca saem do servidor. **`CALENDAR_FEED_TOKEN` é diferente**: a página
+`/profile` imprime a URL completa de assinatura, token incluído, no HTML — é o
+propósito dela, você precisa copiar essa URL pro Google/Apple Calendar.
+
+Consequências:
+
+- Quem conseguir abrir `/profile` lê o token. Hoje isso está contido porque o
+  **Vercel Deployment Protection (Vercel Authentication)** está ativado no
+  projeto, então a URL `*.vercel.app` exige login na conta Vercel. Essa
+  proteção **não** cobre domínio próprio automaticamente.
+- A mesma página também mostra flags médicas, peso, % de gordura e BMR. O
+  token é o vazamento menor dos dois.
+- Se o token vazar, o dano é limitado: o feed iCal expõe só horários de
+  refeição, os rótulos genéricos dos slots e quais dias são de skate. Não
+  contém nomes de pratos, substâncias, medicações nem dados clínicos.
+- Pra revogar: troca o valor de `CALENDAR_FEED_TOKEN` no Vercel e reassina o
+  calendário com a URL nova. A rota nega tudo (401) enquanto a var estiver
+  vazia, então ela nunca fica aberta por acidente.
+
 ## Auditoria atual do repo
 
 ✅ **Zero chaves reais nos arquivos commitados** — confirmado por grep regex contra padrões da Anthropic (`sk-ant-...`), Turso (`eyJ...`), AWS, Google, Stripe. Só placeholders no `.env.example`.

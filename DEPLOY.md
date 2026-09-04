@@ -80,7 +80,14 @@ Ainda na tela de import, **antes** de clicar Deploy:
      - **Name**: `ANTHROPIC_API_KEY`
      - **Value**: cola a key (`sk-ant-api03-...`)
    - Sem essa key, o botão "Estimar nutrição com IA" mostra "IA não configurada" e você preenche kcal/proteína na mão.
-4. **Branch importante**: Vercel by default usa a `main`. Mas o código tá na branch `claude/meal-planning-agents-0gn0Q`. Vai precisar mudar isso. Veja Passo 8.
+4. **`CALENDAR_FEED_TOKEN`** (opcional — só se quiser o calendário no celular):
+   - Gera um valor aleatório longo (ex: no terminal, `openssl rand -hex 32`).
+   - Adiciona quarta env var:
+     - **Name**: `CALENDAR_FEED_TOKEN`
+     - **Value**: cola o valor gerado
+   - Sem essa var, a rota do calendário **nega todo mundo** (401) — ela nunca
+     fica aberta por acidente. A URL completa pra assinar aparece na página
+     **Perfil** do app depois do deploy.
 
 ## Passo 7: Deploy! (1 min)
 
@@ -94,24 +101,22 @@ Aguarda 1-3 minutos enquanto o Vercel:
 
 Vai aparecer uma tela com confete quando der certo. **Copia a URL** (algo tipo `https://plano-a-xxx.vercel.app`).
 
-## Passo 8: Configurar pra branch correta (3 min)
+## Passo 8: Proteção de acesso (2 min)
 
-⚠️ Por padrão Vercel deploy da `main`. Como o código tá na `claude/meal-planning-agents-0gn0Q`, precisa apontar pra ela.
+O app **não tem login próprio**. A página **Perfil** mostra flags médicas, peso,
+BMR e o token do calendário — ou seja, não pode ficar aberta na internet.
 
-**Opção A — Mais simples**: faz merge do branch pra `main` no GitHub
-1. No navegador, abre o repo no GitHub.
-2. Vai em **Pull Requests** → **New Pull Request**.
-3. Base: `main`, Compare: `claude/meal-planning-agents-0gn0Q`.
-4. Cria o PR, depois Merge.
-5. Vercel detecta o push em `main` e faz deploy automático.
+Quem protege isso é o **Vercel Deployment Protection**:
+1. No Vercel, abre o projeto → **Settings** → **Deployment Protection**.
+2. Confirma que **Vercel Authentication** está **ativado** (é o padrão em
+   projetos novos, e já está ligado neste).
+3. Assim só quem estiver logado na sua conta Vercel consegue abrir a URL.
 
-**Opção B — Mantém branch separada**:
-1. No Vercel, abre o projeto recém-criado.
-2. Vai em **Settings** → **Git** → **Production Branch**.
-3. Muda de `main` pra `claude/meal-planning-agents-0gn0Q`.
-4. Volta em **Deployments** e dispara um novo deploy.
+⚠️ A proteção padrão cobre `*.vercel.app`, mas **não** um domínio próprio. Se
+um dia você apontar um domínio pra cá, revisa essa tela antes.
 
-Recomendo a **Opção A** (merge pra main) porque deixa mais limpo a longo prazo.
+> O código fica na branch `main`, que é a que o Vercel observa por padrão —
+> não precisa mudar Production Branch.
 
 ---
 

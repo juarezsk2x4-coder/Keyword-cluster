@@ -2,6 +2,7 @@ import { getDb, ensureMigrated } from "./db";
 import { MEAL_SLOTS } from "./types";
 import type { MealLog, SleepLog, SubstanceLog, PersonId } from "./types";
 import { getDayKcalTarget } from "./seed-plan";
+import { lastNDates } from "./dates";
 
 export interface DayRollup {
   date: string;
@@ -316,17 +317,6 @@ export async function getPredictions(
     hydration_extra_l,
     insights,
   };
-}
-
-function lastNDates(todayIso: string, n: number): string[] {
-  const out: string[] = [];
-  const base = new Date(todayIso + "T00:00:00");
-  for (let i = 0; i < n; i++) {
-    const d = new Date(base);
-    d.setDate(base.getDate() - i);
-    out.push(d.toISOString().slice(0, 10));
-  }
-  return out;
 }
 
 function countConsecutive(rollups: DayRollup[], pred: (r: DayRollup) => boolean): number {

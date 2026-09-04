@@ -36,3 +36,4 @@ secrets/
 secret.json
 credentials.json
 service-account*.json
+.vitest-tmp.db*

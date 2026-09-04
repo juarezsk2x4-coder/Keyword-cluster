@@ -4,13 +4,12 @@ import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { useMemo } from "react";
 import type { Lang } from "@/lib/i18n";
 import { t } from "@/lib/i18n";
-import { todayIso } from "@/lib/dates";
+import { todayIso, addDaysIso } from "@/lib/dates";
 
-function shiftDate(iso: string, days: number) {
-  const d = new Date(iso + "T00:00:00");
-  d.setDate(d.getDate() + days);
-  return d.toISOString().slice(0, 10);
-}
+// Was doing its own local-time date math, which meant the "next day" arrow
+// could land back on today for any browser east of UTC — and it disagreed
+// with todayIso()'s São Paulo anchoring. Shares the TZ-safe helper now.
+const shiftDate = addDaysIso;
 
 function labelFor(iso: string, lang: Lang): string {
   const today = todayIso();

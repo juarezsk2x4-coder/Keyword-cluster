@@ -9,7 +9,7 @@ const nextConfig = {
   // YAML files out of the deployed function bundle. This explicitly forces
   // them in regardless of what the tracer infers.
   outputFileTracingIncludes: {
-    "/**": ["../data/profiles/**"],
+    "/**": ["../data/profiles/*.yml"],
   },
 };
 export default nextConfig;

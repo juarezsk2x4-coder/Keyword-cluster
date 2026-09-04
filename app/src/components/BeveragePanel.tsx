@@ -5,6 +5,7 @@ import { logBeverage, deleteBeverageLog } from "@/app/actions";
 import type { BeverageLog, BeverageType } from "@/lib/types";
 import type { Lang } from "@/lib/i18n";
 import { t } from "@/lib/i18n";
+import { nowTimeInAppTz, formatTimeInAppTz, appTzWallClockToIso } from "@/lib/dates";
 
 interface Props {
   date: string;
@@ -14,22 +15,13 @@ interface Props {
 
 const TYPES: BeverageType[] = ["mate", "coffee", "tea", "treat"];
 
-function nowHHMM(): string {
-  const d = new Date();
-  return `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
-}
-
-function formatHHMM(iso: string): string {
-  const d = new Date(iso);
-  return `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
-}
-
-function combineDateTime(dateIso: string, hhmm: string): string {
-  const [h, m] = hhmm.split(":").map(Number);
-  const d = new Date(dateIso + "T00:00:00");
-  d.setHours(h ?? 0, m ?? 0, 0, 0);
-  return d.toISOString();
-}
+// All three of these used to read/write the host's local clock, so a time
+// rendered during SSR (UTC) disagreed with the same time after hydration (the
+// viewer's zone) — a React hydration mismatch that also displayed the wrong
+// hour. They now go through APP_TIMEZONE, the same anchor todayIso() uses.
+const nowHHMM = nowTimeInAppTz;
+const formatHHMM = formatTimeInAppTz;
+const combineDateTime = appTzWallClockToIso;
 
 export default function BeveragePanel({ date, beverages, lang }: Props) {
   const tr = t(lang);

@@ -31,9 +31,12 @@ export async function getTodayWeather(profile: PersonProfile): Promise<WeatherSu
   const db = getDb();
   const date = todayIso();
 
+  // Filtered by city as well as date: the cache is shared across profiles, and
+  // keying on date alone handed whoever loaded the page first that day's
+  // forecast to everyone, whatever city they're actually in.
   const cached = await db.execute({
-    sql: `SELECT date, condition, temp_max_c, temp_min_c, precip_prob_pct FROM weather_cache WHERE date = ?`,
-    args: [date],
+    sql: `SELECT date, condition, temp_max_c, temp_min_c, precip_prob_pct FROM weather_cache WHERE date = ? AND city = ?`,
+    args: [date, profile.location.city],
   });
   if (cached.rows.length > 0) {
     return rowToSummary(cached.rows[0] as unknown as WeatherCacheRow);
@@ -44,7 +47,7 @@ export async function getTodayWeather(profile: PersonProfile): Promise<WeatherSu
     await db.execute({
       sql: `INSERT INTO weather_cache (date, city, condition, temp_max_c, temp_min_c, precip_prob_pct)
             VALUES (?, ?, ?, ?, ?, ?)
-            ON CONFLICT(date) DO UPDATE SET
+            ON CONFLICT(date, city) DO UPDATE SET
               condition = excluded.condition,
               temp_max_c = excluded.temp_max_c,
               temp_min_c = excluded.temp_min_c,

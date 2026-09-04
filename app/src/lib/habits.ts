@@ -9,6 +9,7 @@ import {
 } from "./query";
 import { getDayKcalTarget } from "./seed-plan";
 import { sumExerciseKcal } from "./exercise";
+import { lastNDates, dowForIso as dowFor } from "./dates";
 import { MEAL_SLOTS } from "./types";
 import type { CardState, MealSlot, PersonId } from "./types";
 
@@ -31,7 +32,12 @@ export interface HabitExerciseOptions {
 export interface HabitRollup {
   window_days: 7 | 14 | 30;
   end_date: string;
-  days_with_data: number;
+  days_with_data: number; // days with MEAL logs specifically
+  // True when there is anything at all worth rendering — meal days, exercise,
+  // or supplements. The Analyst page gates its whole body on this rather than
+  // on days_with_data, which would hide a fully-logged exercise history behind
+  // "not enough data" just because meals weren't tracked.
+  has_any_data: boolean;
   avg_kcal_per_day: number;
   avg_protein_per_day: number;
   avg_kcal_per_dow: number[]; // length 7, Sun..Sat, 0 = no data
@@ -69,20 +75,6 @@ export interface HabitInsight {
   payload?: Record<string, string | number>;
 }
 
-function lastNDates(endIso: string, n: number): string[] {
-  const out: string[] = [];
-  const base = new Date(endIso + "T00:00:00");
-  for (let i = 0; i < n; i++) {
-    const d = new Date(base);
-    d.setDate(base.getDate() - i);
-    out.push(d.toISOString().slice(0, 10));
-  }
-  return out;
-}
-
-function dowFor(iso: string): number {
-  return new Date(iso + "T00:00:00").getDay();
-}
 
 export async function getHabitRollup(
   personId: PersonId,
@@ -124,6 +116,7 @@ export async function getHabitRollup(
       had_substance: subs.some((s) => s.date === d),
       had_fatigue: fatigueDates.includes(d),
       had_exercise: dayExercise.length > 0,
+      supplement_count: daySupplements.length,
       exercise_kcal: sumExerciseKcal(dayExercise, exerciseOptions.exerciseKcalEstimates, durationVariableExercises),
       had_all_supplements:
         dailySupplements.length > 0 &&
@@ -132,12 +125,19 @@ export async function getHabitRollup(
   });
 
   const daysWithData = perDay.filter((d) => d.dayMeals.length > 0).length;
+  // days_with_data counts MEAL days, and the bail-out below used to key on it
+  // alone — so someone who logged exercise and every supplement for two weeks
+  // but only one day of meals saw "not enough data" and none of their exercise
+  // or supplement history at all. Only bail when there's genuinely nothing to
+  // show from any source.
+  const hasExerciseOrSupplementData = perDay.some((d) => d.had_exercise || d.supplement_count > 0);
 
-  if (daysWithData < 2) {
+  if (daysWithData < 2 && !hasExerciseOrSupplementData) {
     return {
       window_days: windowDays,
       end_date: endIso,
       days_with_data: daysWithData,
+      has_any_data: false,
       avg_kcal_per_day: 0,
       avg_protein_per_day: 0,
       avg_kcal_per_dow: Array(7).fill(0),
@@ -158,14 +158,23 @@ export async function getHabitRollup(
     };
   }
 
-  const avgKcal = Math.round(
-    perDay.filter((d) => d.dayMeals.length > 0).reduce((acc, d) => acc + d.total_kcal, 0) /
-      daysWithData
-  );
-  const avgProtein = Math.round(
-    perDay.filter((d) => d.dayMeals.length > 0).reduce((acc, d) => acc + d.total_protein_g, 0) /
-      daysWithData
-  );
+  // Guarded against daysWithData === 0: the early return above now lets
+  // exercise/supplement-only windows through, and 0/0 would put a NaN on the
+  // Analyst page.
+  const avgKcal =
+    daysWithData > 0
+      ? Math.round(
+          perDay.filter((d) => d.dayMeals.length > 0).reduce((acc, d) => acc + d.total_kcal, 0) /
+            daysWithData
+        )
+      : 0;
+  const avgProtein =
+    daysWithData > 0
+      ? Math.round(
+          perDay.filter((d) => d.dayMeals.length > 0).reduce((acc, d) => acc + d.total_protein_g, 0) /
+            daysWithData
+        )
+      : 0;
 
   // Per day-of-week (Sun=0..Sat=6)
   const dowKcalSum = Array(7).fill(0);
@@ -416,6 +425,7 @@ export async function getHabitRollup(
     window_days: windowDays,
     end_date: endIso,
     days_with_data: daysWithData,
+    has_any_data: true,
     avg_kcal_per_day: avgKcal,
     avg_protein_per_day: avgProtein,
     avg_kcal_per_dow: avgKcalPerDow,

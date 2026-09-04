@@ -114,13 +114,14 @@ async function runMigration() {
     );
 
     CREATE TABLE IF NOT EXISTS weather_cache (
-      date TEXT PRIMARY KEY,
+      date TEXT NOT NULL,
       city TEXT NOT NULL,
       condition TEXT NOT NULL,
       temp_max_c REAL NOT NULL,
       temp_min_c REAL NOT NULL,
       precip_prob_pct INTEGER NOT NULL,
-      fetched_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+      fetched_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      PRIMARY KEY (date, city)
     );
 
     CREATE TABLE IF NOT EXISTS supplement_logs (
@@ -154,6 +155,29 @@ async function runMigration() {
   // the column by hand the same way SIMPLE_ALTER_TABLES does.
   if (!(await hasColumn(c, "exercise_logs", "duration_minutes"))) {
     await c.execute(`ALTER TABLE exercise_logs ADD COLUMN duration_minutes INTEGER`);
+  }
+
+  // weather_cache used to be keyed on `date` alone while storing (but never
+  // filtering on) `city` — so whoever loaded the home page first each day
+  // populated the single row and everyone else got that city's forecast, and
+  // the "good skate weather" nudge derived from it. It's a pure regenerable
+  // cache, so the cheapest correct migration is to drop and recreate it with
+  // the composite key rather than rebuild-and-copy; worst case is one extra
+  // forecast fetch.
+  if (!(await isPrimaryKeyColumn(c, "weather_cache", "city"))) {
+    await c.executeMultiple(`
+      DROP TABLE IF EXISTS weather_cache;
+      CREATE TABLE weather_cache (
+        date TEXT NOT NULL,
+        city TEXT NOT NULL,
+        condition TEXT NOT NULL,
+        temp_max_c REAL NOT NULL,
+        temp_min_c REAL NOT NULL,
+        precip_prob_pct INTEGER NOT NULL,
+        fetched_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        PRIMARY KEY (date, city)
+      );
+    `);
   }
 
   await c.executeMultiple(`
@@ -260,6 +284,15 @@ async function hasPersonIdColumn(c: Client, table: string): Promise<boolean> {
 async function hasColumn(c: Client, table: string, column: string): Promise<boolean> {
   const info = await c.execute(`PRAGMA table_info(${table})`);
   return (info.rows as unknown as { name: string }[]).some((row) => row.name === column);
+}
+
+// PRAGMA table_info's `pk` is 0 for non-key columns and 1-based position for
+// key columns, so this distinguishes a composite key from a single-column one.
+async function isPrimaryKeyColumn(c: Client, table: string, column: string): Promise<boolean> {
+  const info = await c.execute(`PRAGMA table_info(${table})`);
+  return (info.rows as unknown as { name: string; pk: number }[]).some(
+    (row) => row.name === column && Number(row.pk) > 0
+  );
 }
 
 async function getColumnNames(c: Client, table: string): Promise<string[]> {

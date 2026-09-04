@@ -53,6 +53,16 @@ export async function deleteMealLog(date: string, slot: MealSlot) {
   revalidatePath("/history");
 }
 
+// Exercise and supplement entries surface on /history and feed the /analyst
+// rollups, not just the home page — revalidating "/" alone left both of those
+// showing stale data after a log. Meal actions already revalidate /history;
+// nothing revalidated /analyst at all.
+function revalidateLoggedDayPaths() {
+  revalidatePath("/");
+  revalidatePath("/history");
+  revalidatePath("/analyst");
+}
+
 export async function logSleep(hours: number, date?: string, quality?: number) {
   await ensureMigrated();
   const personId = await getActivePerson();
@@ -168,7 +178,7 @@ export async function logSupplement(supplementName: string, date?: string) {
           ON CONFLICT(person_id, date, supplement_name) DO NOTHING`,
     args: [personId, d, supplementName],
   });
-  revalidatePath("/");
+  revalidateLoggedDayPaths();
 }
 
 export async function deleteSupplementLog(supplementName: string, date?: string) {
@@ -179,7 +189,7 @@ export async function deleteSupplementLog(supplementName: string, date?: string)
     sql: `DELETE FROM supplement_logs WHERE person_id = ? AND date = ? AND supplement_name = ?`,
     args: [personId, d, supplementName],
   });
-  revalidatePath("/");
+  revalidateLoggedDayPaths();
 }
 
 // Presets (skate/pilates/musculação, from profile.loggable_exercises) are
@@ -202,7 +212,7 @@ export async function logExercise(
           ON CONFLICT(person_id, date, exercise_type, custom_label) DO NOTHING`,
     args: [personId, d, exerciseType, customLabel ?? "", durationMinutes ?? null],
   });
-  revalidatePath("/");
+  revalidateLoggedDayPaths();
 }
 
 export async function deleteExerciseLog(id: number) {
@@ -212,7 +222,7 @@ export async function deleteExerciseLog(id: number) {
     sql: `DELETE FROM exercise_logs WHERE id = ? AND person_id = ?`,
     args: [id, personId],
   });
-  revalidatePath("/");
+  revalidateLoggedDayPaths();
 }
 
 export async function estimateNutritionAction(

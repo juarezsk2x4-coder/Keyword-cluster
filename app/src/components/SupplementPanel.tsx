@@ -37,6 +37,7 @@ export default function SupplementPanel({ date, supplements, logs, lang }: Props
                 })
               }
               disabled={pending}
+              aria-pressed={!!taken}
               title={tr.tap_to_mark_taken}
               className={`chip ${taken ? "chip-success" : ""} active:scale-95 transition-transform`}
             >

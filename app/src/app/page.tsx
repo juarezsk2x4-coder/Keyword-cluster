@@ -161,7 +161,11 @@ export default async function TodayPage({ searchParams }: PageProps) {
           });
           return (
             <MealCard
-              key={card.slot}
+              // Keyed on the date as well as the slot: navigating dates is a
+              // client-side push, so a slot-only key made React reuse the same
+              // component instance and its useState initializers never re-ran —
+              // yesterday's picked state and edit-form text bled into today.
+              key={`${selectedDate}:${card.slot}`}
               card={card}
               date={selectedDate}
               log={log}

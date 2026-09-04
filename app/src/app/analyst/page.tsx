@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { getHabitRollup } from "@/lib/habits";
 import { getLang } from "@/lib/lang";
 import { getActivePerson } from "@/lib/person";
@@ -44,25 +45,30 @@ export default async function AnalystPage({ searchParams }: PageProps) {
     }
   );
 
+  // Hoisted out of the chart row maps below — each was rebuilding and spreading
+  // the whole array once per rendered row (up to 30 rows on the 30-day window).
+  const dowMax = Math.max(...rollup.avg_kcal_per_dow, 1);
+  const trendMax = Math.max(...rollup.exercise_kcal_trend.map((d) => d.kcal), 1);
+
   return (
     <div className="space-y-4">
       <div className="card">
         <h1 className="text-xl font-semibold mb-2">{tr.analyst_title}</h1>
         <div className="flex gap-2 text-xs">
-          <a href="/analyst?window=7" className={`chip ${windowDays === 7 ? "chip-active" : ""}`}>
+          <Link href="/analyst?window=7" aria-current={windowDays === 7 ? "page" : undefined} className={`chip ${windowDays === 7 ? "chip-active" : ""}`}>
             {tr.analyst_window_7}
-          </a>
-          <a href="/analyst?window=14" className={`chip ${windowDays === 14 ? "chip-active" : ""}`}>
+          </Link>
+          <Link href="/analyst?window=14" aria-current={windowDays === 14 ? "page" : undefined} className={`chip ${windowDays === 14 ? "chip-active" : ""}`}>
             {tr.analyst_window_14}
-          </a>
-          <a href="/analyst?window=30" className={`chip ${windowDays === 30 ? "chip-active" : ""}`}>
+          </Link>
+          <Link href="/analyst?window=30" aria-current={windowDays === 30 ? "page" : undefined} className={`chip ${windowDays === 30 ? "chip-active" : ""}`}>
             {tr.analyst_window_30}
-          </a>
+          </Link>
         </div>
         <p className="text-xs text-muted mt-2">{tr.analyst_days_with_data(rollup.days_with_data)}</p>
       </div>
 
-      {rollup.days_with_data < 2 ? (
+      {!rollup.has_any_data ? (
         <div className="card">
           <p className="text-sm text-muted">{tr.analyst_empty}</p>
         </div>
@@ -93,8 +99,7 @@ export default async function AnalystPage({ searchParams }: PageProps) {
             <div className="space-y-1.5">
               {rollup.avg_kcal_per_dow.map((kcal, i) => {
                 const hasData = rollup.days_with_logs_per_dow[i] > 0;
-                const max = Math.max(...rollup.avg_kcal_per_dow, 1);
-                const pct = hasData ? Math.round((kcal / max) * 100) : 0;
+                const pct = hasData ? Math.round((kcal / dowMax) * 100) : 0;
                 return (
                   <div key={i} className="flex items-center gap-2 text-xs">
                     <div className="w-8 text-muted">{tr.analyst_dow_names[i]}</div>
@@ -119,8 +124,7 @@ export default async function AnalystPage({ searchParams }: PageProps) {
                 <div className="label mb-2">{tr.analyst_exercise_trend_title}</div>
                 <div className="space-y-1.5">
                   {rollup.exercise_kcal_trend.map((d) => {
-                    const max = Math.max(...rollup.exercise_kcal_trend.map((x) => x.kcal), 1);
-                    const pct = Math.round((d.kcal / max) * 100);
+                    const pct = Math.round((d.kcal / trendMax) * 100);
                     return (
                       <div key={d.date} className="flex items-center gap-2 text-xs">
                         <div className="w-14 text-muted">{d.date.slice(5)}</div>

@@ -68,6 +68,7 @@ export default function ExercisePanel({ date, exercises, durationVariable, logs,
                 }
               }}
               disabled={pending}
+              aria-pressed={!!existing}
               className={`chip ${existing ? "chip-success" : ""} ${durationFor === name ? "chip-active" : ""} active:scale-95 transition-transform`}
             >
               {existing ? "✓ " : "+ "}
@@ -93,6 +94,7 @@ export default function ExercisePanel({ date, exercises, durationVariable, logs,
             value={otherLabel}
             onChange={(e) => setOtherLabel(e.target.value)}
             placeholder={tr.exercise_other_placeholder}
+            aria-label={tr.exercise_other_placeholder}
             className="flex-1 bg-surface2 border border-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-accent"
           />
           <button
@@ -114,6 +116,7 @@ export default function ExercisePanel({ date, exercises, durationVariable, logs,
             value={durationValue}
             onChange={(e) => setDurationValue(e.target.value)}
             placeholder={tr.exercise_duration_placeholder}
+            aria-label={tr.exercise_duration_placeholder}
             className="flex-1 bg-surface2 border border-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-accent"
           />
           <button
