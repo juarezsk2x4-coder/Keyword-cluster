@@ -118,13 +118,19 @@ export interface PersonProfile {
   // chips. The app adds a fixed "other" free-text option on top of this
   // list — not listed here since it isn't a profile-specific label.
   loggable_exercises?: string[];
-  // Opt-in: kcal burned per session, keyed by the exact label in
-  // loggable_exercises (or the pre-existing skate activity type). When an
-  // exercise is logged for a day, its estimate is added to that day's kcal
-  // target on the home page — logging exercise otherwise had no effect on
-  // the displayed target at all. Entries logged as "other" (free text, no
-  // matching key here) don't get a bonus — no estimate exists for them.
+  // Opt-in: kcal burned, keyed by the exact label in loggable_exercises.
+  // For a label NOT in duration_variable_exercises below, this is a flat
+  // kcal-per-session estimate (e.g. Pilates always ~400 kcal regardless of
+  // how long it ran). For a label that IS listed there, this is a
+  // kcal-per-minute rate instead, multiplied by that log's duration_minutes
+  // — some activities (skating) vary too much in length for one flat number
+  // to mean anything. Entries logged as "other" (free text, no matching key
+  // here) don't get a bonus — no estimate exists for them.
   exercise_kcal_estimates?: Record<string, number>;
+  // Opt-in: labels from loggable_exercises whose exercise_kcal_estimates
+  // entry is a per-minute rate rather than a flat per-session kcal figure.
+  // Logging one of these prompts for the session's duration in minutes.
+  duration_variable_exercises?: string[];
 }
 
 export interface WeatherSummary {
@@ -209,5 +215,6 @@ export interface ExerciseLog {
   date: string;
   exercise_type: string;     // matches an entry in profile.loggable_exercises, or "other"
   custom_label?: string;     // only meaningful when exercise_type === "other"
+  duration_minutes?: number; // only collected when exercise_type is in profile.duration_variable_exercises
   logged_at: string;
 }

@@ -138,6 +138,7 @@ async function runMigration() {
       date TEXT NOT NULL,
       exercise_type TEXT NOT NULL,
       custom_label TEXT NOT NULL DEFAULT '',
+      duration_minutes INTEGER,
       logged_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
       UNIQUE(person_id, date, exercise_type, custom_label)
     );
@@ -147,6 +148,13 @@ async function runMigration() {
   // below reference person_id, which legacy tables don't have yet until this
   // backfills it.
   await migrateLegacyTables(c);
+
+  // exercise_logs already existed in production before duration_minutes was
+  // added — CREATE TABLE IF NOT EXISTS above is a no-op there, so backfill
+  // the column by hand the same way SIMPLE_ALTER_TABLES does.
+  if (!(await hasColumn(c, "exercise_logs", "duration_minutes"))) {
+    await c.execute(`ALTER TABLE exercise_logs ADD COLUMN duration_minutes INTEGER`);
+  }
 
   await c.executeMultiple(`
     CREATE INDEX IF NOT EXISTS idx_meal_logs_date ON meal_logs(person_id, date);
@@ -246,8 +254,12 @@ async function migrateLegacyTables(c: Client) {
 }
 
 async function hasPersonIdColumn(c: Client, table: string): Promise<boolean> {
+  return hasColumn(c, table, "person_id");
+}
+
+async function hasColumn(c: Client, table: string, column: string): Promise<boolean> {
   const info = await c.execute(`PRAGMA table_info(${table})`);
-  return (info.rows as unknown as { name: string }[]).some((row) => row.name === "person_id");
+  return (info.rows as unknown as { name: string }[]).some((row) => row.name === column);
 }
 
 async function getColumnNames(c: Client, table: string): Promise<string[]> {

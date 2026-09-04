@@ -504,16 +504,28 @@ loggable_exercises:
   - "Pilates"
   - "Musculação"
 
-# Kcal burned per session, keyed by the labels above (plus "Skate" reusing
-# the same number as activity[0].estimated_kcal_per_session — kept in sync
-# by hand). Logging one of these for a day adds this to that day's kcal
-# target on the home page. Pilates set higher than a generic estimate —
-# the instructor pushes the intensity up for him specifically, not a
-# typical class. Adjust freely, these are estimates, not measurements.
+# Kcal burned, keyed by the labels above. Logging one of these for a day
+# adds this to that day's kcal target on the home page. Pilates set higher
+# than a generic estimate — the instructor pushes the intensity up for him
+# specifically, not a typical class. Adjust freely, these are estimates,
+# not measurements.
+#
+# Skate is listed in duration_variable_exercises below, so its number here
+# is a kcal-PER-MINUTE rate instead of a flat per-session figure — session
+# length is too variable (20min to 3h+) for one flat number to make sense.
+# 7.2/min = activity[0].estimated_kcal_per_session (1300) ÷
+# activity[0].minutes_per_session (180), i.e. the same overall intensity as
+# before, just scaled by however long that day's session actually ran.
 exercise_kcal_estimates:
-  Skate: 1300
+  Skate: 7.2
   Pilates: 400
   Musculação: 350
+
+# Labels above whose exercise_kcal_estimates entry is a kcal-per-minute
+# rate rather than a flat per-session kcal figure — logging one of these
+# prompts for the session's duration in minutes.
+duration_variable_exercises:
+  - "Skate"
 
 # Drives which AI prompt / seed plan this profile gets (see lib/meal-plan-ai.ts,
 # lib/seed-plan.ts) — data-driven, not hardcoded to this file's person_id, so

@@ -93,11 +93,21 @@ export default async function TodayPage({ searchParams }: PageProps) {
   const isGoodSkateDay = selectedDate === todayIso() && weather?.condition === "clear" && dayPlan.is_skate_day;
   // Logging an exercise otherwise had no effect on the shown target at
   // all — this is what actually connects the exercise log to calorie
-  // needs. "Other" (free-text) entries don't have an estimate to add.
-  const exerciseKcalBonus = exerciseLogs.reduce(
-    (sum, log) => sum + (profile.exercise_kcal_estimates?.[log.exercise_type] ?? 0),
-    0
-  );
+  // needs. "Other" (free-text) entries don't have an estimate to add. For
+  // duration-variable exercises (a skate session can run 20min or 3h),
+  // the estimate is a kcal-per-minute rate rather than a flat figure —
+  // multiplied by that log's own duration_minutes instead of a one-size
+  // guess. A duration-variable log with no duration recorded contributes
+  // nothing, same as an "other" entry with no estimate.
+  const durationVariableExercises = profile.duration_variable_exercises ?? [];
+  const exerciseKcalBonus = exerciseLogs.reduce((sum, log) => {
+    const estimate = profile.exercise_kcal_estimates?.[log.exercise_type];
+    if (estimate === undefined) return sum;
+    if (durationVariableExercises.includes(log.exercise_type)) {
+      return sum + (log.duration_minutes ? estimate * log.duration_minutes : 0);
+    }
+    return sum + estimate;
+  }, 0);
   const adjustedKcalTarget = dayPlan.kcal_target + exerciseKcalBonus;
 
   return (
@@ -140,6 +150,7 @@ export default async function TodayPage({ searchParams }: PageProps) {
         substanceLogs={daySubs}
         beverages={beverages}
         exercises={profile.loggable_exercises ?? []}
+        durationVariableExercises={durationVariableExercises}
         exerciseLogs={exerciseLogs}
         lang={lang}
       />

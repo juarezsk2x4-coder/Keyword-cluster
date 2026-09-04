@@ -188,14 +188,19 @@ export async function deleteSupplementLog(supplementName: string, date?: string)
 // on the same day, which a single (person_id, date, exercise_type) key
 // couldn't. custom_label defaults to "" for presets, keeping the same
 // one-row-per-day behavior there.
-export async function logExercise(exerciseType: string, date?: string, customLabel?: string) {
+export async function logExercise(
+  exerciseType: string,
+  date?: string,
+  customLabel?: string,
+  durationMinutes?: number
+) {
   await ensureMigrated();
   const personId = await getActivePerson();
   const d = date ?? todayIso();
   await getDb().execute({
-    sql: `INSERT INTO exercise_logs (person_id, date, exercise_type, custom_label, logged_at) VALUES (?, ?, ?, ?, datetime('now'))
+    sql: `INSERT INTO exercise_logs (person_id, date, exercise_type, custom_label, duration_minutes, logged_at) VALUES (?, ?, ?, ?, ?, datetime('now'))
           ON CONFLICT(person_id, date, exercise_type, custom_label) DO NOTHING`,
-    args: [personId, d, exerciseType, customLabel ?? ""],
+    args: [personId, d, exerciseType, customLabel ?? "", durationMinutes ?? null],
   });
   revalidatePath("/");
 }

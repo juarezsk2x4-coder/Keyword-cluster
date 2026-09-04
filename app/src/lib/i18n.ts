@@ -25,6 +25,7 @@ interface Dict {
   exercise_log_title: string;
   exercise_other_label: string;
   exercise_other_placeholder: string;
+  exercise_duration_placeholder: string;
   exercise_kcal_bonus: (kcal: number) => string;
   skate_day: string;
   recovery: string;
@@ -208,7 +209,8 @@ const pt: Dict = {
   exercise_log_title: "Exercício de hoje",
   exercise_other_label: "+ Outro",
   exercise_other_placeholder: "Qual exercício?",
-  exercise_kcal_bonus: (kcal) => `+${kcal} kcal por exercício hoje`,
+  exercise_duration_placeholder: "Quantos minutos?",
+  exercise_kcal_bonus: (kcal) => `Gasto com exercício hoje: +${kcal} kcal`,
   skate_day: "Dia de skate",
   recovery: "Recuperação",
   kcal: "Kcal",
@@ -424,7 +426,8 @@ const en: Dict = {
   exercise_log_title: "Today's exercise",
   exercise_other_label: "+ Other",
   exercise_other_placeholder: "Which exercise?",
-  exercise_kcal_bonus: (kcal) => `+${kcal} kcal from today's exercise`,
+  exercise_duration_placeholder: "How many minutes?",
+  exercise_kcal_bonus: (kcal) => `Spent on exercise today: +${kcal} kcal`,
   skate_day: "Skate day",
   recovery: "Recovery",
   kcal: "Kcal",

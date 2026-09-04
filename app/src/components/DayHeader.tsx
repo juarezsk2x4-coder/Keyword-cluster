@@ -16,6 +16,7 @@ interface Props {
   substanceLogs: SubstanceLog[];
   beverages: BeverageLog[];
   exercises: string[];
+  durationVariableExercises: string[];
   exerciseLogs: ExerciseLog[];
   lang: Lang;
 }
@@ -62,7 +63,13 @@ export default function DayHeader(props: Props) {
         </div>
       </div>
 
-      <ExercisePanel date={props.date} exercises={props.exercises} logs={props.exerciseLogs} lang={props.lang} />
+      <ExercisePanel
+        date={props.date}
+        exercises={props.exercises}
+        durationVariable={props.durationVariableExercises}
+        logs={props.exerciseLogs}
+        lang={props.lang}
+      />
 
       <div className="card">
         <div className="flex items-center justify-between mb-2 gap-2">

@@ -87,6 +87,7 @@ export async function getDayExercises(personId: PersonId, date: string): Promise
     date: row.date as string,
     exercise_type: row.exercise_type as string,
     custom_label: (row.custom_label as string) || undefined,
+    duration_minutes: (row.duration_minutes as number) ?? undefined,
     logged_at: row.logged_at as string,
   }));
 }
