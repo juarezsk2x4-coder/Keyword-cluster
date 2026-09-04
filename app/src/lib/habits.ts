@@ -46,6 +46,7 @@ export interface HabitRollup {
   exercise_streak_max: number;
   total_exercise_kcal: number;
   avg_exercise_kcal_per_active_day: number;
+  exercise_kcal_trend: { date: string; kcal: number }[]; // chronological (oldest first), one entry per window_days
   supplement_adherence_pct: number; // % of window_days with every daily_supplements label logged; 0 if not opted in
   insights: HabitInsight[];
 }
@@ -151,6 +152,7 @@ export async function getHabitRollup(
       exercise_streak_max: 0,
       total_exercise_kcal: 0,
       avg_exercise_kcal_per_active_day: 0,
+      exercise_kcal_trend: [],
       supplement_adherence_pct: 0,
       insights: [],
     };
@@ -255,6 +257,11 @@ export async function getHabitRollup(
     dailySupplements.length > 0
       ? Math.round((perDay.filter((d) => d.had_all_supplements).length / windowDays) * 100)
       : 0;
+  // Day-by-day (not just weekday-averaged) view of kcal spent, so a longer
+  // window actually shows a trend over time — rising/falling exercise
+  // load — rather than just one aggregate number. perDay is newest-first
+  // (from lastNDates); reverse so the chart reads chronologically.
+  const exerciseKcalTrend = [...perDay].reverse().map((d) => ({ date: d.date, kcal: d.exercise_kcal }));
 
   // Sleep-vs-kcal correlation (short-sleep day kcal vs long-sleep day kcal)
   const shortSleepKcal = perDay
@@ -423,6 +430,7 @@ export async function getHabitRollup(
     exercise_streak_max: exerciseStreakMax,
     total_exercise_kcal: totalExerciseKcal,
     avg_exercise_kcal_per_active_day: avgExerciseKcalPerActiveDay,
+    exercise_kcal_trend: exerciseKcalTrend,
     supplement_adherence_pct: supplementAdherencePct,
     insights,
   };

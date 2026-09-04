@@ -166,6 +166,7 @@ interface Dict {
   analyst_avg_kcal: (kcal: number) => string;
   analyst_avg_protein: (g: number) => string;
   analyst_by_dow_title: string;
+  analyst_exercise_trend_title: string;
   analyst_dow_names: string[];
   analyst_most_missed_title: string;
   analyst_state_distribution_title: string;
@@ -385,6 +386,7 @@ const pt: Dict = {
   analyst_avg_kcal: (kcal) => `Média kcal/dia: ${kcal}`,
   analyst_avg_protein: (g) => `Média proteína/dia: ${g}g`,
   analyst_by_dow_title: "Por dia da semana",
+  analyst_exercise_trend_title: "Tendência de kcal em exercício",
   analyst_dow_names: ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"],
   analyst_most_missed_title: "Slots mais pulados",
   analyst_state_distribution_title: "Distribuição de estados",
@@ -604,6 +606,7 @@ const en: Dict = {
   analyst_avg_kcal: (kcal) => `Avg kcal/day: ${kcal}`,
   analyst_avg_protein: (g) => `Avg protein/day: ${g}g`,
   analyst_by_dow_title: "By day of week",
+  analyst_exercise_trend_title: "Exercise kcal trend",
   analyst_dow_names: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
   analyst_most_missed_title: "Most-missed slots",
   analyst_state_distribution_title: "State distribution",

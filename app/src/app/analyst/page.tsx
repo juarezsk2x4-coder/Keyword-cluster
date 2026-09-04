@@ -113,6 +113,30 @@ export default async function AnalystPage({ searchParams }: PageProps) {
             </div>
           </div>
 
+          {profile.loggable_exercises && profile.loggable_exercises.length > 0 &&
+            rollup.exercise_kcal_trend.some((d) => d.kcal > 0) && (
+              <div className="card">
+                <div className="label mb-2">{tr.analyst_exercise_trend_title}</div>
+                <div className="space-y-1.5">
+                  {rollup.exercise_kcal_trend.map((d) => {
+                    const max = Math.max(...rollup.exercise_kcal_trend.map((x) => x.kcal), 1);
+                    const pct = Math.round((d.kcal / max) * 100);
+                    return (
+                      <div key={d.date} className="flex items-center gap-2 text-xs">
+                        <div className="w-14 text-muted">{d.date.slice(5)}</div>
+                        <div className="flex-1 h-3 bg-bg rounded-full overflow-hidden">
+                          <div className="h-full bg-accent rounded-full" style={{ width: `${pct}%` }} />
+                        </div>
+                        <div className="w-16 text-right text-muted tabular-nums">
+                          {d.kcal > 0 ? `${d.kcal} kcal` : "—"}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
           {rollup.most_missed_slots.length > 0 && (
             <div className="card">
               <div className="label mb-2">{tr.analyst_most_missed_title}</div>
