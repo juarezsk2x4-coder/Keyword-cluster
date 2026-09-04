@@ -28,10 +28,21 @@ export default async function AnalystPage({ searchParams }: PageProps) {
   const windowDays: 7 | 14 | 30 =
     windowDaysRaw === 14 ? 14 : windowDaysRaw === 30 ? 30 : 7;
 
-  const rollup = await getHabitRollup(personId, todayIso(), windowDays, {
-    kcal: profile.nutrition_targets.total_kcal_target_off_day,
-    protein: profile.nutrition_targets.protein_g_per_day,
-  });
+  const rollup = await getHabitRollup(
+    personId,
+    todayIso(),
+    windowDays,
+    {
+      kcal: profile.nutrition_targets.total_kcal_target_off_day,
+      protein: profile.nutrition_targets.protein_g_per_day,
+    },
+    {
+      loggableExercises: profile.loggable_exercises,
+      exerciseKcalEstimates: profile.exercise_kcal_estimates,
+      durationVariableExercises: profile.duration_variable_exercises,
+      dailySupplements: profile.daily_supplements,
+    }
+  );
 
   return (
     <div className="space-y-4">
@@ -63,6 +74,18 @@ export default async function AnalystPage({ searchParams }: PageProps) {
             <p className="text-sm">{tr.analyst_easy_streak_max(rollup.easy_streak_max)}</p>
             <p className="text-sm">{tr.analyst_fatigue_days(rollup.fatigue_days)}</p>
             <p className="text-sm">{tr.analyst_substance_days(rollup.substance_days)}</p>
+            {profile.loggable_exercises && profile.loggable_exercises.length > 0 && (
+              <>
+                <p className="text-sm">{tr.analyst_exercise_days(rollup.exercise_days)}</p>
+                <p className="text-sm">{tr.analyst_exercise_streak(rollup.exercise_streak_max)}</p>
+                {rollup.total_exercise_kcal > 0 && (
+                  <p className="text-sm">{tr.analyst_exercise_kcal_total(rollup.total_exercise_kcal)}</p>
+                )}
+              </>
+            )}
+            {profile.daily_supplements && profile.daily_supplements.length > 0 && (
+              <p className="text-sm">{tr.analyst_supplement_adherence(rollup.supplement_adherence_pct)}</p>
+            )}
           </div>
 
           <div className="card">
@@ -154,6 +177,12 @@ export default async function AnalystPage({ searchParams }: PageProps) {
                       break;
                     case "consider_professional_support":
                       text = tr.habit_insight.consider_professional_support;
+                      break;
+                    case "exercise_infrequent":
+                      text = tr.habit_insight.exercise_infrequent(Number(ins.payload?.days ?? 0));
+                      break;
+                    case "supplement_adherence_low":
+                      text = tr.habit_insight.supplement_adherence_low(Number(ins.payload?.pct ?? 0));
                       break;
                     case "on_track":
                       text = tr.habit_insight.on_track;

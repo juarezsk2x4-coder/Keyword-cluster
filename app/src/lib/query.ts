@@ -236,6 +236,30 @@ export async function getSubstanceLogsForPast(personId: PersonId, endIso: string
   return r.rows as unknown as SubstanceLog[];
 }
 
+export async function getExerciseLogsForPast(personId: PersonId, endIso: string, days: number): Promise<ExerciseLog[]> {
+  await ensureMigrated();
+  const end = new Date(endIso + "T00:00:00");
+  const start = new Date(end);
+  start.setDate(end.getDate() - (days - 1));
+  const r = await getDb().execute({
+    sql: `SELECT * FROM exercise_logs WHERE person_id = ? AND date >= ? AND date <= ? ORDER BY date DESC, logged_at ASC`,
+    args: [personId, start.toISOString().slice(0, 10), endIso],
+  });
+  return r.rows as unknown as ExerciseLog[];
+}
+
+export async function getSupplementLogsForPast(personId: PersonId, endIso: string, days: number): Promise<SupplementLog[]> {
+  await ensureMigrated();
+  const end = new Date(endIso + "T00:00:00");
+  const start = new Date(end);
+  start.setDate(end.getDate() - (days - 1));
+  const r = await getDb().execute({
+    sql: `SELECT * FROM supplement_logs WHERE person_id = ? AND date >= ? AND date <= ? ORDER BY date DESC, logged_at ASC`,
+    args: [personId, start.toISOString().slice(0, 10), endIso],
+  });
+  return r.rows as unknown as SupplementLog[];
+}
+
 export async function getFatigueDatesForPast(personId: PersonId, endIso: string, days: number): Promise<string[]> {
   await ensureMigrated();
   const end = new Date(endIso + "T00:00:00");

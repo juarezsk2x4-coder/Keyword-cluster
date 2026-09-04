@@ -21,6 +21,7 @@ import WeatherCard from "@/components/WeatherCard";
 import SupplementPanel from "@/components/SupplementPanel";
 import { getPredictions } from "@/lib/predictions";
 import { getTodayWeather } from "@/lib/weather";
+import { sumExerciseKcal } from "@/lib/exercise";
 import type { CardState } from "@/lib/types";
 import { getLang } from "@/lib/lang";
 import { getActivePerson } from "@/lib/person";
@@ -100,14 +101,7 @@ export default async function TodayPage({ searchParams }: PageProps) {
   // guess. A duration-variable log with no duration recorded contributes
   // nothing, same as an "other" entry with no estimate.
   const durationVariableExercises = profile.duration_variable_exercises ?? [];
-  const exerciseKcalBonus = exerciseLogs.reduce((sum, log) => {
-    const estimate = profile.exercise_kcal_estimates?.[log.exercise_type];
-    if (estimate === undefined) return sum;
-    if (durationVariableExercises.includes(log.exercise_type)) {
-      return sum + (log.duration_minutes ? estimate * log.duration_minutes : 0);
-    }
-    return sum + estimate;
-  }, 0);
+  const exerciseKcalBonus = sumExerciseKcal(exerciseLogs, profile.exercise_kcal_estimates, durationVariableExercises);
   const adjustedKcalTarget = dayPlan.kcal_target + exerciseKcalBonus;
 
   return (

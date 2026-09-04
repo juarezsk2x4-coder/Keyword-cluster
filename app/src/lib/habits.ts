@@ -4,8 +4,11 @@ import {
   getSleepLogsForPast,
   getSubstanceLogsForPast,
   getFatigueDatesForPast,
+  getExerciseLogsForPast,
+  getSupplementLogsForPast,
 } from "./query";
 import { getDayKcalTarget } from "./seed-plan";
+import { sumExerciseKcal } from "./exercise";
 import { MEAL_SLOTS } from "./types";
 import type { CardState, MealSlot, PersonId } from "./types";
 
@@ -14,6 +17,15 @@ const ALL_SLOTS = MEAL_SLOTS;
 export interface HabitTargets {
   kcal: number;
   protein: number;
+}
+
+// Opt-in, mirrors HabitTargets — a profile that doesn't set these (e.g.
+// Person B) gets zero exercise/supplement stats and insights, no crash.
+export interface HabitExerciseOptions {
+  loggableExercises?: string[];
+  exerciseKcalEstimates?: Record<string, number>;
+  durationVariableExercises?: string[];
+  dailySupplements?: string[];
 }
 
 export interface HabitRollup {
@@ -30,6 +42,11 @@ export interface HabitRollup {
   fatigue_days: number;
   substance_days: number;
   sleep_kcal_correlation: "negative" | "positive" | "none"; // short sleep ↔ high kcal?
+  exercise_days: number;
+  exercise_streak_max: number;
+  total_exercise_kcal: number;
+  avg_exercise_kcal_per_active_day: number;
+  supplement_adherence_pct: number; // % of window_days with every daily_supplements label logged; 0 if not opted in
   insights: HabitInsight[];
 }
 
@@ -45,6 +62,8 @@ export interface HabitInsight {
     | "fatigue_frequent"
     | "sleep_kcal_link"
     | "consider_professional_support"
+    | "exercise_infrequent"
+    | "supplement_adherence_low"
     | "on_track";
   payload?: Record<string, string | number>;
 }
@@ -68,24 +87,31 @@ export async function getHabitRollup(
   personId: PersonId,
   endIso: string,
   windowDays: 7 | 14 | 30,
-  targets: HabitTargets
+  targets: HabitTargets,
+  exerciseOptions: HabitExerciseOptions = {}
 ): Promise<HabitRollup> {
   await ensureMigrated();
 
-  const [meals, sleeps, subs, fatigueDates] = await Promise.all([
+  const [meals, sleeps, subs, fatigueDates, exerciseLogs, supplementLogs] = await Promise.all([
     getMealLogsForPast(personId, endIso, windowDays),
     getSleepLogsForPast(personId, endIso, windowDays),
     getSubstanceLogsForPast(personId, endIso, windowDays),
     getFatigueDatesForPast(personId, endIso, windowDays),
+    getExerciseLogsForPast(personId, endIso, windowDays),
+    getSupplementLogsForPast(personId, endIso, windowDays),
   ]);
 
   const dates = lastNDates(endIso, windowDays);
+  const durationVariableExercises = exerciseOptions.durationVariableExercises ?? [];
+  const dailySupplements = exerciseOptions.dailySupplements ?? [];
 
   // Per-day rollup
   const perDay = dates.map((d) => {
     const dayMeals = meals.filter((m) => m.date === d);
     const totalKcal = dayMeals.reduce((acc, m) => acc + (m.kcal ?? 0), 0);
     const totalProtein = dayMeals.reduce((acc, m) => acc + (m.protein_g ?? 0), 0);
+    const dayExercise = exerciseLogs.filter((e) => e.date === d);
+    const daySupplements = supplementLogs.filter((s) => s.date === d);
     return {
       date: d,
       dayMeals,
@@ -96,6 +122,11 @@ export async function getHabitRollup(
       sleep_hours: sleeps.find((s) => s.date === d)?.hours ?? null,
       had_substance: subs.some((s) => s.date === d),
       had_fatigue: fatigueDates.includes(d),
+      had_exercise: dayExercise.length > 0,
+      exercise_kcal: sumExerciseKcal(dayExercise, exerciseOptions.exerciseKcalEstimates, durationVariableExercises),
+      had_all_supplements:
+        dailySupplements.length > 0 &&
+        dailySupplements.every((label) => daySupplements.some((s) => s.supplement_name === label)),
     };
   });
 
@@ -116,6 +147,11 @@ export async function getHabitRollup(
       fatigue_days: 0,
       substance_days: 0,
       sleep_kcal_correlation: "none",
+      exercise_days: 0,
+      exercise_streak_max: 0,
+      total_exercise_kcal: 0,
+      avg_exercise_kcal_per_active_day: 0,
+      supplement_adherence_pct: 0,
       insights: [],
     };
   }
@@ -194,6 +230,31 @@ export async function getHabitRollup(
 
   const fatigueDays = perDay.filter((d) => d.had_fatigue).length;
   const substanceDays = perDay.filter((d) => d.had_substance).length;
+
+  // Exercise streak max — same running-streak-loop pattern as easy_streak_max above.
+  let exerciseStreakMax = 0;
+  let exerciseCurrent = 0;
+  for (const d of perDay) {
+    if (d.had_exercise) {
+      exerciseCurrent += 1;
+      exerciseStreakMax = Math.max(exerciseStreakMax, exerciseCurrent);
+    } else {
+      exerciseCurrent = 0;
+    }
+  }
+  const exerciseDays = perDay.filter((d) => d.had_exercise).length;
+  const totalExerciseKcal = perDay.reduce((sum, d) => sum + d.exercise_kcal, 0);
+  const avgExerciseKcalPerActiveDay = exerciseDays > 0 ? Math.round(totalExerciseKcal / exerciseDays) : 0;
+  // Denominator is the full window, not just days with meal-logging
+  // activity — the supplement checklist is meant to be logged daily
+  // regardless of whether meals were logged that day. Reads artificially
+  // low if daily_supplements was only added to the profile partway
+  // through the window; no "effective since" date exists to correct for
+  // that.
+  const supplementAdherencePct =
+    dailySupplements.length > 0
+      ? Math.round((perDay.filter((d) => d.had_all_supplements).length / windowDays) * 100)
+      : 0;
 
   // Sleep-vs-kcal correlation (short-sleep day kcal vs long-sleep day kcal)
   const shortSleepKcal = perDay
@@ -305,6 +366,26 @@ export async function getHabitRollup(
     insights.push({ severity: "info", key: "sleep_kcal_link" });
   }
 
+  // Both gated on the matching profile field actually being opted into —
+  // a profile that never set loggable_exercises/daily_supplements (e.g.
+  // Person B) gets neither insight, same "data-driven opt-in" pattern as
+  // everywhere else in this app.
+  const loggableExercises = exerciseOptions.loggableExercises ?? [];
+  if (loggableExercises.length > 0 && windowDays >= 7 && exerciseDays / windowDays < 0.2) {
+    insights.push({
+      severity: "info",
+      key: "exercise_infrequent",
+      payload: { days: exerciseDays },
+    });
+  }
+  if (dailySupplements.length > 0 && windowDays >= 7 && supplementAdherencePct < 50) {
+    insights.push({
+      severity: "warning",
+      key: "supplement_adherence_low",
+      payload: { pct: supplementAdherencePct },
+    });
+  }
+
   // Everything above resolves to "log more" / "adjust the plan" — none of
   // it ever points toward a human. Only on the longer windows (a single
   // rough week shouldn't trigger this) and only when multiple severe
@@ -338,6 +419,11 @@ export async function getHabitRollup(
     fatigue_days: fatigueDays,
     substance_days: substanceDays,
     sleep_kcal_correlation: sleepKcalCorrelation,
+    exercise_days: exerciseDays,
+    exercise_streak_max: exerciseStreakMax,
+    total_exercise_kcal: totalExerciseKcal,
+    avg_exercise_kcal_per_active_day: avgExerciseKcalPerActiveDay,
+    supplement_adherence_pct: supplementAdherencePct,
     insights,
   };
 }

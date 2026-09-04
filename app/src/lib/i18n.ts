@@ -102,6 +102,8 @@ interface Dict {
   history_title: (n: number) => string;
   history_empty: string;
   history_kcal_protein: (kcal: number, prot: number, n: number) => string;
+  history_exercises_title: string;
+  history_supplements_title: string;
   notifications: string;
   notifications_enable: string;
   notifications_enabled: string;
@@ -170,6 +172,10 @@ interface Dict {
   analyst_easy_streak_max: (days: number) => string;
   analyst_fatigue_days: (n: number) => string;
   analyst_substance_days: (n: number) => string;
+  analyst_exercise_days: (n: number) => string;
+  analyst_exercise_streak: (days: number) => string;
+  analyst_exercise_kcal_total: (kcal: number) => string;
+  analyst_supplement_adherence: (pct: number) => string;
   analyst_patterns_title: string;
   habit_insight: {
     chronic_under_kcal: (pct: number) => string;
@@ -181,6 +187,8 @@ interface Dict {
     fatigue_frequent: (days: number) => string;
     sleep_kcal_link: string;
     consider_professional_support: string;
+    exercise_infrequent: (days: number) => string;
+    supplement_adherence_low: (pct: number) => string;
     on_track: string;
   };
 }
@@ -313,6 +321,8 @@ const pt: Dict = {
   history_title: (n) => `Histórico (últimos ${n} dia${n === 1 ? "" : "s"})`,
   history_empty: "Nada logado ainda. Comece marcando refeições em Hoje.",
   history_kcal_protein: (kcal, prot, n) => `${kcal} kcal · ${Math.round(prot)}g proteína · ${n} refeição${n === 1 ? "" : "es"}`,
+  history_exercises_title: "Exercícios",
+  history_supplements_title: "Suplementos",
   notifications: "Notificações de refeição",
   notifications_enable: "Ativar notificações dos horários",
   notifications_enabled: "Notificações ativas — você será avisado nos horários",
@@ -381,6 +391,10 @@ const pt: Dict = {
   analyst_easy_streak_max: (days) => `Maior sequência easy/líquido: ${days} dias`,
   analyst_fatigue_days: (n) => `Dias com cansaço de casa: ${n}`,
   analyst_substance_days: (n) => `Dias com substâncias: ${n}`,
+  analyst_exercise_days: (n) => `Dias com exercício: ${n}`,
+  analyst_exercise_streak: (days) => `Maior sequência de exercício: ${days} dia${days === 1 ? "" : "s"}`,
+  analyst_exercise_kcal_total: (kcal) => `Kcal total gasto em exercício: ${kcal}`,
+  analyst_supplement_adherence: (pct) => `Adesão às vitaminas: ${pct}%`,
   analyst_patterns_title: "Padrões detectados",
   habit_insight: {
     chronic_under_kcal: (pct) => `Você está ${pct}% abaixo da meta de kcal de forma recorrente. Pode estar perdendo massa magra.`,
@@ -390,6 +404,8 @@ const pt: Dict = {
     easy_dominance: (pct) => `${pct}% das refeições foram "easy" ou "liquid". Indica cansaço persistente ou rotina sobrecarregada.`,
     substance_correlation: "Dias com substâncias coincidem com baixa ingestão. Recovery food no dia seguinte ajuda.",
     fatigue_frequent: (days) => `${days} dias com cansaço de casa registrado. Considera fixar batch-cook no domingo.`,
+    exercise_infrequent: (days) => `Só ${days} dia${days === 1 ? "" : "s"} de exercício nessa janela. Considera encaixar mais sessões.`,
+    supplement_adherence_low: (pct) => `Adesão às vitaminas em ${pct}% nessa janela.`,
     sleep_kcal_link: "Sono curto (<6h) coincide com kcal mais alto (compensação). Prioriza sono.",
     consider_professional_support: "Esse padrão combinado (não um sinal isolado) já passou do que ajuste de plano ou mais logging costuma resolver sozinho. Pode valer a pena levar isso pra uma conversa com seu médico ou terapeuta — não é algo que o app vai resolver por mais dados que você registre.",
     on_track: "Padrões estáveis dentro das metas. Boa cadência.",
@@ -524,6 +540,8 @@ const en: Dict = {
   history_title: (n) => `History (last ${n} day${n === 1 ? "" : "s"})`,
   history_empty: "Nothing logged yet. Start by logging meals in Today.",
   history_kcal_protein: (kcal, prot, n) => `${kcal} kcal · ${Math.round(prot)}g protein · ${n} meal${n === 1 ? "" : "s"}`,
+  history_exercises_title: "Exercise",
+  history_supplements_title: "Supplements",
   notifications: "Meal-time notifications",
   notifications_enable: "Enable meal-time notifications",
   notifications_enabled: "Notifications active — you'll be alerted at meal times",
@@ -592,6 +610,10 @@ const en: Dict = {
   analyst_easy_streak_max: (days) => `Longest easy/liquid streak: ${days} days`,
   analyst_fatigue_days: (n) => `House-fatigue days: ${n}`,
   analyst_substance_days: (n) => `Days with substances: ${n}`,
+  analyst_exercise_days: (n) => `Exercise days: ${n}`,
+  analyst_exercise_streak: (days) => `Longest exercise streak: ${days} day${days === 1 ? "" : "s"}`,
+  analyst_exercise_kcal_total: (kcal) => `Total kcal spent on exercise: ${kcal}`,
+  analyst_supplement_adherence: (pct) => `Supplement adherence: ${pct}%`,
   analyst_patterns_title: "Detected patterns",
   habit_insight: {
     chronic_under_kcal: (pct) => `You're chronically ${pct}% under kcal target. May be losing lean mass.`,
@@ -601,6 +623,8 @@ const en: Dict = {
     easy_dominance: (pct) => `${pct}% of meals were "easy" or "liquid". Indicates persistent fatigue or overloaded routine.`,
     substance_correlation: "Substance-use days coincide with low intake. Recovery food the next day helps.",
     fatigue_frequent: (days) => `${days} house-fatigue days logged. Consider fixing Sunday batch-cook.`,
+    exercise_infrequent: (days) => `Only ${days} exercise day${days === 1 ? "" : "s"} in this window. Consider fitting in more sessions.`,
+    supplement_adherence_low: (pct) => `Supplement adherence at ${pct}% this window.`,
     sleep_kcal_link: "Short sleep (<6h) correlates with higher kcal (compensation). Prioritize sleep.",
     consider_professional_support: "This combined pattern (not just one flag on its own) has gone past what a plan tweak or more logging usually fixes by itself. Might be worth bringing this to your doctor or therapist — it's not something the app is going to solve with more data.",
     on_track: "Patterns stable within targets. Good cadence.",
