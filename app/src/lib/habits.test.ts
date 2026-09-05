@@ -157,3 +157,50 @@ describe("chronic-deficit insight accounts for skate days", () => {
     expect(r.insights.map((i) => i.key)).toContain("chronic_under_protein");
   });
 });
+
+// The actual ask: Analyst used to show a blank "not enough data" screen with
+// only 1 meal-logged day and zero exercise/supplement data — the bail-out
+// gate required 2. avgKcal/avgProtein are plain averages, well-defined at
+// n=1, so requiring 2 was arbitrary caution, not something the math needed.
+describe("works with exactly 1 day logged (no exercise/supplement data at all)", () => {
+  it("renders real stats instead of the empty state", async () => {
+    await seedFullDay(END, 2200, 140);
+
+    const r = await getHabitRollup("person_a", END, 7, TARGETS); // no exercise opts either
+
+    expect(r.has_any_data).toBe(true);
+    expect(r.days_with_data).toBe(1);
+    expect(r.avg_kcal_per_day).toBe(2200);
+    expect(r.avg_protein_per_day).toBe(140);
+    expect(Number.isNaN(r.avg_kcal_per_day)).toBe(false);
+  });
+
+  it("shows on_track when nothing wrong is detected, rather than an empty insights card", async () => {
+    await seedFullDay(END, 2500, 130); // right at target, nothing should fire
+
+    const r = await getHabitRollup("person_a", END, 7, TARGETS);
+
+    expect(r.insights.map((i) => i.key)).toEqual(["on_track"]);
+  });
+
+  it("still keeps insights that need multiple data points silent at n=1", async () => {
+    await seedFullDay(END, 900, 40, "easy");
+
+    const r = await getHabitRollup("person_a", END, 7, TARGETS, EXERCISE_OPTS);
+
+    const keys = r.insights.map((i) => i.key);
+    // These genuinely can't mean anything from one day — a "chronic" pattern,
+    // a streak, a weekday comparison, or a correlation all need >1 data point,
+    // not just a lower arbitrary threshold.
+    expect(keys).not.toContain("chronic_under_kcal");
+    expect(keys).not.toContain("chronic_under_protein");
+    expect(keys).not.toContain("weekday_dip");
+    expect(keys).not.toContain("easy_dominance");
+    expect(r.easy_streak_max).toBeLessThanOrEqual(1);
+  });
+
+  it("still bails out with zero days of anything logged", async () => {
+    const r = await getHabitRollup("person_a", END, 7, TARGETS);
+    expect(r.has_any_data).toBe(false);
+  });
+});

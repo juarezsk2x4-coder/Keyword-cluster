@@ -153,3 +153,18 @@ describe("degenerate inputs", () => {
     expect(keys(p.insights)).toContain("sleep_short");
   });
 });
+
+describe("works with just 1 day of the 2-day lookback logged", () => {
+  it("shows on_track from a single logged day, not just an empty banner", async () => {
+    // Only WED logged, TUE has nothing — was gated at daysWithData >= 2
+    // (effectively both lookback days), even though kcal_deficit_pct is
+    // already a plain average that works fine from 1 day.
+    await seedFullDay(WED, 2500, 130);
+
+    const p = await getPredictions("person_a", THURSDAY, false, TARGETS);
+
+    expect(p.days_with_data).toBe(1);
+    expect(Number.isNaN(p.kcal_deficit_pct)).toBe(false);
+    expect(keys(p.insights)).toEqual(["on_track"]);
+  });
+});

@@ -1,5 +1,13 @@
 import { describe, it, expect } from "vitest";
-import { addDaysIso, dowForIso, getSundayOfWeek, getNextSunday, lastNDates } from "./dates";
+import {
+  addDaysIso,
+  dowForIso,
+  getSundayOfWeek,
+  getNextSunday,
+  lastNDates,
+  appTzWallClockToIso,
+  formatTimeInAppTz,
+} from "./dates";
 
 // The whole suite runs with TZ=Asia/Tokyo (see vitest.config.ts) precisely
 // because these helpers used to do their arithmetic in server-local time and
@@ -55,5 +63,38 @@ describe("date helpers are independent of the host timezone", () => {
       "2026-09-03", "2026-09-04", "2026-09-05",
     ]);
     expect(week.map(dowForIso)).toEqual([0, 1, 2, 3, 4, 5, 6]);
+  });
+});
+
+// appTzWallClockToIso/formatTimeInAppTz replaced BeveragePanel's raw
+// Date#getHours() calls, which were UTC during SSR and local after
+// hydration — a real hydration mismatch that showed the wrong hour. These
+// exercise the App São Paulo (UTC-3, no DST since 2019) round trip, which
+// the previous pass added with zero test coverage despite being exactly
+// what changed.
+describe("wall-clock time helpers (São Paulo, UTC-3, no DST)", () => {
+  it("converts an evening wall-clock time to the correct UTC instant", () => {
+    // 23:30 in São Paulo (-03:00) is 02:30 the next day in UTC.
+    expect(appTzWallClockToIso("2026-09-04", "23:30")).toBe("2026-09-05T02:30:00.000Z");
+  });
+
+  it("converts an early-morning wall-clock time without a spurious date rollover", () => {
+    // 01:00 in São Paulo is 04:00 UTC the SAME calendar day — this is the
+    // case a naive "compute offset then shift the date string" approach
+    // could get wrong; going through Date#getTime() arithmetic avoids it.
+    expect(appTzWallClockToIso("2026-09-04", "01:00")).toBe("2026-09-04T04:00:00.000Z");
+  });
+
+  it("round-trips back through formatTimeInAppTz", () => {
+    const iso = appTzWallClockToIso("2026-09-04", "20:15");
+    expect(formatTimeInAppTz(iso)).toBe("20:15");
+  });
+
+  it("formatTimeInAppTz reads the same wall-clock hour regardless of host TZ", () => {
+    // The whole suite already runs under TZ=Asia/Tokyo (vitest.config.ts) —
+    // this is the literal hydration-mismatch bug: the same UTC instant used
+    // to render a different hour depending on which timezone evaluated it.
+    const consumedUtc = "2026-09-04T23:00:00.000Z"; // 20:00 in São Paulo
+    expect(formatTimeInAppTz(consumedUtc)).toBe("20:00");
   });
 });

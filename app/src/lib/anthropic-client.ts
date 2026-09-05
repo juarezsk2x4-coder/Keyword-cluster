@@ -10,7 +10,20 @@ export function getAnthropicClient(): Anthropic {
   // The SDK already retries connection errors/408/409/429/5xx internally
   // (default max_retries: 2) with exponential backoff — no custom retry
   // loop needed on top of that.
-  clientInstance = new Anthropic();
+  //
+  // Its default `timeout` is 10 minutes, which is longer than any
+  // serverless function is likely to be allowed to run (this project has
+  // no `maxDuration` configured anywhere, so it's on whatever the Vercel
+  // plan's default is — commonly well under 10 minutes). Without an
+  // explicit timeout, a stalled request doesn't fail with the app's own
+  // error handling (isAiEnabled()-gated try/catch in actions.ts) — the
+  // platform kills the function first and the user sees an opaque error
+  // instead of the "AI unavailable" messaging the UI is built to show.
+  // 120s is a deliberate middle ground: short enough that a real hang
+  // fails with a clear error well before any plausible platform limit,
+  // long enough not to cut off the weekly-plan generation's real
+  // multi-thousand-token streamed output in the common case.
+  clientInstance = new Anthropic({ timeout: 120_000 });
   return clientInstance;
 }
 

@@ -843,13 +843,13 @@ export interface ResolvedWeeklyPlan {
 // render a NaN ring, and a day missing `meals` threw inside the meal list.
 // Validate the shape the UI actually depends on before trusting it, and fall
 // back to the deterministic seed plan (loudly) when it doesn't hold.
-function isUsableWeek(days: unknown, weekStartIso: string): days is DailyPlan[] {
+export function isUsableWeek(days: unknown, weekStartIso: string): days is DailyPlan[] {
   if (!Array.isArray(days) || days.length !== 7) return false;
-  return days.every((d, i) => {
+  const shapeOk = days.every((d) => {
     if (!d || typeof d !== "object") return false;
     const day = d as Partial<DailyPlan>;
     return (
-      day.date === addDaysIso(weekStartIso, i) &&
+      typeof day.date === "string" &&
       typeof day.kcal_target === "number" &&
       Number.isFinite(day.kcal_target) &&
       typeof day.protein_g_target === "number" &&
@@ -860,6 +860,17 @@ function isUsableWeek(days: unknown, weekStartIso: string): days is DailyPlan[] 
       day.meals.every((m) => m && typeof m.slot === "string" && m.alternatives?.original)
     );
   });
+  if (!shapeOk) return false;
+  // Checked as a SET of the 7 expected dates, not positional equality — the
+  // AI generator's JSON schema only requires `date` to be a string and never
+  // sorts what it stores, so a legitimate plan with days out of array order
+  // used to fail this check and silently fall back to the generic seed plan.
+  // Every real consumer (page.tsx, getDayKcalTarget, plan/page.tsx) already
+  // looks a day up by `.find(d => d.date === ...)`, never by index, so
+  // ordering was never something the app actually depended on.
+  const expected = new Set(Array.from({ length: 7 }, (_, i) => addDaysIso(weekStartIso, i)));
+  const actual = new Set((days as DailyPlan[]).map((d) => d.date));
+  return actual.size === 7 && [...expected].every((date) => actual.has(date));
 }
 
 export async function resolveWeeklyPlan(personId: PersonId, weekStartIso: string): Promise<ResolvedWeeklyPlan> {

@@ -1,8 +1,8 @@
 import { describe, it, expect } from "vitest";
-import { buildWeeklyPlan, buildGenericSeedPlan } from "./seed-plan";
+import { buildWeeklyPlan, buildGenericSeedPlan, isUsableWeek } from "./seed-plan";
 import { MEAL_SLOTS } from "./types";
-import type { PersonProfile } from "./types";
-import { dowForIso } from "./dates";
+import type { DailyPlan, PersonProfile } from "./types";
+import { addDaysIso, dowForIso } from "./dates";
 
 const WEEK_START = "2026-08-30"; // a Sunday
 
@@ -112,5 +112,63 @@ describe("buildGenericSeedPlan with an unfilled profile", () => {
     const day = buildGenericSeedPlan(WEEK_START, filled)[0];
     const total = day.meals.reduce((s, m) => s + m.alternatives.original.kcal, 0);
     expect(Math.abs(total - 2400)).toBeLessThanOrEqual(10); // rounding slack only
+  });
+});
+
+// isUsableWeek gates whether a stored (often AI-generated) plan gets trusted
+// or silently discarded in favor of the generic seed plan. The AI's JSON
+// schema only requires `date` to be a string and never sorts what it stores,
+// so a legitimate plan can have its 7 days in any order — this must accept
+// that, while still rejecting genuinely broken shapes (a NaN target used to
+// render a NaN ring on the home page before this validator existed at all).
+describe("isUsableWeek", () => {
+  const validWeek = () => buildWeeklyPlan(WEEK_START) as unknown as DailyPlan[];
+
+  it("accepts a correctly-shaped week in the expected order", () => {
+    expect(isUsableWeek(validWeek(), WEEK_START)).toBe(true);
+  });
+
+  it("accepts the same week with its days shuffled out of order", () => {
+    const shuffled = [...validWeek()];
+    [shuffled[0], shuffled[6]] = [shuffled[6], shuffled[0]];
+    [shuffled[2], shuffled[4]] = [shuffled[4], shuffled[2]];
+    expect(isUsableWeek(shuffled, WEEK_START)).toBe(true);
+  });
+
+  it("rejects a week with fewer than 7 days", () => {
+    expect(isUsableWeek(validWeek().slice(0, 6), WEEK_START)).toBe(false);
+  });
+
+  it("rejects a week missing one of the 7 expected dates (a duplicate instead)", () => {
+    const broken = validWeek();
+    broken[6] = { ...broken[6], date: broken[0].date }; // duplicate day 0, day 6 missing
+    expect(isUsableWeek(broken, WEEK_START)).toBe(false);
+  });
+
+  it("rejects a week anchored to the wrong start date", () => {
+    expect(isUsableWeek(validWeek(), addDaysIso(WEEK_START, 7))).toBe(false);
+  });
+
+  it("rejects a day with a non-finite kcal_target (the original NaN-ring bug)", () => {
+    const broken = validWeek();
+    broken[0] = { ...broken[0], kcal_target: NaN };
+    expect(isUsableWeek(broken, WEEK_START)).toBe(false);
+    const broken2 = validWeek();
+    // @ts-expect-error deliberately wrong shape, simulating a malformed AI response
+    broken2[0] = { ...broken2[0], kcal_target: "FILL_IN" };
+    expect(isUsableWeek(broken2, WEEK_START)).toBe(false);
+  });
+
+  it("rejects a day with no meals", () => {
+    const broken = validWeek();
+    broken[0] = { ...broken[0], meals: [] };
+    expect(isUsableWeek(broken, WEEK_START)).toBe(false);
+  });
+
+  it("rejects non-array and null input without throwing", () => {
+    expect(isUsableWeek(null, WEEK_START)).toBe(false);
+    expect(isUsableWeek(undefined, WEEK_START)).toBe(false);
+    expect(isUsableWeek("not a plan", WEEK_START)).toBe(false);
+    expect(isUsableWeek({}, WEEK_START)).toBe(false);
   });
 });

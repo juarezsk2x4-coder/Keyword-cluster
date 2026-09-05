@@ -293,7 +293,11 @@ export async function getPredictions(
       payload: { hours: today.sleep_hours ?? 0 },
     });
   }
-  if (insights.length === 0 && daysWithData >= 2) {
+  // Was gated at >=2 (effectively requiring both days of the 2-day lookback
+  // to have data); relaxed to >=1 — kcal/protein deficit are plain averages,
+  // already computed from just 1 day above, so requiring 2 here to say
+  // "nothing wrong found" was stricter than the underlying math needed.
+  if (insights.length === 0 && daysWithData >= 1) {
     insights.push({ severity: "info", key: "on_track" });
   }
 

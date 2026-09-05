@@ -132,7 +132,14 @@ export async function getHabitRollup(
   // show from any source.
   const hasExerciseOrSupplementData = perDay.some((d) => d.had_exercise || d.supplement_count > 0);
 
-  if (daysWithData < 2 && !hasExerciseOrSupplementData) {
+  // Previously required 2 meal-days before showing anything at all, but
+  // avgKcal/avgProtein/kcal_deficit_pct etc. are plain averages, well-defined
+  // at n=1 — the "need 2+" bar here was just arbitrary caution, not something
+  // the math actually required. Insights that genuinely can't mean anything
+  // from one day (streaks, correlations, weekday comparisons, "chronic"/
+  // "frequent" framings) keep their own higher thresholds further down; this
+  // is only the "is there anything to render at all" gate.
+  if (daysWithData < 1 && !hasExerciseOrSupplementData) {
     return {
       window_days: windowDays,
       end_date: endIso,
@@ -417,7 +424,11 @@ export async function getHabitRollup(
     }
   }
 
-  if (insights.length === 0 && daysWithData >= 5) {
+  // Was gated at >=5 days; relaxed to >=1 alongside the bail-out above so a
+  // single logged day with nothing wrong detected shows something rather than
+  // an empty insights card. Still just "no problem pattern found in what you
+  // logged" — not a stronger claim than the data supports even at n=1.
+  if (insights.length === 0 && daysWithData >= 1) {
     insights.push({ severity: "info", key: "on_track" });
   }
 

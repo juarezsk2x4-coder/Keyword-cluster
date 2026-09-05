@@ -137,6 +137,12 @@ export default async function TodayPage({ searchParams }: PageProps) {
       <PredictionBanner prediction={predictions} lang={lang} />
 
       <DayHeader
+        // Keyed on the date for the same reason MealCard is: DayHeader wraps
+        // BeveragePanel and ExercisePanel, both of which hold local useState
+        // (an open add-form, typed amount/duration, a default time) that
+        // otherwise survives client-side date navigation unchanged — the
+        // exact bug just fixed for MealCard, left in its siblings.
+        key={selectedDate}
         date={dayPlan.date}
         isFatigued={fatigued}
         sleepHours={sleep?.hours}
